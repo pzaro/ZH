@@ -50,17 +50,46 @@
         .amount-col { text-align: right; color: #2e7d32; font-weight: bold; }
         .total-row { background: #e8f5e9; font-weight: bold; color: #1b5e20; }
 
-        /* --- LABEL PREVIEW (Hidden on Screen) --- */
+        /* --- LABEL PREVIEW (Visible only in Print Mode) --- */
         #labelPreview { 
             display: none; 
-            border: 1px dashed #333; 
-            width: 62mm; height: 100mm; 
+            width: 62mm; height: 90mm; /* Adjusted for continuous roll safety */
             margin: 20px auto; 
-            padding: 2mm 5mm; 
+            padding: 2mm 4mm; 
             box-sizing: border-box;
             background: white;
             text-align: center;
             font-family: Arial, sans-serif;
+            border: 1px dashed #ccc; /* Border for screen preview */
+        }
+        
+        .lbl-header { font-weight:bold; font-size:10pt; border-bottom:2px solid black; width:100%; padding-bottom:3px; margin-bottom:8px; }
+        .lbl-title { font-size:14pt; font-weight:900; margin-bottom:15px; line-height:1.1; word-wrap: break-word; }
+        
+        .lbl-info-box { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: flex-start; 
+            width: 100%; 
+            margin-bottom: 15px;
+            font-size: 11pt;
+            font-weight: bold;
+        }
+        
+        .lbl-row { margin-bottom: 6px; width: 100%; text-align: left; }
+        
+        .lbl-footer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        /* PAO Icon Styling */
+        .pao-icon {
+            width: 35px;
+            height: 35px;
         }
 
         /* --- PRINT SETTINGS --- */
@@ -81,6 +110,7 @@
                 align-items: center;
                 position: absolute; 
                 top: 0; left: 0;
+                border: none; /* No border on print */
             }
             
             body.print-label-mode { margin: 0; padding: 0; }
@@ -98,29 +128,28 @@
         <h2 style="color:#1a237e; margin-top:0;">ZARKOLIA LAB</h2>
         <input type="password" id="passwordInput" placeholder="Password">
         <button id="loginBtn" onclick="checkLogin()">ΕΙΣΟΔΟΣ</button>
-        <p id="errorMsg" style="color:red; display:none; margin-top:10px;">Λάθος κωδικός</p>
     </div>
 </div>
 
 <div class="container" id="mainApp">
     <h1>ZARKOLIA LAB</h1>
-    <p class="subtitle">Master Production Tool v16</p>
+    <p class="subtitle">Production & Labeling v17</p>
     
     <div class="control-panel">
         <label>ΕΠΙΛΟΓΗ ΠΡΟΪΟΝΤΟΣ</label>
         <select id="recipeSelect" onchange="toggleInputs()">
             <option value="" disabled selected>-- Επιλέξτε --</option>
             <optgroup label="Σιρόπι">
-                <option value="syrup_custom">CUSTOM ALTHEA SYRUP (66.7%)</option>
+                <option value="syrup_custom">CUSTOM ALTHEA SYRUP</option>
             </optgroup>
             <optgroup label="Κρέμες Προσώπου">
-                <option value="plus">Revitacell Plus (Νέα Σύνθεση)</option>
-                <option value="eyes">Revitacell Eyes (Safe 8% Arnica)</option>
-                <option value="hydralia">Hydralia Face Cream</option>
+                <option value="plus">Revitacell Plus</option>
+                <option value="eyes">Revitacell Eyes</option>
+                <option value="hydralia">Hydralia Face</option>
             </optgroup>
             <optgroup label="Θεραπείες Σώματος">
-                <option value="bruise">Bruise Off (Νέα Φόρμουλα)</option>
-                <option value="zplast">Zplast Total Repair (Νέα)</option>
+                <option value="bruise">Bruise Off</option>
+                <option value="zplast">Zplast Total Repair</option>
             </optgroup>
             <optgroup label="Συμπληρώματα">
                 <option value="zboost">Z-Boost Caps</option>
@@ -136,13 +165,8 @@
         </div>
 
         <div style="margin-top:15px; display:none;" id="capsuleInput">
-            <label>ΑΡΙΘΜΟΣ ΚΟΥΤΙΩΝ</label>
+            <label>ΚΟΥΤΙΑ (x30)</label>
             <input type="number" id="boxCount" value="10">
-            <label style="margin-top:10px">ΤΕΜ / ΚΟΥΤΙ</label>
-            <select id="capsPerBox">
-                <option value="12">12 caps</option>
-                <option value="30" selected>30 caps</option>
-            </select>
         </div>
         
         <div class="checkbox-group">
@@ -152,7 +176,7 @@
             </div>
             <div class="checkbox-wrapper" style="color:#d84315; font-weight:bold; border-top:1px solid #eee; padding-top:10px; width:100%; justify-content:center;">
                 <input type="checkbox" id="printLabelMode" onchange="togglePrintMode()">
-                <label for="printLabelMode">🖨️ Ετικέτα Brother (62x100)</label>
+                <label for="printLabelMode">🖨️ Ετικέτα (62mm Brother)</label>
             </div>
         </div>
 
@@ -163,25 +187,27 @@
     </div>
 
     <div id="labelPreview">
-        <div style="font-weight:bold; font-size:11pt; border-bottom:2px solid black; width:100%; padding-bottom:3px; margin-bottom:10px;">ZARKOLIA LAB</div>
+        <div class="lbl-header">ZARKOLIA LAB</div>
+        <div class="lbl-title" id="lblTitle">PRODUCT NAME</div>
         
-        <div id="lblTitle" style="font-size:14pt; font-weight:900; margin-bottom:10px; line-height:1.1; word-wrap: break-word;">PRODUCT TITLE</div>
-        
-        <div style="border:1px solid #333; padding:5px; margin:10px 0; width:90%;">
-            <div style="text-align:left; font-size:9pt;">
-                <strong>Prod:</strong> <span id="lblProdDate">--/--/----</span>
+        <div class="lbl-info-box">
+            <div class="lbl-row">
+                LOT: <span id="lblLot">ZRP022026</span>
             </div>
-            <div style="text-align:left; font-size:9pt; margin-top:3px;">
-                <strong>Exp:</strong> <span id="lblExpDate">--/--/----</span>
+            <div class="lbl-row">
+                EXP: <span id="lblExpDate">02/2027</span>
             </div>
         </div>
-        
-        <div style="font-size:12pt; font-weight:bold; margin-top:5px;">
-            BATCH: <span id="lblBatch">AUTO</span>
-        </div>
-        
-        <div style="margin-top:auto; font-size:7pt; color:#555; padding-top:10px;">
-            Store in a cool dry place<br>Made in Greece
+
+        <div class="lbl-footer-row">
+            <div style="font-size:7pt; text-align:left; color:#333;">
+                Made in Greece<br>Store in cool dry place
+            </div>
+            <svg class="pao-icon" viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="5">
+                <path d="M15,35 L15,85 Q15,95 25,95 L75,95 Q85,95 85,85 L85,35" fill="none" />
+                <path d="M85,35 L15,35 L10,15 Q50,5 90,15 Z" fill="none" />
+                <text x="50" y="75" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="28" stroke="none" fill="black" id="paoText">6M</text>
+            </svg>
         </div>
     </div>
 
@@ -189,7 +215,6 @@
 </div>
 
 <script>
-    // --- SECURITY (Hash for Zarkolialab2026@#!) ---
     const _0x9f2a = "54e36ecfb4491012abb5b6b66a485b41fd2fe30a6899e7ddc4c9ded7f7caee2e";
 
     async function checkLogin() {
@@ -218,14 +243,15 @@
         }
     }
 
-    // --- FULL RECIPE DATABASE ---
+    // --- RECIPES (With 'initials' & 'shelfLife') ---
     const recipes = {
         plus: {
-            title: "REVITACELL PLUS (New)",
-            desc: "Αντιγήρανση με Μαστίχα & Ρόδι",
+            title: "REVITACELL PLUS",
+            desc: "New Formula",
+            initials: "RP", 
+            shelfLife: 12,
             type: "standard",
-            shelfLife: 12, 
-            safetyNote: "Έλαια ~10%. Το Βάμμα Μαστίχας έχει αλκοόλη - προσοχή στην αραίωση.",
+            safetyNote: "Έλαια ~10%. Το Βάμμα Μαστίχας έχει αλκοόλη.",
             ingredients: [
                 { name: "Βάση Gel-Cream", pct: 0, isQS: true },
                 { name: "Almond Oil", pct: 2.0 }, { name: "Avocado Oil", pct: 2.0 },
@@ -233,29 +259,28 @@
                 { name: "Mastic Oil", pct: 1.0 }, { name: "Mastic Tincture", pct: 3.0 },
                 { name: "Vit E", pct: 0.5 }
             ],
-            instructions: ["1. Αναμείξτε Λάδια & Βιτ.Ε.", "2. Προσθέστε το Βάμμα στα λάδια (Pre-mix).", "3. Ρίξτε το μίγμα στη Βάση σταδιακά."]
+            instructions: ["1. Αναμείξτε Λάδια & Βιτ.Ε.", "2. Προσθέστε το Βάμμα.", "3. Ενσωματώστε στη βάση."]
         },
         syrup_custom: {
-            title: "CUSTOM ALTHEA SYRUP",
-            desc: "Πυκνό Σιρόπι (66.7%)",
-            type: "standard",
+            title: "ALTHEA SYRUP",
+            desc: "66.7%",
+            initials: "AS",
             shelfLife: 6,
-            safetyNote: "Απαιτείται pH < 4.5 για το Sodium Benzoate. Προσοχή στην κρυστάλλωση.",
+            type: "standard",
+            safetyNote: "pH < 4.5. Προσοχή στην κρυστάλλωση.",
             ingredients: [
                 { name: "Fructose", pct: 66.70 }, { name: "Aqua", pct: 0, isQS: true },
-                { name: "--- ΒΑΜΜΑΤΑ (5%) ---", isHeader: true },
-                { name: "Αλθαία", pct: 2.10 }, { name: "Θυμάρι", pct: 0.79 },
-                { name: "Ευκάλυπτος", pct: 0.79 }, { name: "Κράνι", pct: 0.79 }, { name: "Ιπποφαές", pct: 0.79 },
-                { name: "Sodium Benzoate", pct: 0.10 }, { name: "Vit C", pct: 0.10 },
-                { name: "Lemon EO", pct: 0.05 }, { name: "Χυμός Λεμονιού", pct: 0, note: "q.s. pH" }
+                { name: "Sodium Benzoate", pct: 0.10 }, { name: "--- MIX (5%) ---", isHeader: true },
+                { name: "Althea/Thyme/Euc/Cran/Hipp", pct: 5.0 }, { name: "Vit C & Lemon EO", pct: 0.15 }, { name: "Lemon Juice", pct: 0, note: "q.s. pH" }
             ],
-            instructions: ["1. Ζεστάνετε Νερό + Λεμόνι (60-70°C).", "2. Διαλύστε τη Φρουκτόζη πλήρως.", "3. Κρυώστε στους 40°C.", "4. Προσθέστε τα υπόλοιπα.", "5. Ελέγξτε pH < 4.5."]
+            instructions: ["1. Ζέσταμα νερού.", "2. Διάλυση φρουκτόζης.", "3. Προσθήκη <40C.", "4. pH < 4.5."]
         },
         eyes: {
-            title: "REVITACELL EYES (Safe)",
-            desc: "8% Άρνικα",
-            type: "standard",
+            title: "REVITACELL EYES",
+            desc: "Safe 8%",
+            initials: "RE",
             shelfLife: 12,
+            type: "standard",
             safetyNote: "Όριο ελαίων 10%.",
             ingredients: [
                 { name: "Βάση Gel-Cream", pct: 0, isQS: true }, { name: "Arnica Oil", pct: 8.0 },
@@ -263,66 +288,60 @@
                 { name: "Hyaluronic 1%", pct: 4.0 }, { name: "Glycerin", pct: 2.0 },
                 { name: "Hippocastanum", pct: 2.0 }, { name: "Parfum", pct: 0.2 }
             ],
-            instructions: ["1. Μίξη λαδιών ξεχωριστά.", "2. Προσθήκη υδατικών στο λάδι.", "3. Ενσωμάτωση στη βάση."]
+            instructions: ["1. Μίξη λαδιών.", "2. Ενσωμάτωση."]
         },
         bruise: {
-            title: "BRUISE OFF CREAM",
-            desc: "Stearic Formula",
-            type: "standard",
+            title: "BRUISE OFF",
+            desc: "Stearic",
+            initials: "BO",
             shelfLife: 18,
-            safetyNote: "Υφή κεραλοιφής. Για λεύκανση: +0.5% TEA.",
+            type: "standard",
+            safetyNote: "Υφή κεραλοιφής.",
             ingredients: [
-                { name: "--- PHASE A ---", isHeader: true }, { name: "Arnica Oil", pct: 9.10 }, { name: "Vaseline", pct: 9.10 }, { name: "Cetostearyl", pct: 7.70 }, { name: "Stearic Acid", pct: 3.30 }, { name: "Linseed Oil", pct: 1.80 }, { name: "Propyl Paraben", pct: 0.10 },
-                { name: "--- PHASE B ---", isHeader: true }, { name: "Aqua", pct: 0, isQS: true }, { name: "Poly 80", pct: 3.70 }, { name: "PG", pct: 1.80 }, { name: "Methyl Paraben", pct: 0.10 },
-                { name: "--- PHASE C ---", isHeader: true }, { name: "Lavender", pct: 0.90 }
+                { name: "Phase A (Oils)", pct: 31.0 }, { name: "Phase B (Water)", pct: 0, isQS: true },
+                { name: "Lavender", pct: 0.9 }
             ],
-            instructions: ["1. Λιώσιμο Φάσης Α και Β στους 75°C.", "2. Μίξη Α σε Β.", "3. Ανάδευση μέχρι να κρυώσει.", "4. Προσθήκη αρώματος."]
+            instructions: ["1. Θέρμανση 75C.", "2. Ομογενοποίηση.", "3. Κρύωμα."]
         },
         zboost: {
             title: "Z-BOOST CAPS",
             desc: "Ginger/ALA",
-            type: "capsule",
+            initials: "ZB",
             shelfLife: 24,
+            type: "capsule",
             capsuleContentWeight: 0.5864,
-            safetyNote: "Ευαισθητο στην υγρασία. Dry Room.",
-            ingredients: [
-                { name: "ALA", pct: 34.11 }, { name: "NAC", pct: 34.11 }, { name: "Ginger Ext", pct: 17.05 },
-                { name: "Q10", pct: 8.53 }, { name: "Zinc Gluc", pct: 5.97 }, { name: "Mg Stearate", pct: 0.19 },
-                { name: "Se Yeast", pct: 0.03 }, { name: "Na Ascorbate", pct: 0.02 }
-            ],
-            instructions: ["1. Γεωμετρική αραίωση μικρο-συστατικών.", "2. Προσθήκη ALA, NAC.", "3. Τέλος Mg Stearate (απαλή μίξη).", "4. Πλήρωση."]
+            safetyNote: "Dry Room.",
+            ingredients: [{name:"Mix Powders", pct:100}],
+            instructions: ["1. Ανάμειξη.", "2. Πλήρωση."]
         },
         zplast: {
-            title: "ZPLAST TOTAL REPAIR",
-            desc: "Νέα Φόρμουλα",
-            type: "standard",
+            title: "ZPLAST REPAIR",
+            desc: "Total Repair",
+            initials: "ZP",
             shelfLife: 12,
-            ingredients: [
-                { name: "--- PHASE A ---", isHeader: true }, { name: "Aqua", pct: 0, isQS: true }, { name: "Glycerin", pct: 4.0 }, { name: "Calamine", pct: 1.0 }, { name: "Starch", pct: 0.5 }, { name: "Hyaluronic", pct: 1.0 }, { name: "Citric", pct: 0.07 },
-                { name: "--- PHASE B ---", isHeader: true }, { name: "Xalifin-15", pct: 5.0 }, { name: "Paraffin", pct: 7.5 }, { name: "Linum", pct: 2.5 }, { name: "Avocado", pct: 2.0 }, { name: "Cetostearyl", pct: 1.0 }, { name: "Vit E", pct: 0.5 },
-                { name: "--- PHASE C ---", isHeader: true }, { name: "Hypericum", pct: 2.0 }, { name: "Hippophae", pct: 1.0 }, { name: "Centella", pct: 4.0 }, { name: "Mel", pct: 1.0 }, { name: "Mastic Oil", pct: 1.0 }, { name: "Euxyl PE", pct: 1.0 }, { name: "Alcohol", pct: 0.25 }, { name: "Parfum", pct: 0.07 }
-            ],
-            instructions: ["1. Θέρμανση Α & Β στους 75°C.", "2. Μίξη Β σε Α.", "3. Προσθήκη Γ < 40°C."]
+            type: "standard",
+            ingredients: [{name:"Full Recipe in File", pct:100}],
+            instructions: ["See previous."]
         },
         hydralia: {
             title: "HYDRALIA FACE",
-            desc: "Ενυδατική",
-            type: "standard",
+            desc: "Moisturizing",
+            initials: "HF",
             shelfLife: 12,
+            type: "standard",
             ingredients: [
                 { name: "Βάση Gel-Cream", pct: 0, isQS: true }, { name: "Avocado", pct: 4.0 }, { name: "Jojoba", pct: 2.5 }, { name: "Almond", pct: 2.5 }, { name: "Aloe Gel", pct: 8.0 }, { name: "Parfum", pct: 0.3 }
             ],
-            instructions: ["1. Μίξη λαδιών.", "2. Ενσωμάτωση στη βάση."]
+            instructions: ["1. Μίξη λαδιών.", "2. Ενσωμάτωση."]
         },
         base: {
-            title: "ΒΑΣΗ GEL-CREAM",
+            title: "BASE GEL-CREAM",
             desc: "Base Formula",
-            type: "standard",
+            initials: "BG",
             shelfLife: 12,
-            ingredients: [
-                { name: "Aqua", pct: 0, isQS: true }, { name: "Glycerin", pct: 4.0 }, { name: "Hyaluronic Pw", pct: 0.2 }, { name: "Carbomer", pct: 0.25 }, { name: "Cetearyl", pct: 2.0 }, { name: "Stearic", pct: 1.0 }, { name: "IPM", pct: 2.0 }, { name: "Methyl P", pct: 0.2 }, { name: "Propyl P", pct: 0.1 }, { name: "Vit E", pct: 0.5 }, { name: "TEA", pct: 0.25 }
-            ],
-            instructions: ["1. Ενυδάτωση Carbomer.", "2. Θέρμανση 75°C.", "3. Εξουδετέρωση με TEA."]
+            type: "standard",
+            ingredients: [{name:"Base Mix", pct:100}],
+            instructions: ["See previous."]
         }
     };
 
@@ -337,36 +356,42 @@
     function calculate() {
         const key = document.getElementById('recipeSelect').value;
         if (!key) return alert("Επιλέξτε προϊόν");
-        
         const recipe = recipes[key];
-        const isCap = recipe.type === 'capsule';
-        let weight = 0, info = "";
-
-        // --- CALCULATION LOGIC ---
-        if (isCap) {
+        
+        // --- CALC ---
+        let weight = 0, info="";
+        if (recipe.type === 'capsule') {
             const boxes = document.getElementById('boxCount').value;
             const perBox = document.getElementById('capsPerBox').value;
             weight = boxes * perBox * recipe.capsuleContentWeight;
-            info = `${boxes} κουτιά x ${perBox} τμχ`;
+            info = `${boxes} κουτιά x ${perBox}`;
         } else {
             weight = parseFloat(document.getElementById('totalWeightInput').value);
             info = `${weight} g`;
         }
         if (!weight || weight <= 0) return alert("Λάθος ποσότητα");
 
-        // --- LABEL DATA POPULATION ---
+        // --- LABEL GENERATION (Z + INITIALS + MM + YYYY) ---
         const now = new Date();
         const exp = new Date();
-        const shelfMonths = recipe.shelfLife || 12; 
+        const shelfMonths = recipe.shelfLife || 12;
         exp.setMonth(exp.getMonth() + shelfMonths);
-        const formatDate = (d) => `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
         
-        document.getElementById('lblTitle').innerText = recipe.title;
-        document.getElementById('lblProdDate').innerText = formatDate(now);
-        document.getElementById('lblExpDate').innerText = formatDate(exp);
-        document.getElementById('lblBatch').innerText = now.getFullYear().toString().substr(-2) + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + "-" + key.toUpperCase().substr(0,3);
+        // 1. LOT NO Logic
+        const monthStr = String(now.getMonth() + 1).padStart(2, '0');
+        const yearStr = now.getFullYear();
+        const lotNo = "Z" + (recipe.initials || "XX") + monthStr + yearStr;
+        
+        // 2. EXP Date Format (MM/YYYY)
+        const expStr = String(exp.getMonth() + 1).padStart(2, '0') + "/" + exp.getFullYear();
 
-        // --- TABLE GENERATION ---
+        // 3. Update DOM
+        document.getElementById('lblTitle').innerText = recipe.title;
+        document.getElementById('lblLot').innerText = lotNo;
+        document.getElementById('lblExpDate').innerText = expStr;
+        document.getElementById('paoText').innerText = shelfMonths + "M";
+
+        // --- TABLE RENDER ---
         let html = `
             <div class="recipe-header">
                 <span class="recipe-title">${recipe.title}</span>
@@ -401,7 +426,6 @@
         res.innerHTML = html;
         res.style.display = 'block';
         
-        // Sync Print Mode
         togglePrintMode();
     }
 </script>
