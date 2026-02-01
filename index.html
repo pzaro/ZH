@@ -18,51 +18,34 @@
         /* Login Screen */
         #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a237e; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; }
         #loginBox { background: white; padding: 30px; border-radius: 15px; text-align: center; width: 80%; max-width: 300px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-        #passwordInput { padding: 15px; font-size: 1.2em; width: 100%; box-sizing: border-box; margin-bottom: 15px; border: 2px solid #ddd; border-radius: 8px; text-align: center; }
+        #passwordInput { padding: 15px; font-size: 1.2em; width: 100%; box-sizing: border-box; margin-bottom: 15px; border: 2px solid #ddd; border-radius: 8px; text-align: center; -webkit-text-security: disc;}
         #loginBtn { background: #ff5722; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; }
-
+        
         /* Main App */
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: none; /* Hidden until login */ }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: none; }
         
         h1 { text-align: center; color: #1a237e; margin: 10px 0; font-size: 1.4em; }
         p.subtitle { text-align: center; color: #666; font-size: 0.9em; margin-bottom: 20px; }
         
-        /* Form Elements - Touch Friendly */
+        /* Form Elements */
         .control-panel { background: #e8eaf6; padding: 20px; border-radius: 12px; border: 1px solid #c5cae9; }
-        
         label { display: block; margin-bottom: 8px; font-weight: 600; color: #3f51b5; }
-        
-        select#recipeSelect { 
-            padding: 15px; font-size: 1.1em; border-radius: 10px; border: 2px solid #3f51b5; 
-            width: 100%; font-weight: bold; color: #1a237e; background: white; 
-            -webkit-appearance: none; appearance: none;
-        }
-
+        select#recipeSelect { padding: 15px; font-size: 1.1em; border-radius: 10px; border: 2px solid #3f51b5; width: 100%; font-weight: bold; color: #1a237e; background: white; -webkit-appearance: none; appearance: none; }
         .input-row { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 20px; }
-        
-        input[type="number"] { 
-            padding: 15px; font-size: 1.3em; width: 100%; max-width: 200px; 
-            border: 2px solid #9fa8da; border-radius: 10px; text-align: center; font-weight: bold; 
-            box-sizing: border-box;
-        }
+        input[type="number"] { padding: 15px; font-size: 1.3em; width: 100%; max-width: 200px; border: 2px solid #9fa8da; border-radius: 10px; text-align: center; font-weight: bold; box-sizing: border-box; }
 
         /* Buttons */
         .btn-group { display: flex; gap: 10px; margin-top: 25px; }
-        button { 
-            flex: 1; padding: 15px; font-size: 1em; border: none; border-radius: 10px; 
-            font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+        button { flex: 1; padding: 15px; font-size: 1em; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .btn-calc { background-color: #3f51b5; color: white; }
         .btn-print { background-color: #546e7a; color: white; }
 
         /* Results */
         #resultContainer { margin-top: 30px; display: none; border: 1px solid #eee; border-radius: 10px; overflow: hidden; }
-        
         .recipe-header { background-color: #263238; color: white; padding: 15px; }
         .recipe-title { font-size: 1.2em; font-weight: bold; display: block; }
         
-        /* Safety & Instructions */
+        /* Notes */
         .safety-box { background: #fff3e0; color: #bf360c; padding: 15px; border-left: 5px solid #ff5722; font-size: 0.9em; line-height: 1.4; }
         .instructions-box { background: #f1f8e9; color: #33691e; padding: 15px; border-top: 2px solid #aed581; }
         .instructions-list { padding-left: 20px; }
@@ -75,10 +58,9 @@
         .phase-row td { background: #eceff1; color: #455a64; font-weight: bold; padding-top: 15px; }
         .amount-col { color: #2e7d32; font-weight: bold; text-align: right; }
         .total-row { background: #e8f5e9; font-weight: bold; color: #1b5e20; }
-
-        /* Checkbox */
-        .checkbox-wrapper { margin-top: 20px; text-align: center; }
         
+        .checkbox-wrapper { margin-top: 20px; text-align: center; }
+
         @media print {
             #loginOverlay, .control-panel, .btn-group, h1, .subtitle { display: none; }
             .container { box-shadow: none; padding: 0; margin: 0; display: block !important; }
@@ -100,7 +82,7 @@
 
 <div class="container" id="mainApp">
     <h1>ZARKOLIA LAB</h1>
-    <p class="subtitle">Mobile Production Tool v9</p>
+    <p class="subtitle">Secure Mobile Production Tool v11</p>
     
     <div class="control-panel">
         <label>ΕΠΙΛΟΓΗ ΠΡΟΪΟΝΤΟΣ</label>
@@ -146,7 +128,7 @@
                 </select>
             </div>
         </div>
-
+        
         <div class="checkbox-wrapper">
             <input type="checkbox" id="showInstructions" checked>
             <label for="showInstructions" style="display:inline;">Οδηγίες Παρασκευής</label>
@@ -162,16 +144,29 @@
 </div>
 
 <script>
-    // --- PASSWORD PROTECTION ---
-    const SECRET_PIN = "106014"; // <--- ΑΛΛΑΞΕ ΤΟΝ ΚΩΔΙΚΟ ΕΔΩ
+    
+    const CORRECT_HASH = "34b35aca37baf7d5d997466dff1ab8ca1dc901df7010f3279138670838e2c9e8";
 
-    function checkLogin() {
+    async function checkLogin() {
         const input = document.getElementById('passwordInput').value;
-        if(input === SECRET_PIN) {
+        const msg = document.getElementById('errorMsg');
+        
+        if (!input) return;
+
+        // Μετατροπή του κωδικού που έβαλε ο χρήστης σε Hash
+        const encoder = new TextEncoder();
+        const data = encoder.encode(input);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+        // Σύγκριση με το σωστό Hash
+        if (hashHex === CORRECT_HASH) {
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
         } else {
-            document.getElementById('errorMsg').style.display = 'block';
+            msg.style.display = 'block';
+            document.getElementById('passwordInput').value = '';
         }
     }
 
@@ -236,7 +231,7 @@
             desc: "Ginger/ALA",
             type: "capsule",
             capsuleContentWeight: 0.5864,
-            safetyNote: "Ευαίσθητο στην υγρασία. Dry Room.",
+            safetyNote: "Ευαισθητο στην υγρασία. Dry Room.",
             ingredients: [
                 { name: "ALA", pct: 34.11 }, { name: "NAC", pct: 34.11 }, { name: "Ginger Ext", pct: 17.05 },
                 { name: "Q10", pct: 8.53 }, { name: "Zinc Gluc", pct: 5.97 }, { name: "Mg Stearate", pct: 0.19 },
@@ -340,5 +335,4 @@
 </script>
 
 </body>
-
 </html>
