@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ZARKOLIA Lab App</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a237e">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3004/3004458.png">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3004/3004458.png">
+
+    <style>
+        /* Base Styles */
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; padding: 15px; color: #333; margin: 0; }
+        
+        /* Login Screen */
+        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a237e; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; }
+        #loginBox { background: white; padding: 30px; border-radius: 15px; text-align: center; width: 80%; max-width: 300px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        #passwordInput { padding: 15px; font-size: 1.2em; width: 100%; box-sizing: border-box; margin-bottom: 15px; border: 2px solid #ddd; border-radius: 8px; text-align: center; }
+        #loginBtn { background: #ff5722; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; }
+
+        /* Main App */
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: none; /* Hidden until login */ }
+        
+        h1 { text-align: center; color: #1a237e; margin: 10px 0; font-size: 1.4em; }
+        p.subtitle { text-align: center; color: #666; font-size: 0.9em; margin-bottom: 20px; }
+        
+        /* Form Elements - Touch Friendly */
+        .control-panel { background: #e8eaf6; padding: 20px; border-radius: 12px; border: 1px solid #c5cae9; }
+        
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #3f51b5; }
+        
+        select#recipeSelect { 
+            padding: 15px; font-size: 1.1em; border-radius: 10px; border: 2px solid #3f51b5; 
+            width: 100%; font-weight: bold; color: #1a237e; background: white; 
+            -webkit-appearance: none; appearance: none;
+        }
+
+        .input-row { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 20px; }
+        
+        input[type="number"] { 
+            padding: 15px; font-size: 1.3em; width: 100%; max-width: 200px; 
+            border: 2px solid #9fa8da; border-radius: 10px; text-align: center; font-weight: bold; 
+            box-sizing: border-box;
+        }
+
+        /* Buttons */
+        .btn-group { display: flex; gap: 10px; margin-top: 25px; }
+        button { 
+            flex: 1; padding: 15px; font-size: 1em; border: none; border-radius: 10px; 
+            font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn-calc { background-color: #3f51b5; color: white; }
+        .btn-print { background-color: #546e7a; color: white; }
+
+        /* Results */
+        #resultContainer { margin-top: 30px; display: none; border: 1px solid #eee; border-radius: 10px; overflow: hidden; }
+        
+        .recipe-header { background-color: #263238; color: white; padding: 15px; }
+        .recipe-title { font-size: 1.2em; font-weight: bold; display: block; }
+        
+        /* Safety & Instructions */
+        .safety-box { background: #fff3e0; color: #bf360c; padding: 15px; border-left: 5px solid #ff5722; font-size: 0.9em; line-height: 1.4; }
+        .instructions-box { background: #f1f8e9; color: #33691e; padding: 15px; border-top: 2px solid #aed581; }
+        .instructions-list { padding-left: 20px; }
+        .instructions-list li { margin-bottom: 8px; font-size: 0.95em; }
+
+        /* Table */
+        table { width: 100%; border-collapse: collapse; margin-top: 0; font-size: 0.9em; }
+        th, td { padding: 10px; border-bottom: 1px solid #eee; }
+        th { background: #f5f5f5; color: #555; text-transform: uppercase; font-size: 0.8em; }
+        .phase-row td { background: #eceff1; color: #455a64; font-weight: bold; padding-top: 15px; }
+        .amount-col { color: #2e7d32; font-weight: bold; text-align: right; }
+        .total-row { background: #e8f5e9; font-weight: bold; color: #1b5e20; }
+
+        /* Checkbox */
+        .checkbox-wrapper { margin-top: 20px; text-align: center; }
+        
+        @media print {
+            #loginOverlay, .control-panel, .btn-group, h1, .subtitle { display: none; }
+            .container { box-shadow: none; padding: 0; margin: 0; display: block !important; }
+            #resultContainer { display: block !important; border: 2px solid #000; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="loginOverlay">
+    <div id="loginBox">
+        <h2 style="color:#1a237e; margin-top:0;">ZARKOLIA LAB</h2>
+        <p style="color:#666; margin-bottom:20px;">Εισάγετε Κωδικό</p>
+        <input type="password" id="passwordInput" placeholder="PIN" inputmode="numeric">
+        <button id="loginBtn" onclick="checkLogin()">ΕΙΣΟΔΟΣ</button>
+        <p id="errorMsg" style="color:red; display:none; margin-top:10px;">Λάθος κωδικός</p>
+    </div>
+</div>
+
+<div class="container" id="mainApp">
+    <h1>ZARKOLIA LAB</h1>
+    <p class="subtitle">Mobile Production Tool v9</p>
+    
+    <div class="control-panel">
+        <label>ΕΠΙΛΟΓΗ ΠΡΟΪΟΝΤΟΣ</label>
+        <select id="recipeSelect" onchange="toggleInputs()">
+            <option value="" disabled selected>-- Επιλέξτε --</option>
+            <optgroup label="Σιρόπι">
+                <option value="syrup_custom">CUSTOM ALTHEA SYRUP (66.7%)</option>
+            </optgroup>
+            <optgroup label="Κρέμες Προσώπου">
+                <option value="plus">Revitacell Plus (Νέα Σύνθεση)</option>
+                <option value="eyes">Revitacell Eyes (Safe 8% Arnica)</option>
+                <option value="hydralia">Hydralia Face Cream</option>
+            </optgroup>
+            <optgroup label="Θεραπείες Σώματος">
+                <option value="bruise">Bruise Off (Νέα Φόρμουλα)</option>
+                <option value="zplast">Zplast Total Repair (Νέα)</option>
+            </optgroup>
+            <optgroup label="Συμπληρώματα">
+                <option value="zboost">Z-Boost Caps</option>
+            </optgroup>
+            <optgroup label="Βάσεις">
+                <option value="base">Βάση Gel-Cream</option>
+            </optgroup>
+        </select>
+
+        <div class="input-row" id="standardInput">
+            <div style="width:100%">
+                <label style="text-align:center">ΣΤΟΧΟΣ ΠΑΡΑΓΩΓΗΣ (g)</label>
+                <input type="number" id="totalWeightInput" value="1000" step="50">
+            </div>
+        </div>
+
+        <div class="input-row" id="capsuleInput" style="display:none;">
+            <div style="width:100%">
+                <label style="text-align:center">ΚΟΥΤΙΑ</label>
+                <input type="number" id="boxCount" value="10">
+            </div>
+            <div style="width:100%">
+                <label style="text-align:center">ΤΕΜ / ΚΟΥΤΙ</label>
+                <select id="capsPerBox" style="padding:10px; width:100%; border:2px solid #9fa8da; border-radius:10px;">
+                    <option value="12">12 caps</option>
+                    <option value="30" selected>30 caps</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="checkbox-wrapper">
+            <input type="checkbox" id="showInstructions" checked>
+            <label for="showInstructions" style="display:inline;">Οδηγίες Παρασκευής</label>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-calc" onclick="calculate()">ΥΠΟΛΟΓΙΣΜΟΣ</button>
+            <button class="btn-print" onclick="window.print()">ΕΚΤΥΠΩΣΗ</button>
+        </div>
+    </div>
+
+    <div id="resultContainer"></div>
+</div>
+
+<script>
+    // --- PASSWORD PROTECTION ---
+    const SECRET_PIN = "1234"; // <--- ΑΛΛΑΞΕ ΤΟΝ ΚΩΔΙΚΟ ΕΔΩ
+
+    function checkLogin() {
+        const input = document.getElementById('passwordInput').value;
+        if(input === SECRET_PIN) {
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+        } else {
+            document.getElementById('errorMsg').style.display = 'block';
+        }
+    }
+
+    // --- RECIPES DATABASE ---
+    const recipes = {
+        plus: {
+            title: "REVITACELL PLUS (New)",
+            desc: "Αντιγήρανση με Μαστίχα & Ρόδι",
+            type: "standard",
+            safetyNote: "Έλαια ~10%. Το Βάμμα Μαστίχας έχει αλκοόλη - προσοχή στην αραίωση.",
+            ingredients: [
+                { name: "Βάση Gel-Cream", pct: 0, isQS: true },
+                { name: "Almond Oil", pct: 2.0 }, { name: "Avocado Oil", pct: 2.0 },
+                { name: "Jojoba Oil", pct: 2.0 }, { name: "Pomegranate Oil", pct: 2.0 },
+                { name: "Mastic Oil", pct: 1.0 }, { name: "Mastic Tincture", pct: 3.0 },
+                { name: "Vit E", pct: 0.5 }
+            ],
+            instructions: ["1. Αναμείξτε Λάδια & Βιτ.Ε.", "2. Προσθέστε το Βάμμα στα λάδια (Pre-mix).", "3. Ρίξτε το μίγμα στη Βάση σταδιακά."]
+        },
+        syrup_custom: {
+            title: "CUSTOM ALTHEA SYRUP",
+            desc: "Πυκνό Σιρόπι (66.7%)",
+            type: "standard",
+            safetyNote: "Απαιτείται pH < 4.5 για το Sodium Benzoate. Προσοχή στην κρυστάλλωση.",
+            ingredients: [
+                { name: "Fructose", pct: 66.70 }, { name: "Aqua", pct: 0, isQS: true },
+                { name: "--- ΒΑΜΜΑΤΑ (5%) ---", isHeader: true },
+                { name: "Αλθαία", pct: 2.10 }, { name: "Θυμάρι", pct: 0.79 },
+                { name: "Ευκάλυπτος", pct: 0.79 }, { name: "Κράνι", pct: 0.79 }, { name: "Ιπποφαές", pct: 0.79 },
+                { name: "Sodium Benzoate", pct: 0.10 }, { name: "Vit C", pct: 0.10 },
+                { name: "Lemon EO", pct: 0.05 }, { name: "Χυμός Λεμονιού", pct: 0, note: "q.s. pH" }
+            ],
+            instructions: ["1. Ζεστάνετε Νερό + Λεμόνι (60-70°C).", "2. Διαλύστε τη Φρουκτόζη πλήρως.", "3. Κρυώστε στους 40°C.", "4. Προσθέστε τα υπόλοιπα.", "5. Ελέγξτε pH < 4.5."]
+        },
+        eyes: {
+            title: "REVITACELL EYES (Safe)",
+            desc: "8% Άρνικα",
+            type: "standard",
+            safetyNote: "Όριο ελαίων 10%.",
+            ingredients: [
+                { name: "Βάση Gel-Cream", pct: 0, isQS: true }, { name: "Arnica Oil", pct: 8.0 },
+                { name: "Jojoba", pct: 1.0 }, { name: "Almond", pct: 1.0 },
+                { name: "Hyaluronic 1%", pct: 4.0 }, { name: "Glycerin", pct: 2.0 },
+                { name: "Hippocastanum", pct: 2.0 }, { name: "Parfum", pct: 0.2 }
+            ],
+            instructions: ["1. Μίξη λαδιών ξεχωριστά.", "2. Προσθήκη υδατικών στο λάδι.", "3. Ενσωμάτωση στη βάση."]
+        },
+        bruise: {
+            title: "BRUISE OFF CREAM",
+            desc: "Stearic Formula",
+            type: "standard",
+            safetyNote: "Υφή κεραλοιφής. Για λεύκανση: +0.5% TEA.",
+            ingredients: [
+                { name: "--- PHASE A ---", isHeader: true }, { name: "Arnica Oil", pct: 9.10 }, { name: "Vaseline", pct: 9.10 }, { name: "Cetostearyl", pct: 7.70 }, { name: "Stearic Acid", pct: 3.30 }, { name: "Linseed Oil", pct: 1.80 }, { name: "Propyl Paraben", pct: 0.10 },
+                { name: "--- PHASE B ---", isHeader: true }, { name: "Aqua", pct: 0, isQS: true }, { name: "Poly 80", pct: 3.70 }, { name: "PG", pct: 1.80 }, { name: "Methyl Paraben", pct: 0.10 },
+                { name: "--- PHASE C ---", isHeader: true }, { name: "Lavender", pct: 0.90 }
+            ],
+            instructions: ["1. Λιώσιμο Φάσης Α και Β στους 75°C.", "2. Μίξη Α σε Β.", "3. Ανάδευση μέχρι να κρυώσει.", "4. Προσθήκη αρώματος."]
+        },
+        zboost: {
+            title: "Z-BOOST CAPS",
+            desc: "Ginger/ALA",
+            type: "capsule",
+            capsuleContentWeight: 0.5864,
+            safetyNote: "Ευαίσθητο στην υγρασία. Dry Room.",
+            ingredients: [
+                { name: "ALA", pct: 34.11 }, { name: "NAC", pct: 34.11 }, { name: "Ginger Ext", pct: 17.05 },
+                { name: "Q10", pct: 8.53 }, { name: "Zinc Gluc", pct: 5.97 }, { name: "Mg Stearate", pct: 0.19 },
+                { name: "Se Yeast", pct: 0.03 }, { name: "Na Ascorbate", pct: 0.02 }
+            ],
+            instructions: ["1. Γεωμετρική αραίωση μικρο-συστατικών.", "2. Προσθήκη ALA, NAC.", "3. Τέλος Mg Stearate (απαλή μίξη).", "4. Πλήρωση."]
+        },
+        zplast: {
+            title: "ZPLAST TOTAL REPAIR",
+            desc: "Νέα Φόρμουλα",
+            type: "standard",
+            ingredients: [
+                { name: "--- PHASE A ---", isHeader: true }, { name: "Aqua", pct: 0, isQS: true }, { name: "Glycerin", pct: 4.0 }, { name: "Calamine", pct: 1.0 }, { name: "Starch", pct: 0.5 }, { name: "Hyaluronic", pct: 1.0 }, { name: "Citric", pct: 0.07 },
+                { name: "--- PHASE B ---", isHeader: true }, { name: "Xalifin-15", pct: 5.0 }, { name: "Paraffin", pct: 7.5 }, { name: "Linum", pct: 2.5 }, { name: "Avocado", pct: 2.0 }, { name: "Cetostearyl", pct: 1.0 }, { name: "Vit E", pct: 0.5 },
+                { name: "--- PHASE C ---", isHeader: true }, { name: "Hypericum", pct: 2.0 }, { name: "Hippophae", pct: 1.0 }, { name: "Centella", pct: 4.0 }, { name: "Mel", pct: 1.0 }, { name: "Mastic Oil", pct: 1.0 }, { name: "Euxyl PE", pct: 1.0 }, { name: "Alcohol", pct: 0.25 }, { name: "Parfum", pct: 0.07 }
+            ],
+            instructions: ["1. Θέρμανση Α & Β στους 75°C.", "2. Μίξη Β σε Α.", "3. Προσθήκη Γ < 40°C."]
+        },
+        hydralia: {
+            title: "HYDRALIA FACE",
+            desc: "Ενυδατική",
+            type: "standard",
+            ingredients: [
+                { name: "Βάση Gel-Cream", pct: 0, isQS: true }, { name: "Avocado", pct: 4.0 }, { name: "Jojoba", pct: 2.5 }, { name: "Almond", pct: 2.5 }, { name: "Aloe Gel", pct: 8.0 }, { name: "Parfum", pct: 0.3 }
+            ],
+            instructions: ["1. Μίξη λαδιών.", "2. Ενσωμάτωση στη βάση."]
+        },
+        base: {
+            title: "ΒΑΣΗ GEL-CREAM",
+            desc: "Base Formula",
+            type: "standard",
+            ingredients: [
+                { name: "Aqua", pct: 0, isQS: true }, { name: "Glycerin", pct: 4.0 }, { name: "Hyaluronic Pw", pct: 0.2 }, { name: "Carbomer", pct: 0.25 }, { name: "Cetearyl", pct: 2.0 }, { name: "Stearic", pct: 1.0 }, { name: "IPM", pct: 2.0 }, { name: "Methyl P", pct: 0.2 }, { name: "Propyl P", pct: 0.1 }, { name: "Vit E", pct: 0.5 }, { name: "TEA", pct: 0.25 }
+            ],
+            instructions: ["1. Ενυδάτωση Carbomer.", "2. Θέρμανση 75°C.", "3. Εξουδετέρωση με TEA."]
+        }
+    };
+
+    function toggleInputs() {
+        const key = document.getElementById('recipeSelect').value;
+        const isCap = recipes[key]?.type === 'capsule';
+        document.getElementById('standardInput').style.display = isCap ? 'none' : 'flex';
+        document.getElementById('capsuleInput').style.display = isCap ? 'flex' : 'none';
+        document.getElementById('resultContainer').style.display = 'none';
+    }
+
+    function calculate() {
+        const key = document.getElementById('recipeSelect').value;
+        if (!key) return alert("Επιλέξτε προϊόν");
+        
+        const recipe = recipes[key];
+        const isCap = recipe.type === 'capsule';
+        let weight = 0, info = "";
+
+        if (isCap) {
+            const boxes = document.getElementById('boxCount').value;
+            const perBox = document.getElementById('capsPerBox').value;
+            weight = boxes * perBox * recipe.capsuleContentWeight;
+            info = `${boxes} κουτιά x ${perBox} τμχ`;
+        } else {
+            weight = parseFloat(document.getElementById('totalWeightInput').value);
+            info = `${weight} g`;
+        }
+
+        if (!weight || weight <= 0) return alert("Λάθος ποσότητα");
+
+        let html = `
+            <div class="recipe-header">
+                <span class="recipe-title">${recipe.title}</span>
+                <span style="display:block; font-size:0.9em; opacity:0.8">${recipe.desc}</span>
+            </div>
+            ${recipe.safetyNote ? `<div class="safety-box">⚠️ ${recipe.safetyNote}</div>` : ''}
+            <div style="padding:10px; background:#e3f2fd; color:#0d47a1; font-weight:bold; text-align:center;">Στόχος: ${info}</div>
+            <table>
+                <tr><th>ΣΥΣΤΑΤΙΚΟ</th><th style="text-align:right">ΠΟΣΟΤΗΤΑ</th></tr>
+        `;
+
+        let sumPct = 0;
+        recipe.ingredients.forEach(i => { if(!i.isQS && !i.isHeader) sumPct += i.pct; });
+
+        recipe.ingredients.forEach(i => {
+            if (i.isHeader) {
+                html += `<tr class="phase-row"><td colspan="2">${i.name}</td></tr>`;
+            } else {
+                let finalPct = i.isQS ? Math.max(0, 100 - sumPct) : i.pct;
+                let amt = (finalPct / 100) * weight;
+                html += `<tr><td>${i.name} ${i.note ? `<small>(${i.note})</small>`:''}</td><td class="amount-col">${amt.toFixed(2)} g</td></tr>`;
+            }
+        });
+
+        html += `<tr class="total-row"><td>ΣΥΝΟΛΟ</td><td style="text-align:right">${weight.toFixed(1)} g</td></tr></table>`;
+
+        if (document.getElementById('showInstructions').checked && recipe.instructions) {
+            html += `<div class="instructions-box"><strong>ΟΔΗΓΙΕΣ:</strong><ul class="instructions-list">${recipe.instructions.map(s=>`<li>${s}</li>`).join('')}</ul></div>`;
+        }
+
+        const res = document.getElementById('resultContainer');
+        res.innerHTML = html;
+        res.style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
