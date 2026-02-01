@@ -49,18 +49,24 @@
         .phase-row td { background: #eceff1; color: #455a64; font-weight: bold; padding-top: 15px; }
         .amount-col { text-align: right; color: #2e7d32; font-weight: bold; }
         .total-row { background: #e8f5e9; font-weight: bold; color: #1b5e20; }
+        
+        /* Notes */
+        .safety-box { background: #fff3e0; color: #bf360c; padding: 15px; border-left: 5px solid #ff5722; font-size: 0.9em; line-height: 1.4; }
+        .instructions-box { background: #f1f8e9; color: #33691e; padding: 15px; border-top: 2px solid #aed581; }
+        .instructions-list { padding-left: 20px; }
+        .instructions-list li { margin-bottom: 8px; font-size: 0.95em; }
 
         /* --- LABEL PREVIEW (Visible only in Print Mode) --- */
         #labelPreview { 
             display: none; 
-            width: 62mm; height: 90mm; /* Adjusted for continuous roll safety */
+            width: 62mm; height: 90mm; 
             margin: 20px auto; 
             padding: 2mm 4mm; 
             box-sizing: border-box;
             background: white;
             text-align: center;
             font-family: Arial, sans-serif;
-            border: 1px dashed #ccc; /* Border for screen preview */
+            border: 1px dashed #ccc; 
         }
         
         .lbl-header { font-weight:bold; font-size:10pt; border-bottom:2px solid black; width:100%; padding-bottom:3px; margin-bottom:8px; }
@@ -76,7 +82,7 @@
             font-weight: bold;
         }
         
-        .lbl-row { margin-bottom: 6px; width: 100%; text-align: left; }
+        .lbl-row { margin-bottom: 8px; width: 100%; text-align: left; }
         
         .lbl-footer-row {
             display: flex;
@@ -86,11 +92,8 @@
             margin-top: 10px;
         }
         
-        /* PAO Icon Styling */
-        .pao-icon {
-            width: 35px;
-            height: 35px;
-        }
+        /* PAO Icon */
+        .pao-icon { width: 35px; height: 35px; }
 
         /* --- PRINT SETTINGS --- */
         @media print {
@@ -110,7 +113,7 @@
                 align-items: center;
                 position: absolute; 
                 top: 0; left: 0;
-                border: none; /* No border on print */
+                border: none; 
             }
             
             body.print-label-mode { margin: 0; padding: 0; }
@@ -133,7 +136,7 @@
 
 <div class="container" id="mainApp">
     <h1>ZARKOLIA LAB</h1>
-    <p class="subtitle">Production & Labeling v17</p>
+    <p class="subtitle">Production & Labeling v18</p>
     
     <div class="control-panel">
         <label>ΕΠΙΛΟΓΗ ΠΡΟΪΟΝΤΟΣ</label>
@@ -192,10 +195,10 @@
         
         <div class="lbl-info-box">
             <div class="lbl-row">
-                LOT: <span id="lblLot">ZRP022026</span>
+                LOT: <span id="lblLot">ZXX000000</span>
             </div>
             <div class="lbl-row">
-                EXP: <span id="lblExpDate">02/2027</span>
+                EXP: <span id="lblExpDate">--/----</span>
             </div>
         </div>
 
@@ -243,7 +246,7 @@
         }
     }
 
-    // --- RECIPES (With 'initials' & 'shelfLife') ---
+    // --- RECIPES DATABASE ---
     const recipes = {
         plus: {
             title: "REVITACELL PLUS",
@@ -259,7 +262,7 @@
                 { name: "Mastic Oil", pct: 1.0 }, { name: "Mastic Tincture", pct: 3.0 },
                 { name: "Vit E", pct: 0.5 }
             ],
-            instructions: ["1. Αναμείξτε Λάδια & Βιτ.Ε.", "2. Προσθέστε το Βάμμα.", "3. Ενσωματώστε στη βάση."]
+            instructions: ["1. Αναμείξτε Λάδια & Βιτ.Ε.", "2. Προσθέστε το Βάμμα στα λάδια (Pre-mix).", "3. Ενσωματώστε στη βάση."]
         },
         syrup_custom: {
             title: "ALTHEA SYRUP",
@@ -311,7 +314,11 @@
             type: "capsule",
             capsuleContentWeight: 0.5864,
             safetyNote: "Dry Room.",
-            ingredients: [{name:"Mix Powders", pct:100}],
+            ingredients: [
+                { name: "ALA", pct: 34.11 }, { name: "NAC", pct: 34.11 }, { name: "Ginger Ext", pct: 17.05 },
+                { name: "Q10", pct: 8.53 }, { name: "Zinc Gluc", pct: 5.97 }, { name: "Mg Stearate", pct: 0.19 },
+                { name: "Se Yeast", pct: 0.03 }, { name: "Na Ascorbate", pct: 0.02 }
+            ],
             instructions: ["1. Ανάμειξη.", "2. Πλήρωση."]
         },
         zplast: {
@@ -320,8 +327,12 @@
             initials: "ZP",
             shelfLife: 12,
             type: "standard",
-            ingredients: [{name:"Full Recipe in File", pct:100}],
-            instructions: ["See previous."]
+            ingredients: [
+                { name: "Aqua", pct: 0, isQS: true }, { name: "Glycerin", pct: 4.0 }, { name: "Calamine", pct: 1.0 }, { name: "Starch", pct: 0.5 }, { name: "Hyaluronic", pct: 1.0 }, { name: "Citric", pct: 0.07 },
+                { name: "Xalifin-15", pct: 5.0 }, { name: "Paraffin", pct: 7.5 }, { name: "Linum", pct: 2.5 }, { name: "Avocado", pct: 2.0 }, { name: "Cetostearyl", pct: 1.0 }, { name: "Vit E", pct: 0.5 },
+                { name: "Hypericum", pct: 2.0 }, { name: "Hippophae", pct: 1.0 }, { name: "Centella", pct: 4.0 }, { name: "Mel", pct: 1.0 }, { name: "Mastic Oil", pct: 1.0 }, { name: "Euxyl PE", pct: 1.0 }, { name: "Alcohol", pct: 0.25 }, { name: "Parfum", pct: 0.07 }
+            ],
+            instructions: ["1. Θέρμανση Α+Β 75C.", "2. Μίξη.", "3. Προσθήκη Γ <40C."]
         },
         hydralia: {
             title: "HYDRALIA FACE",
@@ -340,8 +351,10 @@
             initials: "BG",
             shelfLife: 12,
             type: "standard",
-            ingredients: [{name:"Base Mix", pct:100}],
-            instructions: ["See previous."]
+            ingredients: [
+                { name: "Aqua", pct: 0, isQS: true }, { name: "Glycerin", pct: 4.0 }, { name: "Hyaluronic Pw", pct: 0.2 }, { name: "Carbomer", pct: 0.25 }, { name: "Cetearyl", pct: 2.0 }, { name: "Stearic", pct: 1.0 }, { name: "IPM", pct: 2.0 }, { name: "Methyl P", pct: 0.2 }, { name: "Propyl P", pct: 0.1 }, { name: "Vit E", pct: 0.5 }, { name: "TEA", pct: 0.25 }
+            ],
+            instructions: ["1. Ενυδάτωση Carbomer.", "2. Θέρμανση 75°C.", "3. Εξουδετέρωση με TEA."]
         }
     };
 
@@ -377,15 +390,11 @@
         const shelfMonths = recipe.shelfLife || 12;
         exp.setMonth(exp.getMonth() + shelfMonths);
         
-        // 1. LOT NO Logic
         const monthStr = String(now.getMonth() + 1).padStart(2, '0');
         const yearStr = now.getFullYear();
         const lotNo = "Z" + (recipe.initials || "XX") + monthStr + yearStr;
-        
-        // 2. EXP Date Format (MM/YYYY)
         const expStr = String(exp.getMonth() + 1).padStart(2, '0') + "/" + exp.getFullYear();
 
-        // 3. Update DOM
         document.getElementById('lblTitle').innerText = recipe.title;
         document.getElementById('lblLot').innerText = lotNo;
         document.getElementById('lblExpDate').innerText = expStr;
