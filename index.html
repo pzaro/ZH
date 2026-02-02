@@ -10,7 +10,7 @@
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3004/3004458.png">
 
     <style>
-        /* --- Styles --- */
+        /* --- ΓΕΝΙΚΟ ΣΤΥΛ --- */
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; padding: 15px; color: #333; margin: 0; }
         
         /* Login */
@@ -19,7 +19,7 @@
         #passwordInput { padding: 15px; font-size: 1.2em; width: 100%; box-sizing: border-box; margin-bottom: 15px; border: 2px solid #ddd; border-radius: 8px; text-align: center; -webkit-text-security: disc;}
         #loginBtn { background: #ff5722; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; }
         
-        /* App */
+        /* App Container */
         .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: none; }
         h1 { text-align: center; color: #1a237e; margin: 10px 0; font-size: 1.4em; }
         p.subtitle { text-align: center; color: #666; font-size: 0.9em; margin-bottom: 20px; }
@@ -28,11 +28,26 @@
         label { display: block; margin-bottom: 8px; font-weight: 600; color: #3f51b5; }
         select, input[type="number"] { padding: 15px; font-size: 1.1em; border-radius: 10px; border: 2px solid #3f51b5; width: 100%; box-sizing: border-box; font-weight: bold; background: white; }
         
-        /* Capsule Inputs Styling */
-        .capsule-grid { display: flex; gap: 10px; justify-content: space-between; margin-top: 5px; }
-        .capsule-item { flex: 1; text-align: center; }
-        .capsule-item input { text-align: center; font-size: 1.2em; border-color: #ff9800; color: #e65100; }
-        .capsule-item span { display: block; font-size: 0.8em; margin-top: 5px; color: #666; font-weight: bold; }
+        /* --- CAPSULE CALCULATOR STYLES --- */
+        .caps-panel {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #ffb74d;
+            margin-top: 15px;
+        }
+        .caps-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed #ffe0b2;
+            padding-bottom: 10px;
+        }
+        .caps-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .caps-label { font-weight: bold; color: #e65100; flex: 2; text-align: left; font-size: 0.9em; }
+        .caps-input { flex: 1; }
+        .caps-input input { padding: 8px; font-size: 1.1em; text-align: center; border-color: #ff9800; }
 
         .btn-group { display: flex; gap: 10px; margin-top: 25px; }
         button { flex: 1; padding: 15px; font-size: 1em; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
@@ -43,6 +58,7 @@
         .checkbox-wrapper { display: flex; align-items: center; gap: 10px; font-size: 1em; cursor: pointer; }
         input[type="checkbox"] { transform: scale(1.3); }
 
+        /* Results */
         #resultContainer { margin-top: 30px; display: none; border: 1px solid #eee; border-radius: 10px; overflow: hidden; }
         .recipe-header { background-color: #263238; color: white; padding: 15px; }
         .recipe-title { font-size: 1.4em; font-weight: bold; display: block; }
@@ -59,7 +75,7 @@
         .instructions-list { padding-left: 20px; }
         .instructions-list li { margin-bottom: 8px; font-size: 0.95em; }
 
-        /* LABEL (Horizontal) */
+        /* --- LABEL PREVIEW (100x62 Landscape) --- */
         #labelPreview { 
             display: none; 
             width: 100mm; height: 62mm; 
@@ -70,27 +86,63 @@
             border: 1px dashed #ccc; 
             padding: 2mm;
         }
-        .lbl-container { display: flex; width: 100%; height: 100%; border: 2px solid black; border-radius: 5px; padding: 5px; box-sizing: border-box; }
-        .lbl-left { flex: 1.5; display: flex; flex-direction: column; justify-content: space-between; padding-right: 10px; border-right: 1px solid #ccc; }
-        .lbl-right { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-left: 10px; }
+
+        .lbl-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            border: 2px solid black;
+            border-radius: 5px;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        .lbl-left {
+            flex: 1.5; 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding-right: 10px;
+            border-right: 1px solid #ccc;
+        }
+
+        .lbl-right {
+            flex: 1; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding-left: 10px;
+        }
+
         .lbl-header { font-size: 9pt; font-weight: bold; text-transform: uppercase; color: #555; }
         .lbl-title { font-size: 18pt; font-weight: 900; line-height: 1.1; margin-top: 5px; }
         .lbl-meta { font-size: 8pt; margin-top: auto; color: #333; }
+        
         .lbl-data-row { font-size: 10pt; font-weight: bold; margin: 4px 0; width: 100%; text-align: left;}
         .lbl-data-val { font-size: 12pt; display: block;}
+
         .pao-icon { width: 35px; height: 35px; margin-top: 10px; }
 
+        /* --- PRINT SETTINGS --- */
         @media print {
             #loginOverlay, .control-panel, h1, .subtitle { display: none !important; }
             .container { box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: none; }
-            
+
+            /* A4 Portrait */
             body:not(.print-label-mode) #resultContainer { display: block; width: 100%; }
             body:not(.print-label-mode) #labelPreview { display: none; }
             body:not(.print-label-mode) { background: white; }
             @page { size: A4 portrait; margin: 10mm; }
 
+            /* Label Landscape */
             body.print-label-mode #resultContainer { display: none !important; }
-            body.print-label-mode #labelPreview { display: block !important; position: fixed; top: 0; left: 0; width: 100mm; height: 62mm; border: none; margin: 0; padding: 0; }
+            body.print-label-mode #labelPreview { 
+                display: block !important; 
+                position: fixed; top: 0; left: 0;
+                width: 100mm; height: 62mm;
+                border: none; margin: 0; padding: 0;
+            }
             body.print-label-mode @page { size: 100mm 62mm; margin: 0; }
         }
     </style>
@@ -107,7 +159,7 @@
 
 <div class="container" id="mainApp">
     <h1>ZARKOLIA LAB</h1>
-    <p class="subtitle">Production & Labeling v22</p>
+    <p class="subtitle">Production v23 (Capsule Fix)</p>
     
     <div class="control-panel">
         <label>ΕΠΙΛΟΓΗ ΠΡΟΪΟΝΤΟΣ</label>
@@ -142,19 +194,18 @@
         </div>
 
         <div style="margin-top:15px; display:none;" id="capsuleInput">
-            <label style="color:#d84315;">ΥΠΟΛΟΓΙΣΜΟΣ ΚΑΨΟΥΛΩΝ</label>
-            <div class="capsule-grid">
-                <div class="capsule-item">
-                    <input type="number" id="box12" placeholder="0">
-                    <span>Κουτιά (12)</span>
+            <div class="caps-panel">
+                <div class="caps-row">
+                    <span class="caps-label">💊 ΧΥΜΑ ΚΑΨΟΥΛΕΣ (ΤΜΧ)</span>
+                    <div class="caps-input"><input type="number" id="inCapsBulk" placeholder="0"></div>
                 </div>
-                <div class="capsule-item">
-                    <input type="number" id="box30" placeholder="0">
-                    <span>Κουτιά (30)</span>
+                <div class="caps-row">
+                    <span class="caps-label">📦 ΠΑΚΕΤΑ ΤΩΝ 12</span>
+                    <div class="caps-input"><input type="number" id="inPacks12" placeholder="0"></div>
                 </div>
-                <div class="capsule-item">
-                    <input type="number" id="boxExtra" placeholder="0">
-                    <span>Χύμα (τμχ)</span>
+                <div class="caps-row">
+                    <span class="caps-label">📦 ΠΑΚΕΤΑ ΤΩΝ 30</span>
+                    <div class="caps-input"><input type="number" id="inPacks30" placeholder="0"></div>
                 </div>
             </div>
         </div>
@@ -240,9 +291,14 @@
             capsuleContentWeight: 0.5864,
             safetyNote: "Ευαισθητο στην υγρασία. Πλήρωση σε Dry Room.",
             ingredients: [
-                { name: "ALA", pct: 34.11 }, { name: "NAC", pct: 34.11 }, { name: "Ginger Ext", pct: 17.05 },
-                { name: "Q10", pct: 8.53 }, { name: "Zinc Gluc", pct: 5.97 }, { name: "Mg Stearate", pct: 0.19 },
-                { name: "Se Yeast", pct: 0.03 }, { name: "Na Ascorbate", pct: 0.02 }
+                { name: "a-Lipoic Acid (ALA)", pct: 34.11 },
+                { name: "N-Acetyl-L-Cysteine", pct: 34.11 },
+                { name: "Ginger Extract", pct: 17.05 },
+                { name: "Coenzyme Q10", pct: 8.53 },
+                { name: "Zinc Gluconate", pct: 5.97 },
+                { name: "Magnesium Stearate", pct: 0.19 },
+                { name: "Selenium Yeast", pct: 0.03 },
+                { name: "Sodium Ascorbate", pct: 0.02 }
             ],
             instructions: ["1. Ανάμειξη.", "2. Πλήρωση."]
         },
@@ -287,24 +343,24 @@
         
         let weight = 0, info="";
         
-        // --- CAPSULE LOGIC v22 (FIXED) ---
+        // --- CAPSULE LOGIC v23 (FIXED & EXPLICIT) ---
         if (recipe.type === 'capsule') {
-            const b12 = parseFloat(document.getElementById('box12').value) || 0;
-            const b30 = parseFloat(document.getElementById('box30').value) || 0;
-            const extra = parseFloat(document.getElementById('boxExtra').value) || 0;
+            const bulk = parseFloat(document.getElementById('inCapsBulk').value) || 0;
+            const p12 = parseFloat(document.getElementById('inPacks12').value) || 0;
+            const p30 = parseFloat(document.getElementById('inPacks30').value) || 0;
             
-            const totalCaps = (b12 * 12) + (b30 * 30) + extra;
+            const totalCaps = bulk + (p12 * 12) + (p30 * 30);
             
-            if (totalCaps <= 0) return alert("Παρακαλώ εισάγετε αριθμό καψουλών ή κουτιών.");
+            if (totalCaps <= 0) return alert("Παρακαλώ εισάγετε αριθμό καψουλών.");
             
             weight = totalCaps * recipe.capsuleContentWeight;
-            info = `ΣΥΝΟΛΟ: ${totalCaps} CAPS (${b12}x12 + ${b30}x30 + ${extra})`;
+            info = `ΣΥΝΟΛΟ: ${totalCaps} Κάψουλες<br><small>(${bulk} χύμα + ${p12}x12 + ${p30}x30)</small>`;
         } 
         // --- STANDARD LOGIC ---
         else {
             weight = parseFloat(document.getElementById('totalWeightInput').value);
             if (!weight || weight <= 0) return alert("Λάθος ποσότητα");
-            info = `${weight} g`;
+            info = `ΣΤΟΧΟΣ: ${weight} g`;
         }
 
         // --- LABEL GEN ---
