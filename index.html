@@ -57,7 +57,6 @@
         /* --- LABEL PREVIEW (Visible only in Print Mode) --- */
         #labelPreview { 
             display: none; 
-            /* Ρύθμιση για Οριζόντια διάταξη */
             width: 100mm; height: 60mm; 
             margin: 20px auto; 
             box-sizing: border-box;
@@ -67,7 +66,6 @@
             padding: 2mm;
         }
 
-        /* Flex container για οριζόντια διάταξη */
         .lbl-container {
             display: flex;
             width: 100%;
@@ -79,7 +77,7 @@
         }
 
         .lbl-left {
-            flex: 1.5; /* Πιάνει το 60% του πλάτους */
+            flex: 1.5; 
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -88,7 +86,7 @@
         }
 
         .lbl-right {
-            flex: 1; /* Πιάνει το 40% του πλάτους */
+            flex: 1; 
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -110,39 +108,21 @@
             #loginOverlay, .control-panel, h1, .subtitle { display: none !important; }
             .container { box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: none; }
 
-            /* --- SCENARIO A: RECIPE (A4 PORTRAIT) --- */
-            body:not(.print-label-mode) #resultContainer { 
-                display: block; 
-                width: 100%;
-            }
+            /* SCENARIO A: RECIPE (A4 PORTRAIT) */
+            body:not(.print-label-mode) #resultContainer { display: block; width: 100%; }
             body:not(.print-label-mode) #labelPreview { display: none; }
-            
-            body:not(.print-label-mode) {
-                background: white;
-            }
-            @page {
-                size: A4 portrait;
-                margin: 10mm;
-            }
+            body:not(.print-label-mode) { background: white; }
+            @page { size: A4 portrait; margin: 10mm; }
 
-            /* --- SCENARIO B: LABEL (100mm x 62mm LANDSCAPE) --- */
+            /* SCENARIO B: LABEL (100mm x 62mm LANDSCAPE) */
             body.print-label-mode #resultContainer { display: none !important; }
             body.print-label-mode #labelPreview { 
                 display: block !important; 
-                position: fixed;
-                top: 0; left: 0;
-                width: 100mm;
-                height: 62mm;
-                border: none;
-                margin: 0;
-                padding: 0;
+                position: fixed; top: 0; left: 0;
+                width: 100mm; height: 62mm;
+                border: none; margin: 0; padding: 0;
             }
-            
-            /* Κρίσιμη εντολή για Brother: Ορίζουμε μέγεθος Landscape */
-            body.print-label-mode @page {
-                size: 100mm 62mm; 
-                margin: 0;
-            }
+            body.print-label-mode @page { size: 100mm 62mm; margin: 0; }
         }
     </style>
 </head>
@@ -158,14 +138,14 @@
 
 <div class="container" id="mainApp">
     <h1>ZARKOLIA LAB</h1>
-    <p class="subtitle">Production & Labeling v19</p>
+    <p class="subtitle">Production & Labeling v20</p>
     
     <div class="control-panel">
         <label>ΕΠΙΛΟΓΗ ΠΡΟΪΟΝΤΟΣ</label>
         <select id="recipeSelect" onchange="toggleInputs()">
             <option value="" disabled selected>-- Επιλέξτε --</option>
-            <optgroup label="Σιρόπι">
-                <option value="syrup_custom">CUSTOM ALTHEA SYRUP</option>
+            <optgroup label="ΝΕΕΣ ΔΟΚΙΜΕΣ">
+                <option value="zplast_heavy">ZPLAST HEAVY (Test 0.5% Cet)</option>
             </optgroup>
             <optgroup label="Κρέμες Προσώπου">
                 <option value="plus">Revitacell Plus</option>
@@ -173,8 +153,11 @@
                 <option value="hydralia">Hydralia Face</option>
             </optgroup>
             <optgroup label="Θεραπείες Σώματος">
+                <option value="zplast">Zplast Total Repair (Standard)</option>
                 <option value="bruise">Bruise Off</option>
-                <option value="zplast">Zplast Total Repair</option>
+            </optgroup>
+            <optgroup label="Σιρόπι">
+                <option value="syrup_custom">CUSTOM ALTHEA SYRUP</option>
             </optgroup>
             <optgroup label="Συμπληρώματα">
                 <option value="zboost">Z-Boost Caps</option>
@@ -187,6 +170,7 @@
         <div style="margin-top:15px;" id="standardInput">
             <label>ΣΤΟΧΟΣ ΠΑΡΑΓΩΓΗΣ (g)</label>
             <input type="number" id="totalWeightInput" value="1000" step="50">
+            <small style="display:block;color:#666; margin-top:5px;">(Για δοκιμή βάλτε 300g)</small>
         </div>
 
         <div style="margin-top:15px; display:none;" id="capsuleInput">
@@ -223,7 +207,6 @@
                     Store in a cool dry place
                 </div>
             </div>
-            
             <div class="lbl-right">
                 <div class="lbl-data-row">
                     LOT:<br><span class="lbl-data-val" id="lblLot">ZXX0000</span>
@@ -275,6 +258,44 @@
 
     // --- RECIPES ---
     const recipes = {
+        zplast_heavy: {
+            title: "ZPLAST REPAIR (Heavy)",
+            desc: "Heavy Paraffin + 0.5% Cetostearyl",
+            initials: "ZH",
+            shelfLife: 12,
+            type: "standard",
+            ingredients: [
+                { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ) ---", isHeader: true },
+                { name: "Aqua (Νερό)", pct: 0, isQS: true },
+                { name: "Glycerin", pct: 3.77 },
+                { name: "Calamine Powder", pct: 1.50 },
+                { name: "Zea Mays Starch", pct: 0.50 },
+                { name: "Sodium Hyaluronate 1%", pct: 1.27 },
+                { name: "Citric Acid", pct: 0.07 },
+                { name: "--- ΦΑΣΗ Β (75°C) ---", isHeader: true },
+                { name: "Xalifin-15", pct: 5.00 },
+                { name: "Paraffinum Liq. (HEAVY)", pct: 7.50 },
+                { name: "Linum Usitatissimum Oil", pct: 2.50 },
+                { name: "Avocado Oil", pct: 2.00 },
+                { name: "Cetostearyl Alcohol", pct: 0.50 },
+                { name: "Tocopherol (Vit E)", pct: 0.63 },
+                { name: "--- ΦΑΣΗ Γ (<40°C) ---", isHeader: true },
+                { name: "Hypericum Ext", pct: 2.00 },
+                { name: "Hippophae Ext", pct: 1.27 },
+                { name: "Centella Asiatica", pct: 3.77 },
+                { name: "Mel (Honey)", pct: 1.27 },
+                { name: "Mastic Oil", pct: 3.27 },
+                { name: "Euxyl PE 9010", pct: 1.00 },
+                { name: "Alcohol Denat", pct: 0.27 },
+                { name: "Parfum", pct: 0.07 }
+            ],
+            instructions: [
+                "1. Θέρμανση Φάσης Α (Νερό/Σκόνες) στους 75°C.",
+                "2. Θέρμανση Φάσης Β (Κεριά/Λάδια) στους 75°C (Προσοχή στο δέσιμο).",
+                "3. Προσθήκη Β σε Α και ομογενοποίηση.",
+                "4. Προσθήκη Φάσης Γ κάτω από τους 40°C."
+            ]
+        },
         plus: {
             title: "REVITACELL PLUS",
             desc: "New Formula",
