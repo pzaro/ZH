@@ -10,16 +10,16 @@
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3004/3004458.png">
 
     <style>
-        /* --- ΓΕΝΙΚΟ ΣΤΥΛ --- */
+        /* --- ΓΕΝΙΚΟ ΣΤΥΛ (ΟΘΟΝΗ) --- */
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; padding: 15px; color: #333; margin: 0; }
         
-        /* --- Login Screen --- */
+        /* Login */
         #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a237e; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; }
         #loginBox { background: white; padding: 30px; border-radius: 15px; text-align: center; width: 80%; max-width: 300px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
         #passwordInput { padding: 15px; font-size: 1.2em; width: 100%; box-sizing: border-box; margin-bottom: 15px; border: 2px solid #ddd; border-radius: 8px; text-align: center; -webkit-text-security: disc;}
         #loginBtn { background: #ff5722; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; }
         
-        /* --- Main App --- */
+        /* App Container */
         .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: none; }
         h1 { text-align: center; color: #1a237e; margin: 10px 0; font-size: 1.4em; }
         p.subtitle { text-align: center; color: #666; font-size: 0.9em; margin-bottom: 20px; }
@@ -33,15 +33,14 @@
         .btn-calc { background-color: #3f51b5; color: white; }
         .btn-print { background-color: #546e7a; color: white; }
 
-        /* --- Checkboxes --- */
         .checkbox-group { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; align-items: center; background: white; padding: 10px; border-radius: 8px; }
         .checkbox-wrapper { display: flex; align-items: center; gap: 10px; font-size: 1em; cursor: pointer; }
         input[type="checkbox"] { transform: scale(1.3); }
 
-        /* --- Result Table --- */
+        /* Results */
         #resultContainer { margin-top: 30px; display: none; border: 1px solid #eee; border-radius: 10px; overflow: hidden; }
         .recipe-header { background-color: #263238; color: white; padding: 15px; }
-        .recipe-title { font-size: 1.2em; font-weight: bold; display: block; }
+        .recipe-title { font-size: 1.4em; font-weight: bold; display: block; }
         
         table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
         th, td { padding: 10px; border-bottom: 1px solid #eee; }
@@ -50,7 +49,6 @@
         .amount-col { text-align: right; color: #2e7d32; font-weight: bold; }
         .total-row { background: #e8f5e9; font-weight: bold; color: #1b5e20; }
         
-        /* Notes */
         .safety-box { background: #fff3e0; color: #bf360c; padding: 15px; border-left: 5px solid #ff5722; font-size: 0.9em; line-height: 1.4; }
         .instructions-box { background: #f1f8e9; color: #33691e; padding: 15px; border-top: 2px solid #aed581; }
         .instructions-list { padding-left: 20px; }
@@ -59,66 +57,90 @@
         /* --- LABEL PREVIEW (Visible only in Print Mode) --- */
         #labelPreview { 
             display: none; 
-            width: 62mm; height: 90mm; 
+            /* Ρύθμιση για Οριζόντια διάταξη */
+            width: 100mm; height: 60mm; 
             margin: 20px auto; 
-            padding: 2mm 4mm; 
             box-sizing: border-box;
             background: white;
-            text-align: center;
             font-family: Arial, sans-serif;
             border: 1px dashed #ccc; 
+            padding: 2mm;
         }
-        
-        .lbl-header { font-weight:bold; font-size:10pt; border-bottom:2px solid black; width:100%; padding-bottom:3px; margin-bottom:8px; }
-        .lbl-title { font-size:14pt; font-weight:900; margin-bottom:15px; line-height:1.1; word-wrap: break-word; }
-        
-        .lbl-info-box { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: flex-start; 
-            width: 100%; 
-            margin-bottom: 15px;
-            font-size: 11pt;
-            font-weight: bold;
-        }
-        
-        .lbl-row { margin-bottom: 8px; width: 100%; text-align: left; }
-        
-        .lbl-footer-row {
+
+        /* Flex container για οριζόντια διάταξη */
+        .lbl-container {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
             width: 100%;
-            margin-top: 10px;
+            height: 100%;
+            border: 2px solid black;
+            border-radius: 5px;
+            padding: 5px;
+            box-sizing: border-box;
         }
+
+        .lbl-left {
+            flex: 1.5; /* Πιάνει το 60% του πλάτους */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding-right: 10px;
+            border-right: 1px solid #ccc;
+        }
+
+        .lbl-right {
+            flex: 1; /* Πιάνει το 40% του πλάτους */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding-left: 10px;
+        }
+
+        .lbl-header { font-size: 9pt; font-weight: bold; text-transform: uppercase; color: #555; }
+        .lbl-title { font-size: 18pt; font-weight: 900; line-height: 1.1; margin-top: 5px; }
+        .lbl-meta { font-size: 8pt; margin-top: auto; color: #333; }
         
-        /* PAO Icon */
-        .pao-icon { width: 35px; height: 35px; }
+        .lbl-data-row { font-size: 10pt; font-weight: bold; margin: 4px 0; width: 100%; text-align: left;}
+        .lbl-data-val { font-size: 12pt; display: block;}
+
+        .pao-icon { width: 35px; height: 35px; margin-top: 10px; }
 
         /* --- PRINT SETTINGS --- */
         @media print {
             #loginOverlay, .control-panel, h1, .subtitle { display: none !important; }
             .container { box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: none; }
 
-            /* Default Print: A4 Report */
-            #resultContainer { display: block; }
-            #labelPreview { display: none; }
+            /* --- SCENARIO A: RECIPE (A4 PORTRAIT) --- */
+            body:not(.print-label-mode) #resultContainer { 
+                display: block; 
+                width: 100%;
+            }
+            body:not(.print-label-mode) #labelPreview { display: none; }
+            
+            body:not(.print-label-mode) {
+                background: white;
+            }
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
 
-            /* Label Mode */
+            /* --- SCENARIO B: LABEL (100mm x 62mm LANDSCAPE) --- */
             body.print-label-mode #resultContainer { display: none !important; }
             body.print-label-mode #labelPreview { 
-                display: flex !important; 
-                flex-direction: column;
-                justify-content: flex-start;
-                align-items: center;
-                position: absolute; 
+                display: block !important; 
+                position: fixed;
                 top: 0; left: 0;
-                border: none; 
+                width: 100mm;
+                height: 62mm;
+                border: none;
+                margin: 0;
+                padding: 0;
             }
             
-            body.print-label-mode { margin: 0; padding: 0; }
-            @page {
-                size: 62mm 100mm; 
+            /* Κρίσιμη εντολή για Brother: Ορίζουμε μέγεθος Landscape */
+            body.print-label-mode @page {
+                size: 100mm 62mm; 
                 margin: 0;
             }
         }
@@ -129,14 +151,14 @@
 <div id="loginOverlay">
     <div id="loginBox">
         <h2 style="color:#1a237e; margin-top:0;">ZARKOLIA LAB</h2>
-        <input type="password" id="passwordInput" placeholder="Password">
+        <input type="password" id="passwordInput" placeholder="Password" inputmode="numeric">
         <button id="loginBtn" onclick="checkLogin()">ΕΙΣΟΔΟΣ</button>
     </div>
 </div>
 
 <div class="container" id="mainApp">
     <h1>ZARKOLIA LAB</h1>
-    <p class="subtitle">Production & Labeling v18</p>
+    <p class="subtitle">Production & Labeling v19</p>
     
     <div class="control-panel">
         <label>ΕΠΙΛΟΓΗ ΠΡΟΪΟΝΤΟΣ</label>
@@ -175,11 +197,11 @@
         <div class="checkbox-group">
             <div class="checkbox-wrapper">
                 <input type="checkbox" id="showInstructions" checked>
-                <label for="showInstructions">Οδηγίες Παρασκευής</label>
+                <label for="showInstructions">Οδηγίες Παρασκευής (A4)</label>
             </div>
             <div class="checkbox-wrapper" style="color:#d84315; font-weight:bold; border-top:1px solid #eee; padding-top:10px; width:100%; justify-content:center;">
                 <input type="checkbox" id="printLabelMode" onchange="togglePrintMode()">
-                <label for="printLabelMode">🖨️ Ετικέτα (62mm Brother)</label>
+                <label for="printLabelMode">🖨️ ΕΚΤΥΠΩΣΗ ΕΤΙΚΕΤΑΣ (Οριζόντια)</label>
             </div>
         </div>
 
@@ -190,27 +212,31 @@
     </div>
 
     <div id="labelPreview">
-        <div class="lbl-header">ZARKOLIA LAB</div>
-        <div class="lbl-title" id="lblTitle">PRODUCT NAME</div>
-        
-        <div class="lbl-info-box">
-            <div class="lbl-row">
-                LOT: <span id="lblLot">ZXX000000</span>
+        <div class="lbl-container">
+            <div class="lbl-left">
+                <div>
+                    <div class="lbl-header">ZARKOLIA LAB</div>
+                    <div class="lbl-title" id="lblTitle">PRODUCT NAME</div>
+                </div>
+                <div class="lbl-meta">
+                    Made in Greece<br>
+                    Store in a cool dry place
+                </div>
             </div>
-            <div class="lbl-row">
-                EXP: <span id="lblExpDate">--/----</span>
+            
+            <div class="lbl-right">
+                <div class="lbl-data-row">
+                    LOT:<br><span class="lbl-data-val" id="lblLot">ZXX0000</span>
+                </div>
+                <div class="lbl-data-row">
+                    EXP:<br><span class="lbl-data-val" id="lblExpDate">00/00</span>
+                </div>
+                <svg class="pao-icon" viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="5">
+                    <path d="M15,35 L15,85 Q15,95 25,95 L75,95 Q85,95 85,85 L85,35" fill="none" />
+                    <path d="M85,35 L15,35 L10,15 Q50,5 90,15 Z" fill="none" />
+                    <text x="50" y="75" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="28" stroke="none" fill="black" id="paoText">6M</text>
+                </svg>
             </div>
-        </div>
-
-        <div class="lbl-footer-row">
-            <div style="font-size:7pt; text-align:left; color:#333;">
-                Made in Greece<br>Store in cool dry place
-            </div>
-            <svg class="pao-icon" viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="5">
-                <path d="M15,35 L15,85 Q15,95 25,95 L75,95 Q85,95 85,85 L85,35" fill="none" />
-                <path d="M85,35 L15,35 L10,15 Q50,5 90,15 Z" fill="none" />
-                <text x="50" y="75" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="28" stroke="none" fill="black" id="paoText">6M</text>
-            </svg>
         </div>
     </div>
 
@@ -218,7 +244,8 @@
 </div>
 
 <script>
-    const _0x9f2a = "54e36ecfb4491012abb5b6b66a485b41fd2fe30a6899e7ddc4c9ded7f7caee2e";
+    // --- SECURITY (Hash for 106014) ---
+    const _0x9f2a = "34b35aca37baf7d5d997466dff1ab8ca1dc901df7010f3279138670838e2c9e8";
 
     async function checkLogin() {
         const input = document.getElementById('passwordInput').value;
@@ -246,7 +273,7 @@
         }
     }
 
-    // --- RECIPES DATABASE ---
+    // --- RECIPES ---
     const recipes = {
         plus: {
             title: "REVITACELL PLUS",
@@ -314,11 +341,7 @@
             type: "capsule",
             capsuleContentWeight: 0.5864,
             safetyNote: "Dry Room.",
-            ingredients: [
-                { name: "ALA", pct: 34.11 }, { name: "NAC", pct: 34.11 }, { name: "Ginger Ext", pct: 17.05 },
-                { name: "Q10", pct: 8.53 }, { name: "Zinc Gluc", pct: 5.97 }, { name: "Mg Stearate", pct: 0.19 },
-                { name: "Se Yeast", pct: 0.03 }, { name: "Na Ascorbate", pct: 0.02 }
-            ],
+            ingredients: [{name:"Mix Powders", pct:100}],
             instructions: ["1. Ανάμειξη.", "2. Πλήρωση."]
         },
         zplast: {
@@ -400,7 +423,7 @@
         document.getElementById('lblExpDate').innerText = expStr;
         document.getElementById('paoText').innerText = shelfMonths + "M";
 
-        // --- TABLE RENDER ---
+        // --- TABLE RENDER (A4) ---
         let html = `
             <div class="recipe-header">
                 <span class="recipe-title">${recipe.title}</span>
