@@ -10,7 +10,7 @@
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3004/3004458.png">
 
     <style>
-        /* --- ΓΕΝΙΚΟ ΣΤΥΛ (ΟΘΟΝΗ) --- */
+        /* --- ΓΕΝΙΚΟ ΣΤΥΛ --- */
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; padding: 15px; color: #333; margin: 0; }
         
         /* Login */
@@ -28,6 +28,12 @@
         label { display: block; margin-bottom: 8px; font-weight: 600; color: #3f51b5; }
         select, input[type="number"] { padding: 15px; font-size: 1.1em; border-radius: 10px; border: 2px solid #3f51b5; width: 100%; box-sizing: border-box; font-weight: bold; background: white; }
         
+        /* Caps Inputs */
+        .caps-row { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+        .caps-group { flex: 1; text-align: center; }
+        .caps-group input { font-size: 1.1em; padding: 10px; }
+        .caps-group small { display: block; margin-top: 5px; color: #666; font-size: 0.8em; }
+
         .btn-group { display: flex; gap: 10px; margin-top: 25px; }
         button { flex: 1; padding: 15px; font-size: 1em; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .btn-calc { background-color: #3f51b5; color: white; }
@@ -54,7 +60,7 @@
         .instructions-list { padding-left: 20px; }
         .instructions-list li { margin-bottom: 8px; font-size: 0.95em; }
 
-        /* --- LABEL PREVIEW (Visible only in Print Mode) --- */
+        /* --- LABEL PREVIEW (100x62 Landscape) --- */
         #labelPreview { 
             display: none; 
             width: 100mm; height: 60mm; 
@@ -108,13 +114,13 @@
             #loginOverlay, .control-panel, h1, .subtitle { display: none !important; }
             .container { box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: none; }
 
-            /* SCENARIO A: RECIPE (A4 PORTRAIT) */
+            /* A4 Portrait */
             body:not(.print-label-mode) #resultContainer { display: block; width: 100%; }
             body:not(.print-label-mode) #labelPreview { display: none; }
             body:not(.print-label-mode) { background: white; }
             @page { size: A4 portrait; margin: 10mm; }
 
-            /* SCENARIO B: LABEL (100mm x 62mm LANDSCAPE) */
+            /* Label Landscape */
             body.print-label-mode #resultContainer { display: none !important; }
             body.print-label-mode #labelPreview { 
                 display: block !important; 
@@ -138,13 +144,16 @@
 
 <div class="container" id="mainApp">
     <h1>ZARKOLIA LAB</h1>
-    <p class="subtitle">Production & Labeling v20</p>
+    <p class="subtitle">Production v21 (Z-Boost Fix)</p>
     
     <div class="control-panel">
         <label>ΕΠΙΛΟΓΗ ΠΡΟΪΟΝΤΟΣ</label>
         <select id="recipeSelect" onchange="toggleInputs()">
             <option value="" disabled selected>-- Επιλέξτε --</option>
-            <optgroup label="ΝΕΕΣ ΔΟΚΙΜΕΣ">
+            <optgroup label="Συμπληρώματα">
+                <option value="zboost">Z-Boost Caps (Ginger/ALA)</option>
+            </optgroup>
+            <optgroup label="Νέες Δοκιμές">
                 <option value="zplast_heavy">ZPLAST HEAVY (Test 0.5% Cet)</option>
             </optgroup>
             <optgroup label="Κρέμες Προσώπου">
@@ -159,9 +168,6 @@
             <optgroup label="Σιρόπι">
                 <option value="syrup_custom">CUSTOM ALTHEA SYRUP</option>
             </optgroup>
-            <optgroup label="Συμπληρώματα">
-                <option value="zboost">Z-Boost Caps</option>
-            </optgroup>
             <optgroup label="Βάσεις">
                 <option value="base">Βάση Gel-Cream</option>
             </optgroup>
@@ -170,12 +176,24 @@
         <div style="margin-top:15px;" id="standardInput">
             <label>ΣΤΟΧΟΣ ΠΑΡΑΓΩΓΗΣ (g)</label>
             <input type="number" id="totalWeightInput" value="1000" step="50">
-            <small style="display:block;color:#666; margin-top:5px;">(Για δοκιμή βάλτε 300g)</small>
         </div>
 
         <div style="margin-top:15px; display:none;" id="capsuleInput">
-            <label>ΚΟΥΤΙΑ (x30)</label>
-            <input type="number" id="boxCount" value="10">
+            <label style="margin-bottom:10px; color:#1a237e;">ΥΠΟΛΟΓΙΣΜΟΣ ΚΑΨΟΥΛΩΝ</label>
+            <div class="caps-row">
+                <div class="caps-group">
+                    <input type="number" id="box12" value="0">
+                    <small>Κουτιά x12</small>
+                </div>
+                <div class="caps-group">
+                    <input type="number" id="box30" value="0">
+                    <small>Κουτιά x30</small>
+                </div>
+                <div class="caps-group">
+                    <input type="number" id="capsExtra" value="0">
+                    <small>Χύμα Caps</small>
+                </div>
+            </div>
         </div>
         
         <div class="checkbox-group">
@@ -227,7 +245,7 @@
 </div>
 
 <script>
-    // --- SECURITY (Hash for 106014) ---
+    // --- SECURITY (106014) ---
     const _0x9f2a = "34b35aca37baf7d5d997466dff1ab8ca1dc901df7010f3279138670838e2c9e8";
 
     async function checkLogin() {
@@ -258,6 +276,26 @@
 
     // --- RECIPES ---
     const recipes = {
+        zboost: {
+            title: "Z-BOOST CAPS",
+            desc: "Ginger/ALA",
+            initials: "ZB",
+            shelfLife: 24,
+            type: "capsule",
+            capsuleContentWeight: 0.5864, // g per capsule content
+            safetyNote: "Ευαίσθητο στην υγρασία. Πλήρωση σε Dry Room. Αποθήκευση με Silica Gel.",
+            ingredients: [
+                { name: "a-Lipoic Acid (ALA)", pct: 34.11 },
+                { name: "N-Acetyl-L-Cysteine", pct: 34.11 },
+                { name: "Ginger Extract", pct: 17.05 },
+                { name: "Coenzyme Q10", pct: 8.53 },
+                { name: "Zinc Gluconate", pct: 5.97 },
+                { name: "Magnesium Stearate", pct: 0.19 },
+                { name: "Selenium Yeast", pct: 0.03 },
+                { name: "Sodium Ascorbate", pct: 0.02 }
+            ],
+            instructions: ["1. Κοσκινίστε όλες τις σκόνες.", "2. Γεωμετρική αραίωση μικρο-συστατικών με Ginger.", "3. Προσθήκη ALA & NAC.", "4. Τέλος Mg Stearate (μίξη 3 λεπτά)."]
+        },
         zplast_heavy: {
             title: "ZPLAST REPAIR (Heavy)",
             desc: "Heavy Paraffin + 0.5% Cetostearyl",
@@ -289,12 +327,7 @@
                 { name: "Alcohol Denat", pct: 0.27 },
                 { name: "Parfum", pct: 0.07 }
             ],
-            instructions: [
-                "1. Θέρμανση Φάσης Α (Νερό/Σκόνες) στους 75°C.",
-                "2. Θέρμανση Φάσης Β (Κεριά/Λάδια) στους 75°C (Προσοχή στο δέσιμο).",
-                "3. Προσθήκη Β σε Α και ομογενοποίηση.",
-                "4. Προσθήκη Φάσης Γ κάτω από τους 40°C."
-            ]
+            instructions: ["1. Θέρμανση Α & Β στους 75°C.", "2. Μίξη Β σε Α.", "3. Προσθήκη Γ < 40°C."]
         },
         plus: {
             title: "REVITACELL PLUS",
@@ -354,17 +387,6 @@
             ],
             instructions: ["1. Θέρμανση 75C.", "2. Ομογενοποίηση.", "3. Κρύωμα."]
         },
-        zboost: {
-            title: "Z-BOOST CAPS",
-            desc: "Ginger/ALA",
-            initials: "ZB",
-            shelfLife: 24,
-            type: "capsule",
-            capsuleContentWeight: 0.5864,
-            safetyNote: "Dry Room.",
-            ingredients: [{name:"Mix Powders", pct:100}],
-            instructions: ["1. Ανάμειξη.", "2. Πλήρωση."]
-        },
         zplast: {
             title: "ZPLAST REPAIR",
             desc: "Total Repair",
@@ -415,20 +437,29 @@
         if (!key) return alert("Επιλέξτε προϊόν");
         const recipe = recipes[key];
         
-        // --- CALC ---
         let weight = 0, info="";
+        
+        // --- CAPSULE LOGIC FIX (SUM) ---
         if (recipe.type === 'capsule') {
-            const boxes = document.getElementById('boxCount').value;
-            const perBox = document.getElementById('capsPerBox').value;
-            weight = boxes * perBox * recipe.capsuleContentWeight;
-            info = `${boxes} κουτιά x ${perBox}`;
-        } else {
+            const b12 = parseFloat(document.getElementById('box12').value) || 0;
+            const b30 = parseFloat(document.getElementById('box30').value) || 0;
+            const extra = parseFloat(document.getElementById('capsExtra').value) || 0;
+            
+            const totalCaps = (b12 * 12) + (b30 * 30) + extra;
+            
+            if (totalCaps <= 0) return alert("Δεν έχετε βάλει αριθμό καψουλών!");
+            
+            weight = totalCaps * recipe.capsuleContentWeight;
+            info = `ΣΥΝΟΛΟ: ${totalCaps} CAPS (${b12}x12 + ${b30}x30 + ${extra})`;
+        } 
+        // --- STANDARD LOGIC ---
+        else {
             weight = parseFloat(document.getElementById('totalWeightInput').value);
+            if (!weight || weight <= 0) return alert("Λάθος ποσότητα");
             info = `${weight} g`;
         }
-        if (!weight || weight <= 0) return alert("Λάθος ποσότητα");
 
-        // --- LABEL GENERATION (Z + INITIALS + MM + YYYY) ---
+        // --- LABEL GEN ---
         const now = new Date();
         const exp = new Date();
         const shelfMonths = recipe.shelfLife || 12;
@@ -444,7 +475,7 @@
         document.getElementById('lblExpDate').innerText = expStr;
         document.getElementById('paoText').innerText = shelfMonths + "M";
 
-        // --- TABLE RENDER (A4) ---
+        // --- HTML TABLE ---
         let html = `
             <div class="recipe-header">
                 <span class="recipe-title">${recipe.title}</span>
