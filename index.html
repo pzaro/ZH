@@ -28,22 +28,9 @@
         label { display: block; margin-bottom: 8px; font-weight: 600; color: #3f51b5; }
         select, input[type="number"] { padding: 15px; font-size: 1.1em; border-radius: 10px; border: 2px solid #3f51b5; width: 100%; box-sizing: border-box; font-weight: bold; background: white; }
         
-        /* --- CAPSULE CALCULATOR STYLES --- */
-        .caps-panel {
-            background: #fff3e0;
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px solid #ffb74d;
-            margin-top: 15px;
-        }
-        .caps-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            border-bottom: 1px dashed #ffe0b2;
-            padding-bottom: 10px;
-        }
+        /* Caps Inputs */
+        .caps-panel { background: #fff3e0; padding: 15px; border-radius: 10px; border: 2px solid #ffb74d; margin-top: 15px; }
+        .caps-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px dashed #ffe0b2; padding-bottom: 10px; }
         .caps-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .caps-label { font-weight: bold; color: #e65100; flex: 2; text-align: left; font-size: 0.9em; }
         .caps-input { flex: 1; }
@@ -75,53 +62,18 @@
         .instructions-list { padding-left: 20px; }
         .instructions-list li { margin-bottom: 8px; font-size: 0.95em; }
 
-        /* --- LABEL PREVIEW (100x62 Landscape) --- */
+        /* --- LABEL PREVIEW --- */
         #labelPreview { 
-            display: none; 
-            width: 100mm; height: 62mm; 
-            margin: 20px auto; 
-            box-sizing: border-box;
-            background: white;
-            font-family: Arial, sans-serif;
-            border: 1px dashed #ccc; 
-            padding: 2mm;
+            display: none; width: 100mm; height: 62mm; margin: 20px auto; box-sizing: border-box; background: white; font-family: Arial, sans-serif; border: 1px dashed #ccc; padding: 2mm;
         }
-
-        .lbl-container {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            border: 2px solid black;
-            border-radius: 5px;
-            padding: 5px;
-            box-sizing: border-box;
-        }
-
-        .lbl-left {
-            flex: 1.5; 
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding-right: 10px;
-            border-right: 1px solid #ccc;
-        }
-
-        .lbl-right {
-            flex: 1; 
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding-left: 10px;
-        }
-
+        .lbl-container { display: flex; width: 100%; height: 100%; border: 2px solid black; border-radius: 5px; padding: 5px; box-sizing: border-box; }
+        .lbl-left { flex: 1.5; display: flex; flex-direction: column; justify-content: space-between; padding-right: 10px; border-right: 1px solid #ccc; }
+        .lbl-right { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-left: 10px; }
         .lbl-header { font-size: 9pt; font-weight: bold; text-transform: uppercase; color: #555; }
         .lbl-title { font-size: 18pt; font-weight: 900; line-height: 1.1; margin-top: 5px; }
         .lbl-meta { font-size: 8pt; margin-top: auto; color: #333; }
-        
         .lbl-data-row { font-size: 10pt; font-weight: bold; margin: 4px 0; width: 100%; text-align: left;}
         .lbl-data-val { font-size: 12pt; display: block;}
-
         .pao-icon { width: 35px; height: 35px; margin-top: 10px; }
 
         /* --- PRINT SETTINGS --- */
@@ -137,12 +89,7 @@
 
             /* Label Landscape */
             body.print-label-mode #resultContainer { display: none !important; }
-            body.print-label-mode #labelPreview { 
-                display: block !important; 
-                position: fixed; top: 0; left: 0;
-                width: 100mm; height: 62mm;
-                border: none; margin: 0; padding: 0;
-            }
+            body.print-label-mode #labelPreview { display: block !important; position: fixed; top: 0; left: 0; width: 100mm; height: 62mm; border: none; margin: 0; padding: 0; }
             body.print-label-mode @page { size: 100mm 62mm; margin: 0; }
         }
     </style>
@@ -159,7 +106,7 @@
 
 <div class="container" id="mainApp">
     <h1>ZARKOLIA LAB</h1>
-    <p class="subtitle">Production v23 (Capsule Fix)</p>
+    <p class="subtitle">Production v24 (Full Recipes Restored)</p>
     
     <div class="control-panel">
         <label>ΕΠΙΛΟΓΗ ΠΡΟΪΟΝΤΟΣ</label>
@@ -177,8 +124,8 @@
                 <option value="hydralia">Hydralia Face</option>
             </optgroup>
             <optgroup label="Θεραπείες Σώματος">
+                <option value="bruise">Bruise Off (5kg Formula)</option>
                 <option value="zplast">Zplast Total Repair (Standard)</option>
-                <option value="bruise">Bruise Off</option>
             </optgroup>
             <optgroup label="Σιρόπι">
                 <option value="syrup_custom">CUSTOM ALTHEA SYRUP</option>
@@ -280,8 +227,82 @@
         else document.body.classList.remove('print-label-mode');
     }
 
-    // --- RECIPES ---
+    // --- FULL RECIPES RESTORED ---
     const recipes = {
+        bruise: {
+            title: "BRUISE OFF",
+            desc: "Stearic Formula (Based on 5kg specs)",
+            initials: "BO",
+            shelfLife: 18,
+            type: "standard",
+            safetyNote: "Ενισχυμένο Cetostearyl/Stearic. Χωρίς GMS.",
+            ingredients: [
+                { name: "--- ΦΑΣΗ Α (ΛΙΠΑΡΗ - 75°C) ---", isHeader: true },
+                { name: "Arnica Oil", pct: 9.10 },
+                { name: "Vaseline", pct: 9.10 },
+                { name: "Cetostearyl Alcohol", pct: 7.70 },
+                { name: "Stearic Acid", pct: 3.30 },
+                { name: "Linseed Oil", pct: 1.80 },
+                { name: "Propyl Paraben", pct: 0.10 },
+                { name: "--- ΦΑΣΗ Β (ΥΔΑΤΙΚΗ - 75°C) ---", isHeader: true },
+                { name: "Aqua (Distilled Water)", pct: 0, isQS: true },
+                { name: "Polysorbate 80", pct: 3.70 },
+                { name: "Propylene Glycol", pct: 1.80 },
+                { name: "Methyl Paraben", pct: 0.10 },
+                { name: "--- ΦΑΣΗ Γ (< 40°C) ---", isHeader: true },
+                { name: "Lavender Lemon Balm", pct: 0.90 }
+            ],
+            instructions: ["1. Θέρμανση Φάσης Α και Β στους 75°C ξεχωριστά.", "2. Προσθήκη Α σε Β με έντονη ανάδευση.", "3. Προσθήκη Φάσης Γ (Άρωμα) όταν η θερμοκρασία πέσει < 40°C."]
+        },
+        zplast: {
+            title: "ZPLAST TOTAL REPAIR",
+            desc: "Standard Formula",
+            initials: "ZP",
+            shelfLife: 12,
+            type: "standard",
+            ingredients: [
+                { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ) ---", isHeader: true },
+                { name: "Aqua (Νερό)", pct: 0, isQS: true },
+                { name: "Glycerin", pct: 4.0 },
+                { name: "Calamine Powder", pct: 1.0 },
+                { name: "Zea Mays Starch", pct: 0.5 },
+                { name: "Sodium Hyaluronate 1%", pct: 1.0 },
+                { name: "Citric Acid", pct: 0.07 },
+                { name: "--- ΦΑΣΗ Β (75°C) ---", isHeader: true },
+                { name: "Xalifin-15", pct: 5.0 },
+                { name: "Paraffinum Liquidum", pct: 7.5 },
+                { name: "Linum Usitatissimum Oil", pct: 2.5 },
+                { name: "Avocado Oil", pct: 2.0 },
+                { name: "Cetostearyl Alcohol", pct: 1.0 },
+                { name: "Tocopherol (Vit E)", pct: 0.5 },
+                { name: "--- ΦΑΣΗ Γ (<40°C) ---", isHeader: true },
+                { name: "Hypericum Ext", pct: 2.0 },
+                { name: "Hippophae Ext", pct: 1.0 },
+                { name: "Centella Asiatica", pct: 4.0 },
+                { name: "Mel (Honey)", pct: 1.0 },
+                { name: "Mastic Oil", pct: 1.0 },
+                { name: "Euxyl PE 9010", pct: 1.0 },
+                { name: "Alcohol Denat", pct: 0.25 },
+                { name: "Parfum", pct: 0.07 }
+            ],
+            instructions: ["1. Θέρμανση Α & Β στους 75°C.", "2. Μίξη Β σε Α.", "3. Προσθήκη Γ < 40°C."]
+        },
+        hydralia: {
+            title: "HYDRALIA FACE CREAM",
+            desc: "Moisturizing Cream",
+            initials: "HF",
+            shelfLife: 12,
+            type: "standard",
+            ingredients: [
+                { name: "Βάση Gel-Cream", pct: 0, isQS: true },
+                { name: "Avocado Oil", pct: 4.0 },
+                { name: "Jojoba Oil", pct: 2.5 },
+                { name: "Almond Oil", pct: 2.5 },
+                { name: "Aloe Vera Gel", pct: 8.0 },
+                { name: "Parfum", pct: 0.3 }
+            ],
+            instructions: ["1. Προ-ανάμειξη των λαδιών με το άρωμα.", "2. Προσθήκη του Gel Αλόης στα λάδια.", "3. Ενσωμάτωση του μίγματος στη Βάση Gel-Cream."]
+        },
         zboost: {
             title: "Z-BOOST CAPS",
             desc: "Ginger/ALA",
@@ -289,10 +310,10 @@
             shelfLife: 24,
             type: "capsule",
             capsuleContentWeight: 0.5864,
-            safetyNote: "Ευαισθητο στην υγρασία. Πλήρωση σε Dry Room.",
+            safetyNote: "Ευαίσθητο στην υγρασία. Πλήρωση σε Dry Room.",
             ingredients: [
                 { name: "a-Lipoic Acid (ALA)", pct: 34.11 },
-                { name: "N-Acetyl-L-Cysteine", pct: 34.11 },
+                { name: "N-Acetyl-L-Cysteine (NAC)", pct: 34.11 },
                 { name: "Ginger Extract", pct: 17.05 },
                 { name: "Coenzyme Q10", pct: 8.53 },
                 { name: "Zinc Gluconate", pct: 5.97 },
@@ -300,7 +321,7 @@
                 { name: "Selenium Yeast", pct: 0.03 },
                 { name: "Sodium Ascorbate", pct: 0.02 }
             ],
-            instructions: ["1. Ανάμειξη.", "2. Πλήρωση."]
+            instructions: ["1. Κοσκινίστε όλες τις σκόνες.", "2. Γεωμετρική αραίωση μικρο-συστατικών με Ginger.", "3. Προσθήκη ALA & NAC.", "4. Τέλος το Mg Stearate (μίξη 3 λεπτά)."]
         },
         zplast_heavy: {
             title: "ZPLAST REPAIR (Heavy)",
@@ -319,13 +340,36 @@
             ],
             instructions: ["1. Θέρμανση Α & Β στους 75°C.", "2. Μίξη Β σε Α.", "3. Προσθήκη Γ < 40°C."]
         },
-        plus: { title: "REVITACELL PLUS", desc: "New Formula", initials: "RP", shelfLife: 12, type: "standard", ingredients: [ { name: "Βάση Gel-Cream", pct: 0, isQS: true }, { name: "Almond Oil", pct: 2.0 }, { name: "Avocado Oil", pct: 2.0 }, { name: "Jojoba Oil", pct: 2.0 }, { name: "Pomegranate Oil", pct: 2.0 }, { name: "Mastic Oil", pct: 1.0 }, { name: "Mastic Tincture", pct: 3.0 }, { name: "Vit E", pct: 0.5 } ], instructions: ["1. Μίξη λαδιών.", "2. Ενσωμάτωση."] },
-        syrup_custom: { title: "ALTHEA SYRUP", desc: "66.7%", initials: "AS", shelfLife: 6, type: "standard", ingredients: [ { name: "Fructose", pct: 66.70 }, { name: "Aqua", pct: 0, isQS: true }, { name: "Sodium Benzoate", pct: 0.10 }, { name: "--- MIX (5%) ---", isHeader: true }, { name: "Althea/Thyme/Euc/Cran/Hipp", pct: 5.0 }, { name: "Vit C & Lemon EO", pct: 0.15 }, { name: "Lemon Juice", pct: 0, note: "q.s. pH" } ], instructions: ["1. Ζέσταμα νερού.", "2. Διάλυση φρουκτόζης.", "3. Προσθήκη <40C.", "4. pH < 4.5."] },
-        eyes: { title: "REVITACELL EYES", desc: "Safe 8%", initials: "RE", shelfLife: 12, type: "standard", ingredients: [ { name: "Βάση Gel-Cream", pct: 0, isQS: true }, { name: "Arnica Oil", pct: 8.0 }, { name: "Jojoba", pct: 1.0 }, { name: "Almond", pct: 1.0 }, { name: "Hyaluronic 1%", pct: 4.0 }, { name: "Glycerin", pct: 2.0 }, { name: "Hippocastanum", pct: 2.0 }, { name: "Parfum", pct: 0.2 } ], instructions: ["1. Μίξη λαδιών.", "2. Ενσωμάτωση."] },
-        bruise: { title: "BRUISE OFF", desc: "Stearic", initials: "BO", shelfLife: 18, type: "standard", ingredients: [ { name: "Phase A (Oils)", pct: 31.0 }, { name: "Phase B (Water)", pct: 0, isQS: true }, { name: "Lavender", pct: 0.9 } ], instructions: ["1. Θέρμανση 75C.", "2. Ομογενοποίηση."] },
-        zplast: { title: "ZPLAST REPAIR", desc: "Total Repair", initials: "ZP", shelfLife: 12, type: "standard", ingredients: [{name:"Full Recipe in File", pct:100}], instructions: ["See previous."] },
-        hydralia: { title: "HYDRALIA FACE", desc: "Moisturizing", initials: "HF", shelfLife: 12, type: "standard", ingredients: [ { name: "Βάση Gel-Cream", pct: 0, isQS: true }, { name: "Avocado", pct: 4.0 }, { name: "Jojoba", pct: 2.5 }, { name: "Almond", pct: 2.5 }, { name: "Aloe Gel", pct: 8.0 }, { name: "Parfum", pct: 0.3 } ], instructions: ["1. Μίξη λαδιών.", "2. Ενσωμάτωση."] },
-        base: { title: "BASE GEL-CREAM", desc: "Base Formula", initials: "BG", shelfLife: 12, type: "standard", ingredients: [ { name: "Aqua", pct: 0, isQS: true }, { name: "Glycerin", pct: 4.0 }, { name: "Hyaluronic Pw", pct: 0.2 }, { name: "Carbomer", pct: 0.25 }, { name: "Cetearyl", pct: 2.0 }, { name: "Stearic", pct: 1.0 }, { name: "IPM", pct: 2.0 }, { name: "Methyl P", pct: 0.2 }, { name: "Propyl P", pct: 0.1 }, { name: "Vit E", pct: 0.5 }, { name: "TEA", pct: 0.25 } ], instructions: ["1. Ενυδάτωση Carbomer.", "2. Θέρμανση 75C."] }
+        plus: { 
+            title: "REVITACELL PLUS", desc: "New Formula", initials: "RP", shelfLife: 12, type: "standard", 
+            ingredients: [ 
+                { name: "Βάση Gel-Cream", pct: 0, isQS: true }, { name: "Almond Oil", pct: 2.0 }, { name: "Avocado Oil", pct: 2.0 }, { name: "Jojoba Oil", pct: 2.0 }, { name: "Pomegranate Oil", pct: 2.0 }, { name: "Mastic Oil", pct: 1.0 }, { name: "Mastic Tincture", pct: 3.0 }, { name: "Vit E", pct: 0.5 } 
+            ], 
+            instructions: ["1. Μίξη λαδιών με Βιταμίνη Ε.", "2. Προσθήκη Βάμματος (Pre-mix).", "3. Ενσωμάτωση στη βάση."] 
+        },
+        syrup_custom: { 
+            title: "ALTHEA SYRUP", desc: "66.7%", initials: "AS", shelfLife: 6, type: "standard", 
+            ingredients: [ 
+                { name: "Fructose / Brown Sugar", pct: 66.70 }, { name: "Aqua", pct: 0, isQS: true }, { name: "Sodium Benzoate", pct: 0.10 }, 
+                { name: "--- MIX BΑΜΜΑΤΩΝ (5%) ---", isHeader: true }, 
+                { name: "Althea, Thyme, Euc, Cran, Hipp", pct: 5.0 }, { name: "Vit C & Lemon EO", pct: 0.15 }, { name: "Lemon Juice", pct: 0, note: "q.s. για ρύθμιση pH" } 
+            ], 
+            instructions: ["1. Ζέσταμα νερού (70°C).", "2. Προσθήκη λεμονιού και διάλυση σακχάρου.", "3. Προσθήκη βαμμάτων <40°C.", "4. Έλεγχος pH < 4.5."] 
+        },
+        eyes: { 
+            title: "REVITACELL EYES", desc: "Safe 8% Arnica", initials: "RE", shelfLife: 12, type: "standard", 
+            ingredients: [ 
+                { name: "Βάση Gel-Cream", pct: 0, isQS: true }, { name: "Arnica Oil", pct: 8.0 }, { name: "Jojoba Oil", pct: 1.0 }, { name: "Almond Oil", pct: 1.0 }, { name: "Hyaluronic Acid 1%", pct: 4.0 }, { name: "Glycerin", pct: 2.0 }, { name: "Aesculus Hippocastanum", pct: 2.0 }, { name: "Parfum", pct: 0.2 } 
+            ], 
+            instructions: ["1. Μίξη λαδιών ξεχωριστά.", "2. Προσθήκη υδατικών στο λάδι.", "3. Ενσωμάτωση στη βάση."] 
+        },
+        base: { 
+            title: "BASE GEL-CREAM", desc: "Base Formula", initials: "BG", shelfLife: 12, type: "standard", 
+            ingredients: [ 
+                { name: "Aqua", pct: 0, isQS: true }, { name: "Glycerin", pct: 4.0 }, { name: "Hyaluronic Pw", pct: 0.2 }, { name: "Carbomer", pct: 0.25 }, { name: "Cetearyl Alcohol", pct: 2.0 }, { name: "Stearic Acid", pct: 1.0 }, { name: "IPM", pct: 2.0 }, { name: "Methyl Paraben", pct: 0.2 }, { name: "Propyl Paraben", pct: 0.1 }, { name: "Vit E", pct: 0.5 }, { name: "TEA", pct: 0.25 } 
+            ], 
+            instructions: ["1. Ενυδάτωση Carbomer στο νερό.", "2. Θέρμανση φάσεων στους 75°C.", "3. Ανάμειξη και εξουδετέρωση με TEA."] 
+        }
     };
 
     function toggleInputs() {
@@ -343,7 +387,7 @@
         
         let weight = 0, info="";
         
-        // --- CAPSULE LOGIC v23 (FIXED & EXPLICIT) ---
+        // --- CAPSULE LOGIC ---
         if (recipe.type === 'capsule') {
             const bulk = parseFloat(document.getElementById('inCapsBulk').value) || 0;
             const p12 = parseFloat(document.getElementById('inPacks12').value) || 0;
@@ -403,7 +447,7 @@
             }
         });
 
-        html += `<tr class="total-row"><td>ΣΥΝΟΛΟ</td><td style="text-align:right">${weight.toFixed(1)} g</td></tr></table>`;
+        html += `<tr class="total-row"><td>ΣΥΝΟΛΟ ΜΙΓΜΑΤΟΣ</td><td style="text-align:right">${weight.toFixed(1)} g</td></tr></table>`;
 
         if (document.getElementById('showInstructions').checked && recipe.instructions) {
             html += `<div class="instructions-box"><strong>ΟΔΗΓΙΕΣ:</strong><ul class="instructions-list">${recipe.instructions.map(s=>`<li>${s}</li>`).join('')}</ul></div>`;
