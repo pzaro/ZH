@@ -20,7 +20,7 @@
         #loginBtn { background: #ff5722; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; }
         
         /* App Container */
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: none; }
+        .container { max-width: 850px; margin: 0 auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: none; }
         h1 { text-align: center; color: #1a237e; margin: 10px 0; font-size: 1.4em; }
         p.subtitle { text-align: center; color: #666; font-size: 0.9em; margin-bottom: 20px; }
         
@@ -43,11 +43,11 @@
 
         .checkbox-group { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; align-items: center; background: white; padding: 10px; border-radius: 8px; }
         .checkbox-wrapper { display: flex; align-items: center; gap: 10px; font-size: 1em; cursor: pointer; }
-        input[type="checkbox"] { transform: scale(1.3); }
+        input[type="checkbox"] { transform: scale(1.3); cursor: pointer; }
 
         /* Results (Screen) */
         #resultContainer { margin-top: 30px; display: none; border: 1px solid #eee; border-radius: 10px; overflow: hidden; }
-        .print-doc-header { display: none; } /* Hidden on screen */
+        .print-doc-header { display: none; }
         
         .recipe-header { background-color: #263238; color: white; padding: 15px; }
         .recipe-title { font-size: 1.4em; font-weight: bold; display: block; }
@@ -56,11 +56,13 @@
         .target-info { padding:10px; background:#e3f2fd; color:#0d47a1; font-weight:bold; text-align:center; font-size: 1.1em; }
         
         table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
-        th, td { padding: 10px; border-bottom: 1px solid #eee; }
+        th, td { padding: 10px; border-bottom: 1px solid #eee; vertical-align: middle; }
         th { background: #f5f5f5; text-align: left;}
-        .phase-row td { background: #eceff1; color: #455a64; font-weight: bold; padding-top: 15px; }
-        .amount-col { text-align: right; color: #2e7d32; font-weight: bold; }
+        .phase-row td { background: #eceff1; color: #455a64; font-weight: bold; padding-top: 15px; text-transform: uppercase; }
+        .amount-col { text-align: right; color: #2e7d32; font-weight: bold; font-size: 1.1em; }
         .total-row { background: #e8f5e9; font-weight: bold; color: #1b5e20; }
+        
+        .traceability-box { font-size: 0.85em; color: #666; line-height: 1.6; }
         
         .safety-box { background: #fff3e0; color: #bf360c; padding: 15px; border-left: 5px solid #ff5722; font-size: 0.9em; line-height: 1.4; }
         .instructions-box { background: #f1f8e9; color: #33691e; padding: 15px; border-top: 2px solid #aed581; }
@@ -69,16 +71,8 @@
 
         /* --- LABEL PREVIEW (100x62 Landscape) --- */
         #labelPreview { 
-            display: none; 
-            width: 100mm; height: 62mm; 
-            margin: 20px auto; 
-            box-sizing: border-box;
-            background: white;
-            font-family: Arial, sans-serif;
-            border: 1px dashed #ccc; 
-            padding: 2mm;
+            display: none; width: 100mm; height: 62mm; margin: 20px auto; box-sizing: border-box; background: white; font-family: Arial, sans-serif; border: 1px dashed #ccc; padding: 2mm;
         }
-
         .lbl-container { display: flex; width: 100%; height: 100%; border: 2px solid black; border-radius: 5px; padding: 5px; box-sizing: border-box; }
         .lbl-left { flex: 1.5; display: flex; flex-direction: column; justify-content: space-between; padding-right: 10px; border-right: 1px solid #ccc; }
         .lbl-right { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-left: 10px; }
@@ -90,61 +84,52 @@
         .pao-icon { width: 35px; height: 35px; margin-top: 10px; }
 
         /* =========================================
-           --- PRINT SETTINGS (Η ΜΑΓΕΙΑ ΕΙΝΑΙ ΕΔΩ) ---
+           --- PRINT SETTINGS (GMP A4 & LABEL) ---
            ========================================= */
         @media print {
-            /* Απόκρυψη UI οθόνης */
             #loginOverlay, .control-panel, h1, .subtitle { display: none !important; }
             .container { box-shadow: none; border: none; margin: 0; padding: 0; width: 100%; max-width: none; }
 
-            /* --- SCENARIO A: RECIPE (A4 PORTRAIT BEAUTIFUL LAYOUT) --- */
+            /* --- A4 GMP WORKSHEET --- */
             body:not(.print-label-mode) #resultContainer { display: block; width: 100%; border: none; }
             body:not(.print-label-mode) #labelPreview { display: none; }
-            body:not(.print-label-mode) { background: white; font-size: 10.5pt; color: #000; }
+            body:not(.print-label-mode) { background: white; font-size: 10pt; color: #000; }
             
-            @page { size: A4 portrait; margin: 12mm 15mm; } /* Ιδανικά περιθώρια για να χωρέσει σε 1 σελίδα */
+            @page { size: A4 portrait; margin: 10mm 12mm; }
 
-            /* Κεφαλίδα Εγγράφου Α4 */
+            /* Header */
             body:not(.print-label-mode) .print-doc-header {
                 display: flex; justify-content: space-between; border-bottom: 2px solid #333; 
-                padding-bottom: 5px; margin-bottom: 15px; font-weight: bold; font-size: 10pt; color: #555;
+                padding-bottom: 5px; margin-bottom: 10px; font-weight: bold; font-size: 10pt; color: #000;
             }
             
-            /* Τίτλος Συνταγής (Clean Look) */
-            body:not(.print-label-mode) .recipe-header {
-                background: transparent; color: #000; padding: 0; margin-bottom: 15px; text-align: center;
-            }
-            body:not(.print-label-mode) .recipe-title { font-size: 18pt; text-transform: uppercase; border-bottom: 1px solid #ccc; display: inline-block; padding-bottom: 5px; }
-            body:not(.print-label-mode) .recipe-desc { font-style: italic; margin-top: 5px; }
+            body:not(.print-label-mode) .recipe-header { background: transparent; color: #000; padding: 0; margin-bottom: 10px; text-align: center; }
+            body:not(.print-label-mode) .recipe-title { font-size: 16pt; text-transform: uppercase; border-bottom: 1px solid #ccc; display: inline-block; padding-bottom: 3px; }
+            
+            body:not(.print-label-mode) .target-info { background: transparent; color: #000; border: 1px solid #666; padding: 5px; font-size: 10.5pt; margin-bottom: 10px; }
+            body:not(.print-label-mode) .safety-box { background: transparent; color: #000; border: 1px solid #000; border-left: 5px solid #000; padding: 5px 8px; margin-bottom: 10px; font-weight: bold; }
 
-            /* Info Box & Safety */
-            body:not(.print-label-mode) .target-info {
-                background: transparent; color: #000; border: 1px solid #999; padding: 6px; font-size: 11pt; margin-bottom: 10px;
-            }
-            body:not(.print-label-mode) .safety-box {
-                background: transparent; color: #000; border: 1px solid #000; border-left: 5px solid #000; padding: 6px 10px; margin-bottom: 15px; font-size: 9.5pt; font-weight: bold;
-            }
+            /* Table Formatting for Print */
+            body:not(.print-label-mode) table { border: 1px solid #000; margin-bottom: 15px; }
+            body:not(.print-label-mode) th, body:not(.print-label-mode) td { padding: 5px 8px; border-bottom: 1px solid #999; }
+            body:not(.print-label-mode) th { background-color: #f0f0f0; border-bottom: 2px solid #000; color: #000; }
+            body:not(.print-label-mode) .phase-row td { background-color: #e0e0e0; font-size: 10pt; border-top: 2px solid #000; border-bottom: 1px solid #000; }
+            
+            /* Traceability Dotted Lines */
+            body:not(.print-label-mode) .traceability-box { color: #000; font-size: 9pt; }
+            
+            /* Ensure checkboxes print */
+            input[type="checkbox"] { -webkit-print-color-adjust: exact; color-adjust: exact; }
 
-            /* Πίνακας - Συμμάζεμα */
-            body:not(.print-label-mode) table { font-size: 9.5pt; margin-bottom: 15px; border: 1px solid #ccc; }
-            body:not(.print-label-mode) th, body:not(.print-label-mode) td { padding: 4px 8px; border-bottom: 1px solid #eee; }
-            body:not(.print-label-mode) th { background-color: #f0f0f0; border-bottom: 2px solid #aaa; color: #000; }
-            body:not(.print-label-mode) .phase-row td { background-color: #fafafa; padding-top: 10px; border-top: 1px solid #999; color: #000; }
-            body:not(.print-label-mode) .amount-col { color: #000; }
-            body:not(.print-label-mode) .total-row td { background: transparent; color: #000; border-top: 2px solid #333; border-bottom: 2px solid #333; font-size: 11pt; }
+            body:not(.print-label-mode) .total-row td { background: transparent; color: #000; border-top: 3px double #000; font-size: 11pt; }
 
-            /* Οδηγίες (Αποτροπή αλλαγής σελίδας) */
-            body:not(.print-label-mode) .instructions-box {
-                background: transparent; color: #000; border: 1px solid #999; border-top: 3px solid #666; padding: 10px; 
-                page-break-inside: avoid; /* MAGIC: Κρατάει τις οδηγίες ενιαίες */
-            }
-            body:not(.print-label-mode) .instructions-list li { margin-bottom: 4px; line-height: 1.3; }
+            body:not(.print-label-mode) .instructions-box { background: transparent; color: #000; border: 1px solid #000; padding: 8px; page-break-inside: avoid; }
+            body:not(.print-label-mode) .instructions-list li { margin-bottom: 3px; }
 
-            /* --- SCENARIO B: LABEL (100mm x 62mm LANDSCAPE) --- */
+            /* --- LABEL BROTHER --- */
             body.print-label-mode #resultContainer { display: none !important; }
             body.print-label-mode #labelPreview { 
-                display: block !important; position: fixed; top: 0; left: 0;
-                width: 100mm; height: 62mm; border: none; margin: 0; padding: 0;
+                display: block !important; position: fixed; top: 0; left: 0; width: 100mm; height: 62mm; border: none; margin: 0; padding: 0;
             }
             body.print-label-mode @page { size: 100mm 62mm; margin: 0; }
         }
@@ -162,7 +147,7 @@
 
 <div class="container" id="mainApp">
     <h1>ZARKOLIA LAB</h1>
-    <p class="subtitle">Production v25 (Beautiful Print Layout)</p>
+    <p class="subtitle">Production v26 (GMP Traceability Mode)</p>
     
     <div class="control-panel">
         <label>ΕΠΙΛΟΓΗ ΠΡΟΪΟΝΤΟΣ</label>
@@ -286,40 +271,22 @@
     // --- FULL RECIPES ---
     const recipes = {
         bruise: {
-            title: "BRUISE OFF",
-            desc: "Stearic Formula (Based on 5kg specs)",
-            initials: "BO",
-            shelfLife: 18,
-            type: "standard",
-            safetyNote: "Ενισχυμένο Cetostearyl/Stearic. Χωρίς GMS.",
+            title: "BRUISE OFF", desc: "Stearic Formula (Based on 5kg specs)", initials: "BO", shelfLife: 18, type: "standard", safetyNote: "Ενισχυμένο Cetostearyl/Stearic. Χωρίς GMS.",
             ingredients: [
                 { name: "--- ΦΑΣΗ Α (ΛΙΠΑΡΗ - 75°C) ---", isHeader: true },
-                { name: "Arnica Oil", pct: 9.10 },
-                { name: "Vaseline", pct: 9.10 },
-                { name: "Cetostearyl Alcohol", pct: 7.70 },
-                { name: "Stearic Acid", pct: 3.30 },
-                { name: "Linseed Oil", pct: 1.80 },
-                { name: "Propyl Paraben", pct: 0.10 },
+                { name: "Arnica Oil", pct: 9.10 }, { name: "Vaseline", pct: 9.10 }, { name: "Cetostearyl Alcohol", pct: 7.70 }, { name: "Stearic Acid", pct: 3.30 }, { name: "Linseed Oil", pct: 1.80 }, { name: "Propyl Paraben", pct: 0.10 },
                 { name: "--- ΦΑΣΗ Β (ΥΔΑΤΙΚΗ - 75°C) ---", isHeader: true },
-                { name: "Aqua (Distilled Water)", pct: 0, isQS: true },
-                { name: "Polysorbate 80", pct: 3.70 },
-                { name: "Propylene Glycol", pct: 1.80 },
-                { name: "Methyl Paraben", pct: 0.10 },
+                { name: "Aqua (Distilled Water)", pct: 0, isQS: true }, { name: "Polysorbate 80", pct: 3.70 }, { name: "Propylene Glycol", pct: 1.80 }, { name: "Methyl Paraben", pct: 0.10 },
                 { name: "--- ΦΑΣΗ Γ (< 40°C) ---", isHeader: true },
                 { name: "Lavender Lemon Balm", pct: 0.90 }
             ],
             instructions: ["1. Θέρμανση Φάσης Α και Β στους 75°C ξεχωριστά.", "2. Προσθήκη Α σε Β με έντονη ανάδευση.", "3. Προσθήκη Φάσης Γ (Άρωμα) όταν η θερμοκρασία πέσει < 40°C."]
         },
         zplast: {
-            title: "ZPLAST TOTAL REPAIR",
-            desc: "Standard Formula",
-            initials: "ZP",
-            shelfLife: 12,
-            type: "standard",
+            title: "ZPLAST TOTAL REPAIR", desc: "Standard Formula", initials: "ZP", shelfLife: 12, type: "standard",
             ingredients: [
                 { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ) ---", isHeader: true },
-                { name: "Aqua (Νερό)", pct: 0, isQS: true },
-                { name: "Glycerin", pct: 4.0 }, { name: "Calamine Powder", pct: 1.0 }, { name: "Zea Mays Starch", pct: 0.5 }, { name: "Sodium Hyaluronate 1%", pct: 1.0 }, { name: "Citric Acid", pct: 0.07 },
+                { name: "Aqua (Νερό)", pct: 0, isQS: true }, { name: "Glycerin", pct: 4.0 }, { name: "Calamine Powder", pct: 1.0 }, { name: "Zea Mays Starch", pct: 0.5 }, { name: "Sodium Hyaluronate 1%", pct: 1.0 }, { name: "Citric Acid", pct: 0.07 },
                 { name: "--- ΦΑΣΗ Β (75°C) ---", isHeader: true },
                 { name: "Xalifin-15", pct: 5.0 }, { name: "Paraffinum Liquidum", pct: 7.5 }, { name: "Linum Usitatissimum Oil", pct: 2.5 }, { name: "Avocado Oil", pct: 2.0 }, { name: "Cetostearyl Alcohol", pct: 1.0 }, { name: "Tocopherol (Vit E)", pct: 0.5 },
                 { name: "--- ΦΑΣΗ Γ (<40°C) ---", isHeader: true },
@@ -333,8 +300,7 @@
             instructions: ["1. Προ-ανάμειξη των λαδιών με το άρωμα.", "2. Προσθήκη του Gel Αλόης στα λάδια.", "3. Ενσωμάτωση του μίγματος στη Βάση Gel-Cream."]
         },
         zboost: {
-            title: "Z-BOOST CAPS", desc: "Ginger/ALA", initials: "ZB", shelfLife: 24, type: "capsule", capsuleContentWeight: 0.5864,
-            safetyNote: "Ευαίσθητο στην υγρασία. Πλήρωση σε Dry Room.",
+            title: "Z-BOOST CAPS", desc: "Ginger/ALA", initials: "ZB", shelfLife: 24, type: "capsule", capsuleContentWeight: 0.5864, safetyNote: "Ευαίσθητο στην υγρασία. Πλήρωση σε Dry Room.",
             ingredients: [ { name: "a-Lipoic Acid (ALA)", pct: 34.11 }, { name: "N-Acetyl-L-Cysteine (NAC)", pct: 34.11 }, { name: "Ginger Extract", pct: 17.05 }, { name: "Coenzyme Q10", pct: 8.53 }, { name: "Zinc Gluconate", pct: 5.97 }, { name: "Magnesium Stearate", pct: 0.19 }, { name: "Selenium Yeast", pct: 0.03 }, { name: "Sodium Ascorbate", pct: 0.02 } ],
             instructions: ["1. Κοσκινίστε όλες τις σκόνες.", "2. Γεωμετρική αραίωση μικρο-συστατικών με Ginger.", "3. Προσθήκη ALA & NAC.", "4. Τέλος το Mg Stearate (μίξη 3 λεπτά)."]
         },
@@ -409,18 +375,18 @@
         const monthStr = pad(now.getMonth() + 1);
         const yearStr = now.getFullYear();
         const lotNo = "Z" + (recipe.initials || "XX") + monthStr + yearStr;
-        const expStr = monthStr + "/" + yearStr; // Label EXP format
+        const expStr = monthStr + "/" + yearStr; 
         
-        // Populate Label Preview
+        // Populate Label
         document.getElementById('lblTitle').innerText = recipe.title;
         document.getElementById('lblLot').innerText = lotNo;
         document.getElementById('lblExpDate').innerText = expStr;
         document.getElementById('paoText').innerText = shelfMonths + "M";
 
-        // --- HTML RENDER (A4 Print + Screen) ---
+        // --- HTML RENDER (A4 GMP Worksheet) ---
         let html = `
             <div class="print-doc-header">
-                <span>ZARKOLIA LAB - ΦΥΛΛΟ ΠΑΡΑΓΩΓΗΣ</span>
+                <span>ZARKOLIA LAB - GMP ΦΥΛΛΟ ΠΑΡΑΓΩΓΗΣ</span>
                 <span>Ημ/νία: ${printDate}</span>
             </div>
             
@@ -434,7 +400,12 @@
             <div class="target-info">${info}</div>
             
             <table>
-                <tr><th width="70%">ΣΥΣΤΑΤΙΚΟ</th><th width="30%" style="text-align:right">ΠΟΣΟΤΗΤΑ</th></tr>
+                <tr>
+                    <th width="5%" style="text-align:center;">✔</th>
+                    <th width="35%">ΣΥΣΤΑΤΙΚΟ</th>
+                    <th width="40%">IXNHΛΑΣΙΜΟΤΗΤΑ (Raw Mat.)</th>
+                    <th width="20%" style="text-align:right">ΠΟΣΟΤΗΤΑ</th>
+                </tr>
         `;
 
         let sumPct = 0;
@@ -442,15 +413,25 @@
 
         recipe.ingredients.forEach(i => {
             if (i.isHeader) {
-                html += `<tr class="phase-row"><td colspan="2">${i.name}</td></tr>`;
+                html += `<tr class="phase-row"><td colspan="4">${i.name}</td></tr>`;
             } else {
                 let finalPct = i.isQS ? Math.max(0, 100 - sumPct) : i.pct;
                 let amt = (finalPct / 100) * weight;
-                html += `<tr><td>${i.name} ${i.note ? `<small>(${i.note})</small>`:''}</td><td class="amount-col">${amt.toFixed(2)} g</td></tr>`;
+                let noteStr = i.note ? ` <br><small style="color:#666;">(${i.note})</small>` : '';
+                
+                html += `<tr>
+                    <td style="text-align:center;"><input type="checkbox"></td>
+                    <td><strong>${i.name}</strong>${noteStr}</td>
+                    <td class="traceability-box">
+                        Lot: ....................................<br>
+                        Exp: ......./......./...................
+                    </td>
+                    <td class="amount-col">${amt.toFixed(2)} g</td>
+                </tr>`;
             }
         });
 
-        html += `<tr class="total-row"><td>ΣΥΝΟΛΟ ΜΙΓΜΑΤΟΣ</td><td style="text-align:right">${weight.toFixed(1)} g</td></tr></table>`;
+        html += `<tr class="total-row"><td colspan="3" style="text-align:right;">ΣΥΝΟΛΟ ΜΙΓΜΑΤΟΣ</td><td style="text-align:right">${weight.toFixed(1)} g</td></tr></table>`;
 
         if (document.getElementById('showInstructions').checked && recipe.instructions) {
             html += `
