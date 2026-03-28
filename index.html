@@ -14,9 +14,9 @@
            --- 1. ΓΕΝΙΚΟ ΣΤΥΛ & ΧΡΩΜΑΤΑ (UI/UX) ---
            ========================================= */
         :root {
-            --primary: #1e3a8a; /* Deep Indigo */
+            --primary: #1e3a8a; 
             --primary-light: #eff6ff;
-            --accent: #f59e0b; /* Amber */
+            --accent: #f59e0b; 
             --accent-hover: #d97706;
             --bg-color: #f3f4f6;
             --card-bg: #ffffff;
@@ -108,7 +108,7 @@
         .print-label-toggle { color: #c2410c; padding-top: 10px; border-top: 1px solid #f3f4f6; margin-top: 5px; }
 
         /* =========================================
-           --- 2. ΑΠΟΤΕΛΕΣΜΑΤΑ & ΠΙΝΑΚΑΣ (RESPONSIVE) ---
+           --- 2. ΑΠΟΤΕΛΕΣΜΑΤΑ & ΠΙΝΑΚΑΣ (MOBILE-FIT) ---
            ========================================= */
         #resultContainer { margin-top: 30px; display: none; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         .print-doc-header { display: none; }
@@ -119,25 +119,43 @@
         
         .target-info { padding:12px; background:#dbeafe; color:#1e40af; font-weight:800; text-align:center; font-size: 1.1em; border-bottom: 1px solid #bfdbfe; }
         
-        /* Mobile Responsive Table Wrapper */
-        .table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        /* Table Layout - No horizontal scrollbar */
+        .table-wrapper { width: 100%; overflow: hidden; }
         
-        table { width: 100%; border-collapse: collapse; font-size: 0.95em; min-width: 600px; /* Forces scroll on tiny screens instead of breaking */ }
-        th, td { padding: 12px 15px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.95em; table-layout: fixed; }
+        th, td { padding: 12px 8px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; word-wrap: break-word; }
         th { background: #f8fafc; text-align: left; color: var(--text-muted); font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.5px; }
-        .phase-row td { background: #f1f5f9; color: #334155; font-weight: 800; padding-top: 20px; text-transform: uppercase; font-size: 0.9em; }
-        .amount-col { text-align: right; color: var(--success); font-weight: 800; font-size: 1.1em; }
+        
+        /* Set specific column widths to force fit */
+        th:nth-child(1), td:nth-child(1) { width: 8%; text-align: center; } /* Checkbox */
+        th:nth-child(2), td:nth-child(2) { width: 37%; } /* Ingredient */
+        th:nth-child(3), td:nth-child(3) { width: 30%; } /* Lot/Exp */
+        th:nth-child(4), td:nth-child(4) { width: 25%; text-align: right; } /* Quantity */
+
+        .phase-row td { background: #f1f5f9; color: #334155; font-weight: 800; padding-top: 15px; text-transform: uppercase; font-size: 0.9em; }
+        .amount-col { color: var(--success); font-weight: 800; font-size: 1.05em; }
         .pct-label { display: block; font-size: 0.75em; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
         .total-row { background: #ecfdf5; border-top: 2px solid #a7f3d0; }
-        .total-row td { color: #065f46; font-weight: 800; font-size: 1.1em; }
+        .total-row td { color: #065f46; font-weight: 800; font-size: 1.05em; }
         
-        .traceability-box { font-size: 0.85em; color: #9ca3af; line-height: 1.8; font-family: monospace; }
+        .traceability-box { font-size: 0.8em; color: #9ca3af; line-height: 1.8; font-family: monospace; white-space: nowrap; overflow: hidden; text-overflow: clip;}
         
         .safety-box { background: #fef2f2; color: #b91c1c; padding: 15px; border-left: 5px solid #ef4444; font-size: 0.9em; line-height: 1.5; border-bottom: 1px solid #fecaca; }
         .instructions-box { background: #f0fdf4; color: #166534; padding: 20px; border-top: 1px solid #bbf7d0; }
         .instructions-box strong { display: block; margin-bottom: 10px; font-size: 1.1em; text-transform: uppercase; }
         .instructions-list { padding-left: 20px; margin: 0; }
         .instructions-list li { margin-bottom: 8px; font-size: 0.95em; line-height: 1.5; }
+
+        /* --- MOBILE OPTIMIZATION (< 600px) --- */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 15px; }
+            table { font-size: 0.8em; }
+            th, td { padding: 8px 4px; }
+            .traceability-box { font-size: 0.7em; letter-spacing: -0.5px; }
+            .amount-col { font-size: 0.95em; }
+            input[type="checkbox"] { transform: scale(1.1); }
+        }
 
         /* --- LABEL PREVIEW (Οθόνη) --- */
         #labelPreview { display: none; width: 100mm; height: 62mm; margin: 20px auto; box-sizing: border-box; background: white; font-family: Arial, sans-serif; border: 2px dashed #94a3b8; padding: 2mm; border-radius: 8px; }
@@ -165,24 +183,22 @@
             
             @page { size: A4 portrait; margin: 10mm 12mm; }
 
-            /* Remove table scroll for print */
-            .table-wrapper { overflow-x: visible !important; }
-            body:not(.print-label-mode) table { min-width: auto; }
+            /* Remove width constraints for print */
+            body:not(.print-label-mode) table { table-layout: auto; font-size: 9.5pt; }
+            body:not(.print-label-mode) th:nth-child(1), body:not(.print-label-mode) td:nth-child(1) { width: 5%; }
+            body:not(.print-label-mode) th:nth-child(2), body:not(.print-label-mode) td:nth-child(2) { width: 35%; }
+            body:not(.print-label-mode) th:nth-child(3), body:not(.print-label-mode) td:nth-child(3) { width: 40%; }
+            body:not(.print-label-mode) th:nth-child(4), body:not(.print-label-mode) td:nth-child(4) { width: 20%; }
 
-            body:not(.print-label-mode) .print-doc-header {
-                display: flex; justify-content: space-between; border-bottom: 2px solid #000; 
-                padding-bottom: 5px; margin-bottom: 10px; font-weight: bold; font-size: 10pt; color: #000;
-            }
-            
+            body:not(.print-label-mode) .print-doc-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 10px; font-weight: bold; font-size: 10pt; color: #000; }
             body:not(.print-label-mode) .recipe-header { background: transparent; color: #000; padding: 0; margin-bottom: 10px; text-align: center; border-bottom: none; }
             body:not(.print-label-mode) .recipe-title { font-size: 16pt; text-transform: uppercase; border-bottom: 2px solid #000; display: inline-block; padding-bottom: 3px; letter-spacing: 0; }
             body:not(.print-label-mode) .recipe-desc { font-weight: bold; }
-            
             body:not(.print-label-mode) .target-info { background: transparent; color: #000; border: 1px solid #000; padding: 5px; font-size: 11pt; margin-bottom: 10px; }
             body:not(.print-label-mode) .safety-box { background: transparent; color: #000; border: 1px solid #000; border-left: 5px solid #000; padding: 5px 8px; margin-bottom: 10px; font-weight: bold; }
 
             body:not(.print-label-mode) table { border: 1px solid #000; margin-bottom: 15px; }
-            body:not(.print-label-mode) th, body:not(.print-label-mode) td { padding: 6px 8px; border-bottom: 1px solid #999; color: #000; }
+            body:not(.print-label-mode) th, body:not(.print-label-mode) td { padding: 6px 8px; border-bottom: 1px solid #999; color: #000; white-space: normal;}
             body:not(.print-label-mode) th { background-color: #f0f0f0; border-bottom: 2px solid #000; }
             body:not(.print-label-mode) .phase-row td { background-color: #e5e5e5; font-size: 10pt; border-top: 2px solid #000; border-bottom: 1px solid #000; }
             body:not(.print-label-mode) .traceability-box { color: #000; font-size: 9pt; }
@@ -217,7 +233,7 @@
 
 <div class="container" id="mainApp">
     <h1>ZARKOLIA LAB</h1>
-    <p class="subtitle">Production System v30</p>
+    <p class="subtitle">Production System v31</p>
     
     <div class="control-panel">
         <label>1. ΕΠΙΛΟΓΗ ΠΡΟΪΟΝΤΟΣ</label>
@@ -479,10 +495,10 @@
             <div class="table-wrapper">
                 <table>
                     <tr>
-                        <th width="5%" style="text-align:center;">✔</th>
-                        <th width="35%">ΣΥΣΤΑΤΙΚΟ</th>
-                        <th width="40%">IXNHΛΑΣΙΜΟΤΗΤΑ (Raw Mat.)</th>
-                        <th width="20%" style="text-align:right">ΠΟΣΟΤΗΤΑ (%)</th>
+                        <th style="text-align:center;">✔</th>
+                        <th>ΣΥΣΤΑΤΙΚΟ</th>
+                        <th>IXNHΛΑΣΙΜΟΤΗΤΑ</th>
+                        <th style="text-align:right">ΠΟΣΟΤΗΤΑ</th>
                     </tr>
         `;
 
@@ -497,12 +513,13 @@
                 let amt = (finalPct / 100) * weight;
                 let noteStr = i.note ? ` <br><small style="color:var(--text-muted);">(${i.note})</small>` : '';
                 
+                // Χρήση πιο "έξυπνων" τελειών για να μη χαλάει το πλάτος στα κινητά
                 html += `<tr>
                     <td style="text-align:center;"><input type="checkbox"></td>
                     <td><strong>${i.name}</strong>${noteStr}</td>
                     <td class="traceability-box">
-                        Lot: ....................................<br>
-                        Exp: ......./......./...................
+                        Lot: ___________<br>
+                        Exp: __/__/_____
                     </td>
                     <td class="amount-col">
                         ${amt.toFixed(2)} g
@@ -514,7 +531,7 @@
 
         html += `
                 <tr class="total-row">
-                    <td colspan="3" style="text-align:right;">ΣΥΝΟΛΟ ΜΙΓΜΑΤΟΣ</td>
+                    <td colspan="3" style="text-align:right;">ΣΥΝΟΛΟ:</td>
                     <td style="text-align:right">
                         ${weight.toFixed(1)} g
                         <span class="pct-label">(100.00%)</span>
