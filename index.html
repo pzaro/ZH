@@ -60,6 +60,7 @@
         th { background: #f5f5f5; text-align: left;}
         .phase-row td { background: #eceff1; color: #455a64; font-weight: bold; padding-top: 15px; text-transform: uppercase; }
         .amount-col { text-align: right; color: #2e7d32; font-weight: bold; font-size: 1.1em; }
+        .pct-label { display: block; font-size: 0.75em; color: #666; font-weight: normal; margin-top: 2px; }
         .total-row { background: #e8f5e9; font-weight: bold; color: #1b5e20; }
         
         .traceability-box { font-size: 0.85em; color: #666; line-height: 1.6; }
@@ -122,6 +123,7 @@
             input[type="checkbox"] { -webkit-print-color-adjust: exact; color-adjust: exact; }
 
             body:not(.print-label-mode) .total-row td { background: transparent; color: #000; border-top: 3px double #000; font-size: 11pt; }
+            body:not(.print-label-mode) .pct-label { color: #555; }
 
             body:not(.print-label-mode) .instructions-box { background: transparent; color: #000; border: 1px solid #000; padding: 8px; page-break-inside: avoid; }
             body:not(.print-label-mode) .instructions-list li { margin-bottom: 3px; }
@@ -147,7 +149,7 @@
 
 <div class="container" id="mainApp">
     <h1>ZARKOLIA LAB</h1>
-    <p class="subtitle">Production v27 (GMP Traceability Mode)</p>
+    <p class="subtitle">Production v28 (GMP & Concentration Info)</p>
     
     <div class="control-panel">
         <label>ΕΠΙΛΟΓΗ ΠΡΟΪΟΝΤΟΣ</label>
@@ -417,7 +419,7 @@
                     <th width="5%" style="text-align:center;">✔</th>
                     <th width="35%">ΣΥΣΤΑΤΙΚΟ</th>
                     <th width="40%">IXNHΛΑΣΙΜΟΤΗΤΑ (Raw Mat.)</th>
-                    <th width="20%" style="text-align:right">ΠΟΣΟΤΗΤΑ</th>
+                    <th width="20%" style="text-align:right">ΠΟΣΟΤΗΤΑ (%)</th>
                 </tr>
         `;
 
@@ -439,12 +441,23 @@
                         Lot: ....................................<br>
                         Exp: ......./......./...................
                     </td>
-                    <td class="amount-col">${amt.toFixed(2)} g</td>
+                    <td class="amount-col">
+                        ${amt.toFixed(2)} g
+                        <span class="pct-label">(${finalPct.toFixed(2)}%)</span>
+                    </td>
                 </tr>`;
             }
         });
 
-        html += `<tr class="total-row"><td colspan="3" style="text-align:right;">ΣΥΝΟΛΟ ΜΙΓΜΑΤΟΣ</td><td style="text-align:right">${weight.toFixed(1)} g</td></tr></table>`;
+        html += `
+            <tr class="total-row">
+                <td colspan="3" style="text-align:right;">ΣΥΝΟΛΟ ΜΙΓΜΑΤΟΣ</td>
+                <td style="text-align:right">
+                    ${weight.toFixed(1)} g
+                    <span class="pct-label">(100.00%)</span>
+                </td>
+            </tr>
+        </table>`;
 
         if (document.getElementById('showInstructions').checked && recipe.instructions) {
             html += `
