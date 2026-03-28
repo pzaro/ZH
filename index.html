@@ -6,124 +6,191 @@
     <title>ZARKOLIA Lab</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#1a237e">
+    <meta name="theme-color" content="#1e3a8a">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3004/3004458.png">
 
     <style>
-        /* --- ΓΕΝΙΚΟ ΣΤΥΛ (ΟΘΟΝΗ) --- */
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; padding: 15px; color: #333; margin: 0; }
+        /* =========================================
+           --- 1. ΓΕΝΙΚΟ ΣΤΥΛ & ΧΡΩΜΑΤΑ (UI/UX) ---
+           ========================================= */
+        :root {
+            --primary: #1e3a8a; /* Deep Indigo */
+            --primary-light: #eff6ff;
+            --accent: #f59e0b; /* Amber */
+            --accent-hover: #d97706;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --success: #059669;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); 
+            padding: 15px; 
+            color: var(--text-main); 
+            margin: 0; 
+            min-height: 100vh;
+        }
         
-        /* Login */
-        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a237e; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; }
-        #loginBox { background: white; padding: 30px; border-radius: 15px; text-align: center; width: 80%; max-width: 300px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-        #passwordInput { padding: 15px; font-size: 1.2em; width: 100%; box-sizing: border-box; margin-bottom: 15px; border: 2px solid #ddd; border-radius: 8px; text-align: center; -webkit-text-security: disc;}
-        #loginBtn { background: #ff5722; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; }
+        /* --- Login Screen --- */
+        #loginOverlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%); 
+            z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; 
+        }
+        #loginBox { 
+            background: var(--card-bg); padding: 35px 25px; border-radius: 20px; 
+            text-align: center; width: 85%; max-width: 320px; 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); 
+        }
+        #loginBox h2 { color: var(--primary); margin-top: 0; font-weight: 800; letter-spacing: 1px; }
+        #passwordInput { 
+            padding: 15px; font-size: 1.5em; width: 100%; box-sizing: border-box; margin-bottom: 20px; 
+            border: 2px solid var(--border-color); border-radius: 12px; text-align: center; 
+            -webkit-text-security: disc; outline: none; transition: border 0.3s;
+        }
+        #passwordInput:focus { border-color: var(--primary); }
+        #loginBtn { 
+            background: var(--accent); color: white; border: none; padding: 15px; width: 100%; 
+            border-radius: 12px; font-size: 1.1em; font-weight: bold; cursor: pointer; 
+            transition: transform 0.2s, background 0.3s; box-shadow: 0 4px 6px rgba(245, 158, 11, 0.3);
+        }
+        #loginBtn:active { transform: scale(0.97); background: var(--accent-hover); }
+
+        /* --- Main App Container --- */
+        .container { 
+            max-width: 850px; margin: 0 auto; background: var(--card-bg); padding: 25px; 
+            border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); display: none; 
+        }
+        h1 { text-align: center; color: var(--primary); margin: 0 0 5px 0; font-size: 1.6em; font-weight: 800; letter-spacing: -0.5px; }
+        p.subtitle { text-align: center; color: var(--text-muted); font-size: 0.9em; margin-bottom: 25px; font-weight: 500; }
         
-        /* App Container */
-        .container { max-width: 850px; margin: 0 auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: none; }
-        h1 { text-align: center; color: #1a237e; margin: 10px 0; font-size: 1.4em; }
-        p.subtitle { text-align: center; color: #666; font-size: 0.9em; margin-bottom: 20px; }
-        
-        .control-panel { background: #e8eaf6; padding: 20px; border-radius: 12px; border: 1px solid #c5cae9; }
-        label { display: block; margin-bottom: 8px; font-weight: 600; color: #3f51b5; }
-        select, input[type="number"] { padding: 15px; font-size: 1.1em; border-radius: 10px; border: 2px solid #3f51b5; width: 100%; box-sizing: border-box; font-weight: bold; background: white; }
+        /* --- Control Panel --- */
+        .control-panel { 
+            background: var(--primary-light); padding: 20px; border-radius: 16px; 
+            border: 1px solid #bfdbfe; margin-bottom: 25px;
+        }
+        label { display: block; margin-bottom: 8px; font-weight: 700; color: #1e40af; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; }
+        select, input[type="number"] { 
+            padding: 14px; font-size: 1.1em; border-radius: 12px; border: 2px solid #93c5fd; 
+            width: 100%; box-sizing: border-box; font-weight: bold; background: white; 
+            color: var(--text-main); outline: none; transition: border 0.2s;
+        }
+        select:focus, input[type="number"]:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1); }
         
         /* Caps Inputs */
-        .caps-panel { background: #fff3e0; padding: 15px; border-radius: 10px; border: 2px solid #ffb74d; margin-top: 15px; }
-        .caps-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px dashed #ffe0b2; padding-bottom: 10px; }
+        .caps-panel { background: #fffbeb; padding: 15px; border-radius: 12px; border: 2px solid #fde68a; margin-top: 15px; }
+        .caps-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px dashed #fcd34d; padding-bottom: 12px; }
         .caps-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .caps-label { font-weight: bold; color: #e65100; flex: 2; text-align: left; font-size: 0.9em; }
+        .caps-label { font-weight: 700; color: #b45309; flex: 2; text-align: left; font-size: 0.95em; }
         .caps-input { flex: 1; }
-        .caps-input input { padding: 8px; font-size: 1.1em; text-align: center; border-color: #ff9800; }
+        .caps-input input { padding: 10px; font-size: 1.2em; text-align: center; border-color: #fcd34d; color: #b45309; }
 
-        .btn-group { display: flex; gap: 10px; margin-top: 25px; }
-        button { flex: 1; padding: 15px; font-size: 1em; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .btn-calc { background-color: #3f51b5; color: white; }
-        .btn-print { background-color: #546e7a; color: white; }
-
-        .checkbox-group { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; align-items: center; background: white; padding: 10px; border-radius: 8px; }
-        .checkbox-wrapper { display: flex; align-items: center; gap: 10px; font-size: 1em; cursor: pointer; }
-        input[type="checkbox"] { transform: scale(1.3); cursor: pointer; }
-
-        /* Results (Screen) */
-        #resultContainer { margin-top: 30px; display: none; border: 1px solid #eee; border-radius: 10px; overflow: hidden; }
-        .print-doc-header { display: none; }
-        
-        .recipe-header { background-color: #263238; color: white; padding: 15px; }
-        .recipe-title { font-size: 1.4em; font-weight: bold; display: block; }
-        .recipe-desc { display:block; font-size:0.9em; opacity:0.8; }
-        
-        .target-info { padding:10px; background:#e3f2fd; color:#0d47a1; font-weight:bold; text-align:center; font-size: 1.1em; }
-        
-        table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
-        th, td { padding: 10px; border-bottom: 1px solid #eee; vertical-align: middle; }
-        th { background: #f5f5f5; text-align: left;}
-        .phase-row td { background: #eceff1; color: #455a64; font-weight: bold; padding-top: 15px; text-transform: uppercase; }
-        .amount-col { text-align: right; color: #2e7d32; font-weight: bold; font-size: 1.1em; }
-        .pct-label { display: block; font-size: 0.75em; color: #666; font-weight: normal; margin-top: 2px; }
-        .total-row { background: #e8f5e9; font-weight: bold; color: #1b5e20; }
-        
-        .traceability-box { font-size: 0.85em; color: #666; line-height: 1.6; }
-        
-        .safety-box { background: #fff3e0; color: #bf360c; padding: 15px; border-left: 5px solid #ff5722; font-size: 0.9em; line-height: 1.4; }
-        .instructions-box { background: #f1f8e9; color: #33691e; padding: 15px; border-top: 2px solid #aed581; }
-        .instructions-list { padding-left: 20px; margin-top: 5px; margin-bottom: 0; }
-        .instructions-list li { margin-bottom: 8px; font-size: 0.95em; }
-
-        /* --- LABEL PREVIEW (100x62 Landscape) --- */
-        #labelPreview { 
-            display: none; width: 100mm; height: 62mm; margin: 20px auto; box-sizing: border-box; background: white; font-family: Arial, sans-serif; border: 1px dashed #ccc; padding: 2mm;
+        /* Buttons */
+        .btn-group { display: flex; gap: 15px; margin-top: 25px; flex-wrap: wrap; }
+        button { 
+            flex: 1; min-width: 140px; padding: 16px; font-size: 1em; border: none; border-radius: 12px; 
+            font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; 
+            transition: all 0.2s ease; 
         }
-        .lbl-container { display: flex; width: 100%; height: 100%; border: 2px solid black; border-radius: 5px; padding: 5px; box-sizing: border-box; }
-        .lbl-left { flex: 1.5; display: flex; flex-direction: column; justify-content: space-between; padding-right: 10px; border-right: 1px solid #ccc; }
-        .lbl-right { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-left: 10px; }
-        .lbl-header { font-size: 9pt; font-weight: bold; text-transform: uppercase; color: #555; }
-        .lbl-title { font-size: 18pt; font-weight: 900; line-height: 1.1; margin-top: 5px; }
-        .lbl-meta { font-size: 8pt; margin-top: auto; color: #333; }
-        .lbl-data-row { font-size: 10pt; font-weight: bold; margin: 4px 0; width: 100%; text-align: left;}
-        .lbl-data-val { font-size: 12pt; display: block;}
-        .pao-icon { width: 35px; height: 35px; margin-top: 10px; }
+        .btn-calc { background-color: var(--primary); color: white; box-shadow: 0 4px 6px rgba(30, 58, 138, 0.2); }
+        .btn-calc:hover { background-color: #1e3a8a; transform: translateY(-2px); }
+        .btn-print { background-color: #475569; color: white; box-shadow: 0 4px 6px rgba(71, 85, 105, 0.2); }
+        .btn-print:hover { background-color: #334155; transform: translateY(-2px); }
+
+        /* Checkboxes */
+        .checkbox-group { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; background: white; padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); }
+        .checkbox-wrapper { display: flex; align-items: center; gap: 12px; font-size: 1em; font-weight: 600; cursor: pointer; color: var(--text-main); }
+        input[type="checkbox"] { transform: scale(1.4); accent-color: var(--primary); cursor: pointer; }
+        .print-label-toggle { color: #c2410c; padding-top: 10px; border-top: 1px solid #f3f4f6; margin-top: 5px; }
 
         /* =========================================
-           --- PRINT SETTINGS (GMP A4 & LABEL) ---
+           --- 2. ΑΠΟΤΕΛΕΣΜΑΤΑ & ΠΙΝΑΚΑΣ (RESPONSIVE) ---
+           ========================================= */
+        #resultContainer { margin-top: 30px; display: none; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .print-doc-header { display: none; }
+        
+        .recipe-header { background: linear-gradient(to right, #1e3a8a, #3b82f6); color: white; padding: 20px; }
+        .recipe-title { font-size: 1.5em; font-weight: 800; display: block; letter-spacing: 0.5px; }
+        .recipe-desc { display:block; font-size:0.95em; opacity:0.9; margin-top: 5px; }
+        
+        .target-info { padding:12px; background:#dbeafe; color:#1e40af; font-weight:800; text-align:center; font-size: 1.1em; border-bottom: 1px solid #bfdbfe; }
+        
+        /* Mobile Responsive Table Wrapper */
+        .table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 0.95em; min-width: 600px; /* Forces scroll on tiny screens instead of breaking */ }
+        th, td { padding: 12px 15px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+        th { background: #f8fafc; text-align: left; color: var(--text-muted); font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.5px; }
+        .phase-row td { background: #f1f5f9; color: #334155; font-weight: 800; padding-top: 20px; text-transform: uppercase; font-size: 0.9em; }
+        .amount-col { text-align: right; color: var(--success); font-weight: 800; font-size: 1.1em; }
+        .pct-label { display: block; font-size: 0.75em; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+        .total-row { background: #ecfdf5; border-top: 2px solid #a7f3d0; }
+        .total-row td { color: #065f46; font-weight: 800; font-size: 1.1em; }
+        
+        .traceability-box { font-size: 0.85em; color: #9ca3af; line-height: 1.8; font-family: monospace; }
+        
+        .safety-box { background: #fef2f2; color: #b91c1c; padding: 15px; border-left: 5px solid #ef4444; font-size: 0.9em; line-height: 1.5; border-bottom: 1px solid #fecaca; }
+        .instructions-box { background: #f0fdf4; color: #166534; padding: 20px; border-top: 1px solid #bbf7d0; }
+        .instructions-box strong { display: block; margin-bottom: 10px; font-size: 1.1em; text-transform: uppercase; }
+        .instructions-list { padding-left: 20px; margin: 0; }
+        .instructions-list li { margin-bottom: 8px; font-size: 0.95em; line-height: 1.5; }
+
+        /* --- LABEL PREVIEW (Οθόνη) --- */
+        #labelPreview { display: none; width: 100mm; height: 62mm; margin: 20px auto; box-sizing: border-box; background: white; font-family: Arial, sans-serif; border: 2px dashed #94a3b8; padding: 2mm; border-radius: 8px; }
+        .lbl-container { display: flex; width: 100%; height: 100%; border: 3px solid #000; border-radius: 6px; padding: 5px; box-sizing: border-box; }
+        .lbl-left { flex: 1.6; display: flex; flex-direction: column; justify-content: space-between; padding-right: 10px; border-right: 2px solid #000; }
+        .lbl-right { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-left: 10px; }
+        .lbl-header { font-size: 9pt; font-weight: 900; text-transform: uppercase; color: #000; border-bottom: 2px solid #000; padding-bottom: 3px; }
+        .lbl-title { font-size: 18pt; font-weight: 900; line-height: 1.1; margin-top: 5px; color: #000; letter-spacing: -0.5px; }
+        .lbl-meta { font-size: 8pt; margin-top: auto; color: #000; font-weight: bold; }
+        .lbl-data-row { font-size: 10pt; font-weight: bold; margin: 5px 0; width: 100%; text-align: left; color: #000;}
+        .lbl-data-val { font-size: 13pt; display: block; font-family: monospace;}
+        .pao-icon { width: 38px; height: 38px; margin-top: 10px; }
+
+        /* =========================================
+           --- 3. PRINT SETTINGS (Η Μαγεία της Εκτύπωσης) ---
            ========================================= */
         @media print {
             #loginOverlay, .control-panel, h1, .subtitle { display: none !important; }
-            .container { box-shadow: none; border: none; margin: 0; padding: 0; width: 100%; max-width: none; }
+            .container { box-shadow: none; border: none; margin: 0; padding: 0; width: 100%; max-width: none; border-radius: 0; }
 
             /* --- A4 GMP WORKSHEET --- */
-            body:not(.print-label-mode) #resultContainer { display: block; width: 100%; border: none; }
+            body:not(.print-label-mode) #resultContainer { display: block; width: 100%; border: none; box-shadow: none; border-radius: 0; }
             body:not(.print-label-mode) #labelPreview { display: none; }
             body:not(.print-label-mode) { background: white; font-size: 10pt; color: #000; }
             
             @page { size: A4 portrait; margin: 10mm 12mm; }
 
-            /* Header */
+            /* Remove table scroll for print */
+            .table-wrapper { overflow-x: visible !important; }
+            body:not(.print-label-mode) table { min-width: auto; }
+
             body:not(.print-label-mode) .print-doc-header {
-                display: flex; justify-content: space-between; border-bottom: 2px solid #333; 
+                display: flex; justify-content: space-between; border-bottom: 2px solid #000; 
                 padding-bottom: 5px; margin-bottom: 10px; font-weight: bold; font-size: 10pt; color: #000;
             }
             
-            body:not(.print-label-mode) .recipe-header { background: transparent; color: #000; padding: 0; margin-bottom: 10px; text-align: center; }
-            body:not(.print-label-mode) .recipe-title { font-size: 16pt; text-transform: uppercase; border-bottom: 1px solid #ccc; display: inline-block; padding-bottom: 3px; }
+            body:not(.print-label-mode) .recipe-header { background: transparent; color: #000; padding: 0; margin-bottom: 10px; text-align: center; border-bottom: none; }
+            body:not(.print-label-mode) .recipe-title { font-size: 16pt; text-transform: uppercase; border-bottom: 2px solid #000; display: inline-block; padding-bottom: 3px; letter-spacing: 0; }
+            body:not(.print-label-mode) .recipe-desc { font-weight: bold; }
             
-            body:not(.print-label-mode) .target-info { background: transparent; color: #000; border: 1px solid #666; padding: 5px; font-size: 10.5pt; margin-bottom: 10px; }
+            body:not(.print-label-mode) .target-info { background: transparent; color: #000; border: 1px solid #000; padding: 5px; font-size: 11pt; margin-bottom: 10px; }
             body:not(.print-label-mode) .safety-box { background: transparent; color: #000; border: 1px solid #000; border-left: 5px solid #000; padding: 5px 8px; margin-bottom: 10px; font-weight: bold; }
 
-            /* Table Formatting for Print */
             body:not(.print-label-mode) table { border: 1px solid #000; margin-bottom: 15px; }
-            body:not(.print-label-mode) th, body:not(.print-label-mode) td { padding: 5px 8px; border-bottom: 1px solid #999; }
-            body:not(.print-label-mode) th { background-color: #f0f0f0; border-bottom: 2px solid #000; color: #000; }
-            body:not(.print-label-mode) .phase-row td { background-color: #e0e0e0; font-size: 10pt; border-top: 2px solid #000; border-bottom: 1px solid #000; }
-            
-            /* Traceability Dotted Lines */
+            body:not(.print-label-mode) th, body:not(.print-label-mode) td { padding: 6px 8px; border-bottom: 1px solid #999; color: #000; }
+            body:not(.print-label-mode) th { background-color: #f0f0f0; border-bottom: 2px solid #000; }
+            body:not(.print-label-mode) .phase-row td { background-color: #e5e5e5; font-size: 10pt; border-top: 2px solid #000; border-bottom: 1px solid #000; }
             body:not(.print-label-mode) .traceability-box { color: #000; font-size: 9pt; }
             
-            /* Ensure checkboxes print */
             input[type="checkbox"] { -webkit-print-color-adjust: exact; color-adjust: exact; }
 
             body:not(.print-label-mode) .total-row td { background: transparent; color: #000; border-top: 3px double #000; font-size: 11pt; }
-            body:not(.print-label-mode) .pct-label { color: #555; }
+            body:not(.print-label-mode) .pct-label { color: #333; }
 
             body:not(.print-label-mode) .instructions-box { background: transparent; color: #000; border: 1px solid #000; padding: 8px; page-break-inside: avoid; }
             body:not(.print-label-mode) .instructions-list li { margin-bottom: 3px; }
@@ -141,20 +208,21 @@
 
 <div id="loginOverlay">
     <div id="loginBox">
-        <h2 style="color:#1a237e; margin-top:0;">ZARKOLIA LAB</h2>
-        <input type="password" id="passwordInput" placeholder="Password" inputmode="numeric">
+        <h2>ZARKOLIA LAB</h2>
+        <p style="color:var(--text-muted); margin-bottom:20px; font-weight:600;">Πρόσβαση Εργαστηρίου</p>
+        <input type="password" id="passwordInput" placeholder="PIN" inputmode="numeric">
         <button id="loginBtn" onclick="checkLogin()">ΕΙΣΟΔΟΣ</button>
     </div>
 </div>
 
 <div class="container" id="mainApp">
     <h1>ZARKOLIA LAB</h1>
-    <p class="subtitle">Production v29 (Alveolair Update)</p>
+    <p class="subtitle">Production System v30</p>
     
     <div class="control-panel">
-        <label>ΕΠΙΛΟΓΗ ΠΡΟΪΟΝΤΟΣ</label>
+        <label>1. ΕΠΙΛΟΓΗ ΠΡΟΪΟΝΤΟΣ</label>
         <select id="recipeSelect" onchange="toggleInputs()">
-            <option value="" disabled selected>-- Επιλέξτε --</option>
+            <option value="" disabled selected>-- Επιλέξτε από τη λίστα --</option>
             <optgroup label="Συμπληρώματα">
                 <option value="zboost">Z-Boost Caps (Ginger/ALA)</option>
             </optgroup>
@@ -178,12 +246,13 @@
             </optgroup>
         </select>
 
-        <div style="margin-top:15px;" id="standardInput">
-            <label>ΣΤΟΧΟΣ ΠΑΡΑΓΩΓΗΣ (g)</label>
+        <div style="margin-top:20px;" id="standardInput">
+            <label>2. ΣΤΟΧΟΣ ΠΑΡΑΓΩΓΗΣ (g)</label>
             <input type="number" id="totalWeightInput" value="1000" step="50">
         </div>
 
-        <div style="margin-top:15px; display:none;" id="capsuleInput">
+        <div style="margin-top:20px; display:none;" id="capsuleInput">
+            <label>2. ΥΠΟΛΟΓΙΣΜΟΣ ΚΑΨΟΥΛΩΝ</label>
             <div class="caps-panel">
                 <div class="caps-row">
                     <span class="caps-label">💊 ΧΥΜΑ ΚΑΨΟΥΛΕΣ (ΤΜΧ)</span>
@@ -203,11 +272,11 @@
         <div class="checkbox-group">
             <div class="checkbox-wrapper">
                 <input type="checkbox" id="showInstructions" checked>
-                <label for="showInstructions">Οδηγίες Παρασκευής (A4)</label>
+                <label for="showInstructions">Εμφάνιση Οδηγιών Παρασκευής</label>
             </div>
-            <div class="checkbox-wrapper" style="color:#d84315; font-weight:bold; border-top:1px solid #eee; padding-top:10px; width:100%; justify-content:center;">
+            <div class="checkbox-wrapper print-label-toggle">
                 <input type="checkbox" id="printLabelMode" onchange="togglePrintMode()">
-                <label for="printLabelMode">🖨️ ΕΚΤΥΠΩΣΗ ΕΤΙΚΕΤΑΣ (Οριζόντια)</label>
+                <label for="printLabelMode">🖨️ ΛΕΙΤΟΥΡΓΙΑ ΕΤΙΚΕΤΑΣ (Brother 62mm)</label>
             </div>
         </div>
 
@@ -273,7 +342,7 @@
     // --- FULL RECIPES ---
     const recipes = {
         bruise: {
-            title: "BRUISE OFF", desc: "Stearic Formula (Based on 5kg specs)", initials: "BO", shelfLife: 18, type: "standard", safetyNote: "Ενισχυμένο Cetostearyl/Stearic. Χωρίς GMS.",
+            title: "BRUISE OFF", desc: "Stearic Formula", initials: "BO", shelfLife: 18, type: "standard", safetyNote: "Ενισχυμένο Cetostearyl/Stearic.",
             ingredients: [
                 { name: "--- ΦΑΣΗ Α (ΛΙΠΑΡΗ - 75°C) ---", isHeader: true },
                 { name: "Arnica Oil", pct: 9.10 }, { name: "Vaseline", pct: 9.10 }, { name: "Cetostearyl Alcohol", pct: 7.70 }, { name: "Stearic Acid", pct: 3.30 }, { name: "Linseed Oil", pct: 1.80 }, { name: "Propyl Paraben", pct: 0.10 },
@@ -319,18 +388,11 @@
         syrup_custom: { 
             title: "ALVEOLAIR", desc: "66.7%", initials: "AL", shelfLife: 6, type: "standard", 
             ingredients: [ 
-                { name: "Fructose / Brown Sugar", pct: 66.70 }, 
-                { name: "Aqua", pct: 0, isQS: true }, 
-                { name: "Sodium Benzoate", pct: 0.10 }, 
+                { name: "Fructose / Brown Sugar", pct: 66.70 }, { name: "Aqua", pct: 0, isQS: true }, { name: "Sodium Benzoate", pct: 0.10 }, 
                 { name: "--- MIX BΑΜΜΑΤΩΝ (5%) ---", isHeader: true }, 
-                { name: "Βάμμα Αλθαίας", pct: 2.10 }, 
-                { name: "Βάμμα Θυμαριού", pct: 0.79 }, 
-                { name: "Βάμμα Ευκαλύπτου", pct: 0.79 }, 
-                { name: "Βάμμα Κράνι", pct: 0.79 }, 
-                { name: "Βάμμα Ιπποφαές", pct: 0.79 }, 
+                { name: "Βάμμα Αλθαίας", pct: 2.10 }, { name: "Βάμμα Θυμαριού", pct: 0.79 }, { name: "Βάμμα Ευκαλύπτου", pct: 0.79 }, { name: "Βάμμα Κράνι", pct: 0.79 }, { name: "Βάμμα Ιπποφαές", pct: 0.79 }, 
                 { name: "--- ΥΠΟΛΟΙΠΑ ---", isHeader: true }, 
-                { name: "Vit C & Lemon EO", pct: 0.15 }, 
-                { name: "Lemon Juice", pct: 0, note: "q.s. για ρύθμιση pH" } 
+                { name: "Vit C & Lemon EO", pct: 0.15 }, { name: "Lemon Juice", pct: 0, note: "q.s. για ρύθμιση pH" } 
             ], 
             instructions: ["1. Ζέσταμα νερού (70°C).", "2. Προσθήκη λεμονιού και διάλυση σακχάρου.", "3. Προσθήκη βαμμάτων <40°C.", "4. Έλεγχος pH < 4.5."] 
         },
@@ -356,7 +418,7 @@
 
     function calculate() {
         const key = document.getElementById('recipeSelect').value;
-        if (!key) return alert("Επιλέξτε προϊόν");
+        if (!key) return alert("Επιλέξτε προϊόν από τη λίστα.");
         const recipe = recipes[key];
         
         let weight = 0, info="";
@@ -368,13 +430,13 @@
             const p30 = parseFloat(document.getElementById('inPacks30').value) || 0;
             
             const totalCaps = bulk + (p12 * 12) + (p30 * 30);
-            if (totalCaps <= 0) return alert("Παρακαλώ εισάγετε αριθμό καψουλών.");
+            if (totalCaps <= 0) return alert("Παρακαλώ εισάγετε αριθμό καψουλών (Χύμα ή Πακέτα).");
             
             weight = totalCaps * recipe.capsuleContentWeight;
-            info = `ΣΤΟΧΟΣ ΠΑΡΑΓΩΓΗΣ: ${totalCaps} Κάψουλες (${bulk} χύμα + ${p12} κουτιά x12 + ${p30} κουτιά x30)`;
+            info = `ΣΤΟΧΟΣ: ${totalCaps} Κάψουλες (${bulk} χύμα + ${p12}x12 + ${p30}x30)`;
         } else {
             weight = parseFloat(document.getElementById('totalWeightInput').value);
-            if (!weight || weight <= 0) return alert("Λάθος ποσότητα");
+            if (!weight || weight <= 0) return alert("Λάθος ποσότητα.");
             info = `ΣΤΟΧΟΣ ΠΑΡΑΓΩΓΗΣ: ${weight} γραμμάρια`;
         }
 
@@ -414,13 +476,14 @@
             
             <div class="target-info">${info}</div>
             
-            <table>
-                <tr>
-                    <th width="5%" style="text-align:center;">✔</th>
-                    <th width="35%">ΣΥΣΤΑΤΙΚΟ</th>
-                    <th width="40%">IXNHΛΑΣΙΜΟΤΗΤΑ (Raw Mat.)</th>
-                    <th width="20%" style="text-align:right">ΠΟΣΟΤΗΤΑ (%)</th>
-                </tr>
+            <div class="table-wrapper">
+                <table>
+                    <tr>
+                        <th width="5%" style="text-align:center;">✔</th>
+                        <th width="35%">ΣΥΣΤΑΤΙΚΟ</th>
+                        <th width="40%">IXNHΛΑΣΙΜΟΤΗΤΑ (Raw Mat.)</th>
+                        <th width="20%" style="text-align:right">ΠΟΣΟΤΗΤΑ (%)</th>
+                    </tr>
         `;
 
         let sumPct = 0;
@@ -432,7 +495,7 @@
             } else {
                 let finalPct = i.isQS ? Math.max(0, 100 - sumPct) : i.pct;
                 let amt = (finalPct / 100) * weight;
-                let noteStr = i.note ? ` <br><small style="color:#666;">(${i.note})</small>` : '';
+                let noteStr = i.note ? ` <br><small style="color:var(--text-muted);">(${i.note})</small>` : '';
                 
                 html += `<tr>
                     <td style="text-align:center;"><input type="checkbox"></td>
@@ -450,14 +513,15 @@
         });
 
         html += `
-            <tr class="total-row">
-                <td colspan="3" style="text-align:right;">ΣΥΝΟΛΟ ΜΙΓΜΑΤΟΣ</td>
-                <td style="text-align:right">
-                    ${weight.toFixed(1)} g
-                    <span class="pct-label">(100.00%)</span>
-                </td>
-            </tr>
-        </table>`;
+                <tr class="total-row">
+                    <td colspan="3" style="text-align:right;">ΣΥΝΟΛΟ ΜΙΓΜΑΤΟΣ</td>
+                    <td style="text-align:right">
+                        ${weight.toFixed(1)} g
+                        <span class="pct-label">(100.00%)</span>
+                    </td>
+                </tr>
+            </table>
+        </div>`;
 
         if (document.getElementById('showInstructions').checked && recipe.instructions) {
             html += `
