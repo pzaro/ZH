@@ -218,14 +218,14 @@
     <div id="loginBox">
         <h2>ZARKOLIA LAB</h2>
         <p style="color:var(--text-muted); margin-bottom:20px; font-weight:600;">Πρόσβαση Εργαστηρίου</p>
-        <input type="password" id="passwordInput" placeholder="PIN" inputmode="numeric">
+        <input type="password" id="passwordInput" placeholder="PIN ή Κωδικός">
         <button id="loginBtn" onclick="checkLogin()">ΕΙΣΟΔΟΣ</button>
     </div>
 </div>
 
 <div class="container" id="mainApp">
     <h1>ZARKOLIA LAB</h1>
-    <p class="subtitle">Production System v32</p>
+    <p class="subtitle">Production System v33</p>
     
     <div class="control-panel">
         <label>1. ΕΠΙΛΟΓΗ ΠΡΟΪΟΝΤΟΣ</label>
@@ -320,18 +320,21 @@
 </div>
 
 <script>
-    // --- SECURITY (106014) ---
-    const _0x9f2a = "34b35aca37baf7d5d997466dff1ab8ca1dc901df7010f3279138670838e2c9e8";
+    // --- SECURITY ---
+    const _0x9f2a = "34b35aca37baf7d5d997466dff1ab8ca1dc901df7010f3279138670838e2c9e8"; // Hash for 106014
 
     async function checkLogin() {
         const input = document.getElementById('passwordInput').value;
         if (!input) return;
+        
         const encoder = new TextEncoder();
         const data = encoder.encode(input);
         const hashBuffer = await crypto.subtle.digest('SHA-256', data);
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        if (hashHex === _0x9f2a) {
+        
+        // Accept either the hashed PIN (106014) OR the word "Zelia" / "zelia"
+        if (hashHex === _0x9f2a || input.toLowerCase() === 'zelia') {
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
         } else {
@@ -339,6 +342,11 @@
             document.getElementById('passwordInput').value = "";
         }
     }
+
+    // Επιτρέπει και το πάτημα του "Enter" για είσοδο
+    document.getElementById('passwordInput').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') checkLogin();
+    });
 
     function togglePrintMode() {
         const isLabel = document.getElementById('printLabelMode').checked;
@@ -475,7 +483,7 @@
             const p30 = parseFloat(document.getElementById('inPacks30').value) || 0;
             
             const totalCaps = bulk + (p12 * 12) + (p30 * 30);
-            if (totalCaps <= 0) return alert("Παρακαλώ εισάγετε αριθμό καψουλών.");
+            if (totalCaps <= 0) return alert("Παρακαλώ εισάγετε αριθμό καψουλών (Χύμα ή Πακέτα).");
             
             weight = totalCaps * recipe.capsuleContentWeight;
             info = `ΣΤΟΧΟΣ: ${totalCaps} Κάψουλες (${bulk} χύμα + ${p12}x12 + ${p30}x30)`;
