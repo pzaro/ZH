@@ -70,6 +70,13 @@
         .btn-print { background:#475569; color:white; box-shadow:0 4px 12px rgba(71,85,105,.2); }
         .btn-print:hover { background:#334155; transform:translateY(-2px); }
 
+        /* FONT SIZE CONTROL */
+        .font-ctrl { display:flex; align-items:center; gap:10px; justify-content:center; margin-top:12px; }
+        .font-ctrl-label { font-size:.78em; color:var(--text-muted); font-weight:700; letter-spacing:.5px; text-transform:uppercase; }
+        .font-btn { flex:none; width:36px; height:36px; border-radius:50%; border:2px solid var(--border-color); background:white; font-size:1.2em; font-weight:800; cursor:pointer; color:var(--primary); display:flex; align-items:center; justify-content:center; transition:all .15s; padding:0; min-width:unset; letter-spacing:0; text-transform:none; box-shadow:none; }
+        .font-btn:hover { background:var(--primary-light); border-color:var(--primary); transform:none; }
+        .font-size-display { font-size:.9em; font-weight:700; color:var(--primary); min-width:40px; text-align:center; }
+
         /* RESULT */
         #resultContainer { margin-top:24px; display:none; border:1px solid var(--border-color); border-radius:20px; overflow:hidden; background:white; box-shadow:0 4px 20px rgba(0,0,0,.06); }
         .print-doc-header { display:none; }
@@ -170,6 +177,13 @@
     <div class="app-header">
         <h1>ZARKOLIA LAB</h1>
         <span class="version">Production System v35</span>
+        <div class="font-ctrl">
+            <span class="font-ctrl-label" style="font-size:.85em;">Α</span>
+            <button class="font-btn" onclick="changeFontSize(-1)">−</button>
+            <span class="font-size-display" id="fontSizeDisplay">16px</span>
+            <button class="font-btn" onclick="changeFontSize(1)">+</button>
+            <span class="font-ctrl-label" style="font-size:1.1em;">Α</span>
+        </div>
     </div>
 
     <div class="control-panel">
@@ -266,6 +280,19 @@ async function checkLogin() {
     }
 }
 document.getElementById('passwordInput').addEventListener('keypress', e => { if(e.key==='Enter') checkLogin(); });
+
+let currentFontSize = parseInt(localStorage.getItem('zk_fontsize') || '16');
+function applyFontSize(size) {
+    document.body.style.fontSize = size + 'px';
+    const el = document.getElementById('fontSizeDisplay');
+    if (el) el.textContent = size + 'px';
+}
+function changeFontSize(delta) {
+    currentFontSize = Math.min(26, Math.max(12, currentFontSize + delta));
+    localStorage.setItem('zk_fontsize', currentFontSize);
+    applyFontSize(currentFontSize);
+}
+applyFontSize(currentFontSize);
 
 function togglePrintMode() {
     document.body.classList.toggle('print-label-mode', document.getElementById('printLabelMode').checked);
