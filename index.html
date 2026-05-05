@@ -6,454 +6,152 @@
     <title>ZARKOLIA Lab</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-    
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#1e3a8a">
-
+    <meta name="theme-color" content="#1a3272">
     <style>
         :root {
-            --primary: #1a3272;
-            --primary-mid: #2952b3;
-            --primary-light: #eef3ff;
-            --accent: #e8a020;
-            --accent-hover: #c8880e;
-            --bg-color: #f0f2f5;
-            --card-bg: #ffffff;
-            --text-main: #111827;
-            --text-muted: #6b7280;
-            --border-color: #e2e6ed;
-            --success: #047857;
-            --radius: 14px;
-            --font-base: 'DM Sans', sans-serif;
-            --font-mono: 'DM Mono', monospace;
+            --primary: #1a3272; --primary-mid: #2952b3; --primary-light: #eef3ff;
+            --accent: #e8a020; --accent-hover: #c8880e;
+            --bg-color: #f0f2f5; --card-bg: #ffffff;
+            --text-main: #111827; --text-muted: #6b7280;
+            --border-color: #e2e6ed; --success: #047857;
+            --font-base: 'DM Sans', sans-serif; --font-mono: 'DM Mono', monospace;
         }
-
         * { box-sizing: border-box; }
+        body { font-family: var(--font-base); font-size: 16px; background: var(--bg-color); padding: 20px; color: var(--text-main); margin: 0; min-height: 100vh; line-height: 1.55; }
 
-        body { 
-            font-family: var(--font-base);
-            font-size: 16px;
-            background: var(--bg-color);
-            padding: 20px; 
-            color: var(--text-main); 
-            margin: 0; 
-            min-height: 100vh;
-            line-height: 1.55;
-        }
+        /* LOGIN */
+        #loginOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background: linear-gradient(150deg,#0f1f5c,#1a3272,#0f2040); z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center; }
+        #loginBox { background:rgba(255,255,255,.06); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,.15); padding:44px 36px; border-radius:24px; text-align:center; width:88%; max-width:360px; box-shadow:0 30px 60px rgba(0,0,0,.4); }
+        #loginBox .logo-text { font-size:2em; font-weight:800; color:white; letter-spacing:4px; text-transform:uppercase; margin-bottom:4px; }
+        #loginBox .logo-sub { color:rgba(255,255,255,.5); font-size:.9em; font-weight:500; letter-spacing:2px; margin-bottom:32px; text-transform:uppercase; }
+        #passwordInput { padding:16px 18px; font-size:1.3em; font-family:var(--font-mono); width:100%; margin-bottom:16px; border:1.5px solid rgba(255,255,255,.2); border-radius:12px; text-align:center; background:rgba(255,255,255,.08); color:white; -webkit-text-security:disc; outline:none; transition:border .25s; }
+        #passwordInput::placeholder { color:rgba(255,255,255,.3); font-family:var(--font-base); font-size:.85em; }
+        #passwordInput:focus { border-color:var(--accent); }
+        #loginBtn { background:var(--accent); color:white; border:none; padding:16px; width:100%; border-radius:12px; font-size:1.05em; font-family:var(--font-base); font-weight:700; cursor:pointer; letter-spacing:1.5px; text-transform:uppercase; transition:transform .15s,background .25s; }
+        #loginBtn:active { transform:scale(.97); background:var(--accent-hover); }
 
-        /* ===================== LOGIN ===================== */
-        #loginOverlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: linear-gradient(150deg, #0f1f5c 0%, #1a3272 50%, #0f2040 100%); 
-            z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; 
-        }
-        #loginBox { 
-            background: rgba(255,255,255,0.06); 
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.15);
-            padding: 44px 36px; border-radius: 24px; 
-            text-align: center; width: 88%; max-width: 360px; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4); 
-        }
-        #loginBox .logo-text {
-            font-size: 2em;
-            font-weight: 800;
-            color: white;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-        #loginBox .logo-sub {
-            color: rgba(255,255,255,0.5);
-            font-size: 0.9em;
-            font-weight: 500;
-            letter-spacing: 2px;
-            margin-bottom: 32px;
-            text-transform: uppercase;
-        }
-        #passwordInput { 
-            padding: 16px 18px; font-size: 1.3em; font-family: var(--font-mono);
-            width: 100%; margin-bottom: 16px; 
-            border: 1.5px solid rgba(255,255,255,0.2); border-radius: 12px; 
-            text-align: center; background: rgba(255,255,255,0.08);
-            color: white;
-            -webkit-text-security: disc; outline: none; transition: border 0.25s;
-        }
-        #passwordInput::placeholder { color: rgba(255,255,255,0.3); font-family: var(--font-base); font-size: 0.85em; }
-        #passwordInput:focus { border-color: var(--accent); }
-        #loginBtn { 
-            background: var(--accent); color: white; border: none; padding: 16px; width: 100%; 
-            border-radius: 12px; font-size: 1.05em; font-family: var(--font-base); font-weight: 700; 
-            cursor: pointer; letter-spacing: 1.5px; text-transform: uppercase;
-            transition: transform 0.15s, background 0.25s;
-        }
-        #loginBtn:active { transform: scale(0.97); background: var(--accent-hover); }
+        /* APP */
+        .container { max-width:920px; margin:0 auto; display:none; }
+        .app-header { text-align:center; padding:30px 0 24px; }
+        .app-header h1 { color:var(--primary); margin:0 0 4px; font-size:2.2em; font-weight:800; letter-spacing:3px; text-transform:uppercase; }
+        .app-header .version { color:var(--text-muted); font-size:.9em; font-weight:500; letter-spacing:1px; }
 
-        /* ===================== APP ===================== */
-        .container { 
-            max-width: 920px; margin: 0 auto; display: none;
-        }
+        /* CONTROL PANEL */
+        .control-panel { background:var(--card-bg); padding:28px; border-radius:20px; border:1px solid var(--border-color); margin-bottom:24px; box-shadow:0 2px 12px rgba(0,0,0,.04); }
+        .form-label { display:block; margin-bottom:10px; font-weight:700; color:var(--primary); font-size:.78em; text-transform:uppercase; letter-spacing:1.5px; }
+        select, input[type="number"] { padding:15px 18px; font-size:1.05em; font-family:var(--font-base); font-weight:600; border-radius:12px; border:2px solid var(--border-color); width:100%; background:#fafbff; color:var(--text-main); outline:none; transition:border .2s,box-shadow .2s; -webkit-appearance:none; }
+        select { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%231a3272'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 16px center; background-size:18px; padding-right:44px; }
+        select:focus, input[type="number"]:focus { border-color:var(--primary); box-shadow:0 0 0 4px rgba(26,50,114,.08); background:white; }
+        optgroup { font-weight:700; color:var(--primary); }
+        option { font-weight:500; color:var(--text-main); }
+        .form-row { margin-top:20px; }
 
-        .app-header {
-            text-align: center;
-            padding: 30px 0 24px;
-        }
-        .app-header h1 { 
-            color: var(--primary); 
-            margin: 0 0 4px 0; 
-            font-size: 2.2em; 
-            font-weight: 800; 
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-        .app-header .version { 
-            color: var(--text-muted); 
-            font-size: 0.9em; 
-            font-weight: 500; 
-            letter-spacing: 1px;
-        }
-        
-        /* ===================== CONTROL PANEL ===================== */
-        .control-panel { 
-            background: var(--card-bg); 
-            padding: 28px 28px; 
-            border-radius: 20px; 
-            border: 1px solid var(--border-color); 
-            margin-bottom: 24px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-        }
+        /* CAPS */
+        .caps-panel { background:#fffbeb; padding:18px; border-radius:12px; border:2px solid #fde68a; margin-top:4px; }
+        .caps-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px dashed #fcd34d; padding-bottom:14px; }
+        .caps-row:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+        .caps-label { font-weight:700; color:#92400e; flex:2; font-size:1em; }
+        .caps-input { flex:1; }
+        .caps-input input { padding:12px; font-size:1.2em; text-align:center; border-color:#fcd34d; color:#92400e; background:white; }
 
-        .form-label { 
-            display: block; 
-            margin-bottom: 10px; 
-            font-weight: 700; 
-            color: var(--primary); 
-            font-size: 0.78em; 
-            text-transform: uppercase; 
-            letter-spacing: 1.5px; 
-        }
+        /* CHECKBOXES */
+        .checkbox-group { display:flex; flex-direction:column; gap:14px; margin-top:22px; background:var(--primary-light); padding:18px; border-radius:12px; border:1px solid #c7d8fa; }
+        .checkbox-wrapper { display:flex; align-items:center; gap:14px; font-size:1em; font-weight:600; cursor:pointer; color:var(--text-main); }
+        .checkbox-wrapper label { font-size:1em; font-weight:600; color:var(--text-main); text-transform:none; letter-spacing:0; cursor:pointer; }
+        input[type="checkbox"] { transform:scale(1.5); accent-color:var(--primary); cursor:pointer; flex-shrink:0; }
+        .print-label-toggle label { color:#b45309; }
 
-        select, input[type="number"] { 
-            padding: 15px 18px; 
-            font-size: 1.05em; 
-            font-family: var(--font-base);
-            font-weight: 600;
-            border-radius: 12px; 
-            border: 2px solid var(--border-color); 
-            width: 100%; 
-            background: #fafbff; 
-            color: var(--text-main); 
-            outline: none; 
-            transition: border 0.2s, box-shadow 0.2s;
-            -webkit-appearance: none;
-        }
-        select { 
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%231a3272'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 16px center;
-            background-size: 18px;
-            padding-right: 44px;
-        }
-        select:focus, input[type="number"]:focus { 
-            border-color: var(--primary); 
-            box-shadow: 0 0 0 4px rgba(26,50,114,0.08); 
-            background: white;
+        /* BUTTONS */
+        .btn-group { display:flex; gap:14px; margin-top:24px; flex-wrap:wrap; }
+        button { flex:1; min-width:140px; padding:17px 20px; font-size:1em; border:none; border-radius:12px; font-family:var(--font-base); font-weight:800; cursor:pointer; text-transform:uppercase; letter-spacing:1.5px; transition:all .2s ease; }
+        .btn-calc { background:linear-gradient(135deg,var(--primary),var(--primary-mid)); color:white; box-shadow:0 4px 16px rgba(26,50,114,.25); }
+        .btn-calc:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(26,50,114,.3); }
+        .btn-print { background:#475569; color:white; box-shadow:0 4px 12px rgba(71,85,105,.2); }
+        .btn-print:hover { background:#334155; transform:translateY(-2px); }
+
+        /* RESULT */
+        #resultContainer { margin-top:24px; display:none; border:1px solid var(--border-color); border-radius:20px; overflow:hidden; background:white; box-shadow:0 4px 20px rgba(0,0,0,.06); }
+        .print-doc-header { display:none; }
+        .recipe-header { background:linear-gradient(135deg,var(--primary),var(--primary-mid)); color:white; padding:26px 28px; }
+        .recipe-title { font-size:1.8em; font-weight:800; display:block; letter-spacing:1px; line-height:1.2; }
+        .recipe-desc { display:block; font-size:1em; opacity:.85; margin-top:6px; font-weight:500; }
+        .target-info { padding:14px 20px; background:var(--primary-light); color:var(--primary); font-weight:700; text-align:center; font-size:1.15em; border-bottom:1px solid #c7d8fa; }
+        .table-wrapper { width:100%; overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; font-size:1em; table-layout:fixed; }
+        th, td { padding:14px 12px; border-bottom:1px solid #f1f4f8; vertical-align:middle; word-wrap:break-word; }
+        th { background:#f6f8fc; text-align:left; color:var(--text-muted); font-size:.78em; text-transform:uppercase; letter-spacing:1px; font-weight:700; }
+        th:nth-child(1),td:nth-child(1) { width:7%; text-align:center; }
+        th:nth-child(2),td:nth-child(2) { width:38%; }
+        th:nth-child(3),td:nth-child(3) { width:30%; }
+        th:nth-child(4),td:nth-child(4) { width:25%; text-align:right; }
+        .ingredient-name { font-weight:700; font-size:1em; }
+        .phase-row td { background:#eef1f8; color:var(--primary); font-weight:800; padding-top:18px; text-transform:uppercase; font-size:.88em; letter-spacing:.5px; }
+        .amount-col { color:var(--success); font-weight:800; font-size:1.1em; }
+        .pct-label { display:block; font-size:.8em; color:var(--text-muted); font-weight:600; margin-top:3px; }
+        .total-row { background:#f0fdf7; border-top:2px solid #a7f3d0; }
+        .total-row td { color:var(--success); font-weight:800; font-size:1.1em; padding:16px 12px; }
+        .traceability-box { font-size:.82em; color:#9ca3af; line-height:2; font-family:var(--font-mono); }
+        .safety-box { background:#fef8f0; color:#92400e; padding:16px 20px; border-left:5px solid var(--accent); font-size:.95em; line-height:1.6; border-bottom:1px solid #fde68a; font-weight:500; }
+        .safety-box.wound { background:#f0fdf4; color:#065f46; border-left-color:#059669; border-bottom-color:#a7f3d0; }
+        .instructions-box { background:#f6fff9; color:#065f46; padding:22px 24px; border-top:1px solid #a7f3d0; }
+        .instructions-box strong { display:block; margin-bottom:12px; font-size:1em; text-transform:uppercase; letter-spacing:1px; font-weight:800; }
+        .instructions-list { padding-left:20px; margin:0; }
+        .instructions-list li { margin-bottom:10px; font-size:1em; line-height:1.6; font-weight:500; }
+
+        /* LABEL */
+        #labelPreview { display:none; width:100mm; height:62mm; margin:20px auto; box-sizing:border-box; background:white; font-family:Arial,sans-serif; border:2px dashed #94a3b8; padding:2mm; border-radius:8px; }
+        .lbl-container { display:flex; width:100%; height:100%; border:3px solid #000; border-radius:6px; padding:5px; box-sizing:border-box; }
+        .lbl-left { flex:1.6; display:flex; flex-direction:column; justify-content:space-between; padding-right:10px; border-right:2px solid #000; }
+        .lbl-right { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding-left:10px; }
+        .lbl-header { font-size:9pt; font-weight:900; text-transform:uppercase; color:#000; border-bottom:2px solid #000; padding-bottom:3px; }
+        .lbl-title { font-size:15pt; font-weight:900; line-height:1.1; margin-top:5px; color:#000; }
+        .lbl-meta { font-size:8pt; margin-top:auto; color:#000; font-weight:bold; }
+        .lbl-data-row { font-size:10pt; font-weight:bold; margin:5px 0; width:100%; text-align:left; color:#000; }
+        .lbl-data-val { font-size:13pt; display:block; font-family:monospace; }
+        .pao-icon { width:38px; height:38px; margin-top:10px; }
+
+        @media (max-width:640px) {
+            body { padding:12px; font-size:15px; }
+            .control-panel { padding:20px 16px; }
+            .recipe-header { padding:20px 16px; }
+            .recipe-title { font-size:1.5em; }
+            table { font-size:.88em; }
+            th,td { padding:11px 7px; }
+            .traceability-box { font-size:.72em; }
+            .app-header h1 { font-size:1.8em; }
         }
 
-        optgroup { font-weight: 700; color: var(--primary); }
-        option { font-weight: 500; color: var(--text-main); }
-
-        .form-row { margin-top: 20px; }
-        
-        /* Caps Panel */
-        .caps-panel { 
-            background: #fffbeb; 
-            padding: 18px; 
-            border-radius: 12px; 
-            border: 2px solid #fde68a; 
-            margin-top: 4px; 
-        }
-        .caps-row { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 14px; 
-            border-bottom: 1px dashed #fcd34d; 
-            padding-bottom: 14px; 
-        }
-        .caps-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .caps-label { font-weight: 700; color: #92400e; flex: 2; text-align: left; font-size: 1em; }
-        .caps-input { flex: 1; }
-        .caps-input input { 
-            padding: 12px; font-size: 1.2em; text-align: center; 
-            border-color: #fcd34d; color: #92400e; background: white; 
-        }
-
-        /* Checkboxes */
-        .checkbox-group { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 14px; 
-            margin-top: 22px; 
-            background: var(--primary-light); 
-            padding: 18px; 
-            border-radius: 12px; 
-            border: 1px solid #c7d8fa;
-        }
-        .checkbox-wrapper { 
-            display: flex; 
-            align-items: center; 
-            gap: 14px; 
-            font-size: 1em; 
-            font-weight: 600; 
-            cursor: pointer; 
-            color: var(--text-main); 
-        }
-        .checkbox-wrapper label { 
-            font-size: 1em; 
-            font-weight: 600; 
-            color: var(--text-main); 
-            text-transform: none; 
-            letter-spacing: 0; 
-            cursor: pointer;
-        }
-        input[type="checkbox"] { 
-            transform: scale(1.5); 
-            accent-color: var(--primary); 
-            cursor: pointer; 
-            flex-shrink: 0;
-        }
-        .print-label-toggle label { color: #b45309; }
-
-        /* Buttons */
-        .btn-group { display: flex; gap: 14px; margin-top: 24px; flex-wrap: wrap; }
-        button { 
-            flex: 1; min-width: 140px; padding: 17px 20px; 
-            font-size: 1em; border: none; border-radius: 12px; 
-            font-family: var(--font-base); font-weight: 800; 
-            cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px; 
-            transition: all 0.2s ease; 
-        }
-        .btn-calc { 
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-mid) 100%); 
-            color: white; 
-            box-shadow: 0 4px 16px rgba(26,50,114,0.25); 
-        }
-        .btn-calc:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(26,50,114,0.3); }
-        .btn-calc:active { transform: translateY(0); }
-        .btn-print { 
-            background: #475569; 
-            color: white; 
-            box-shadow: 0 4px 12px rgba(71, 85, 105, 0.2); 
-        }
-        .btn-print:hover { background: #334155; transform: translateY(-2px); }
-
-        /* ===================== RESULT CONTAINER ===================== */
-        #resultContainer { 
-            margin-top: 24px; 
-            display: none; 
-            border: 1px solid var(--border-color); 
-            border-radius: 20px; 
-            overflow: hidden; 
-            background: white; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06); 
-        }
-        .print-doc-header { display: none; }
-        
-        .recipe-header { 
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-mid) 100%); 
-            color: white; 
-            padding: 26px 28px; 
-        }
-        .recipe-title { 
-            font-size: 1.8em; 
-            font-weight: 800; 
-            display: block; 
-            letter-spacing: 1px; 
-            line-height: 1.2;
-        }
-        .recipe-desc { 
-            display: block; 
-            font-size: 1em; 
-            opacity: 0.85; 
-            margin-top: 6px; 
-            font-weight: 500;
-        }
-        
-        .target-info { 
-            padding: 14px 20px; 
-            background: var(--primary-light); 
-            color: var(--primary); 
-            font-weight: 700; 
-            text-align: center; 
-            font-size: 1.15em; 
-            border-bottom: 1px solid #c7d8fa; 
-        }
-        
-        .table-wrapper { width: 100%; overflow-x: auto; }
-        
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            font-size: 1em; 
-            table-layout: fixed; 
-        }
-        th, td { 
-            padding: 14px 12px; 
-            border-bottom: 1px solid #f1f4f8; 
-            vertical-align: middle; 
-            word-wrap: break-word; 
-        }
-        th { 
-            background: #f6f8fc; 
-            text-align: left; 
-            color: var(--text-muted); 
-            font-size: 0.78em; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            font-weight: 700;
-        }
-        
-        th:nth-child(1), td:nth-child(1) { width: 7%; text-align: center; } 
-        th:nth-child(2), td:nth-child(2) { width: 38%; } 
-        th:nth-child(3), td:nth-child(3) { width: 30%; } 
-        th:nth-child(4), td:nth-child(4) { width: 25%; text-align: right; } 
-
-        .ingredient-name { font-weight: 700; font-size: 1em; }
-
-        .phase-row td { 
-            background: #eef1f8; 
-            color: var(--primary); 
-            font-weight: 800; 
-            padding-top: 18px; 
-            text-transform: uppercase; 
-            font-size: 0.88em; 
-            letter-spacing: 0.5px;
-        }
-        .amount-col { 
-            color: var(--success); 
-            font-weight: 800; 
-            font-size: 1.1em; 
-        }
-        .pct-label { 
-            display: block; 
-            font-size: 0.8em; 
-            color: var(--text-muted); 
-            font-weight: 600; 
-            margin-top: 3px; 
-        }
-        .total-row { background: #f0fdf7; border-top: 2px solid #a7f3d0; }
-        .total-row td { 
-            color: var(--success); 
-            font-weight: 800; 
-            font-size: 1.1em; 
-            padding: 16px 12px;
-        }
-        
-        .traceability-box { 
-            font-size: 0.82em; 
-            color: #9ca3af; 
-            line-height: 2; 
-            font-family: var(--font-mono);
-        }
-        
-        .safety-box { 
-            background: #fef8f0; 
-            color: #92400e; 
-            padding: 16px 20px; 
-            border-left: 5px solid var(--accent); 
-            font-size: 0.95em; 
-            line-height: 1.6; 
-            border-bottom: 1px solid #fde68a; 
-            font-weight: 500;
-        }
-        .instructions-box { 
-            background: #f6fff9; 
-            color: #065f46; 
-            padding: 22px 24px; 
-            border-top: 1px solid #a7f3d0; 
-        }
-        .instructions-box strong { 
-            display: block; 
-            margin-bottom: 12px; 
-            font-size: 1em; 
-            text-transform: uppercase; 
-            letter-spacing: 1px;
-            font-weight: 800;
-        }
-        .instructions-list { padding-left: 20px; margin: 0; }
-        .instructions-list li { 
-            margin-bottom: 10px; 
-            font-size: 1em; 
-            line-height: 1.6; 
-            font-weight: 500;
-        }
-
-        /* ===================== LABEL PREVIEW ===================== */
-        #labelPreview { 
-            display: none; width: 100mm; height: 62mm; margin: 20px auto; 
-            box-sizing: border-box; background: white; font-family: Arial, sans-serif; 
-            border: 2px dashed #94a3b8; padding: 2mm; border-radius: 8px; 
-        }
-        .lbl-container { display: flex; width: 100%; height: 100%; border: 3px solid #000; border-radius: 6px; padding: 5px; box-sizing: border-box; }
-        .lbl-left { flex: 1.6; display: flex; flex-direction: column; justify-content: space-between; padding-right: 10px; border-right: 2px solid #000; }
-        .lbl-right { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-left: 10px; }
-        .lbl-header { font-size: 9pt; font-weight: 900; text-transform: uppercase; color: #000; border-bottom: 2px solid #000; padding-bottom: 3px; }
-        .lbl-title { font-size: 18pt; font-weight: 900; line-height: 1.1; margin-top: 5px; color: #000; letter-spacing: -0.5px; }
-        .lbl-meta { font-size: 8pt; margin-top: auto; color: #000; font-weight: bold; }
-        .lbl-data-row { font-size: 10pt; font-weight: bold; margin: 5px 0; width: 100%; text-align: left; color: #000;}
-        .lbl-data-val { font-size: 13pt; display: block; font-family: monospace;}
-        .pao-icon { width: 38px; height: 38px; margin-top: 10px; }
-
-        /* ===================== RESPONSIVE ===================== */
-        @media (max-width: 640px) {
-            body { padding: 12px; font-size: 15px; }
-            .control-panel { padding: 20px 16px; }
-            .recipe-header { padding: 20px 16px; }
-            .recipe-title { font-size: 1.5em; }
-            table { font-size: 0.88em; }
-            th, td { padding: 11px 7px; }
-            .traceability-box { font-size: 0.72em; }
-            .app-header h1 { font-size: 1.8em; }
-            th:nth-child(3), td:nth-child(3) { width: 24%; }
-        }
-
-        /* ===================== PRINT ===================== */
         @media print {
-            #loginOverlay, .control-panel, .app-header { display: none !important; }
-            .container { box-shadow: none; border: none; margin: 0; padding: 0; width: 100%; max-width: none; border-radius: 0; }
-
-            body:not(.print-label-mode) #resultContainer { display: block; width: 100%; border: none; box-shadow: none; border-radius: 0; }
-            body:not(.print-label-mode) #labelPreview { display: none; }
-            body:not(.print-label-mode) { background: white; font-size: 10pt; color: #000; }
-            
-            @page { size: A4 portrait; margin: 10mm 12mm; }
-
-            body:not(.print-label-mode) table { table-layout: auto; font-size: 9.5pt; }
-            body:not(.print-label-mode) th:nth-child(1), body:not(.print-label-mode) td:nth-child(1) { width: 5%; }
-            body:not(.print-label-mode) th:nth-child(2), body:not(.print-label-mode) td:nth-child(2) { width: 35%; }
-            body:not(.print-label-mode) th:nth-child(3), body:not(.print-label-mode) td:nth-child(3) { width: 40%; }
-            body:not(.print-label-mode) th:nth-child(4), body:not(.print-label-mode) td:nth-child(4) { width: 20%; }
-
-            body:not(.print-label-mode) .print-doc-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 10px; font-weight: bold; font-size: 10pt; color: #000; }
-            body:not(.print-label-mode) .recipe-header { background: transparent; color: #000; padding: 0; margin-bottom: 10px; text-align: center; border-bottom: none; }
-            body:not(.print-label-mode) .recipe-title { font-size: 16pt; text-transform: uppercase; border-bottom: 2px solid #000; display: inline-block; padding-bottom: 3px; }
-            body:not(.print-label-mode) .recipe-desc { font-weight: bold; }
-            body:not(.print-label-mode) .target-info { background: transparent; color: #000; border: 1px solid #000; padding: 5px; font-size: 11pt; margin-bottom: 10px; }
-            body:not(.print-label-mode) .safety-box { background: transparent; color: #000; border: 1px solid #000; border-left: 5px solid #000; padding: 5px 8px; margin-bottom: 10px; font-weight: bold; }
-            body:not(.print-label-mode) table { border: 1px solid #000; margin-bottom: 15px; }
-            body:not(.print-label-mode) th, body:not(.print-label-mode) td { padding: 6px 8px; border-bottom: 1px solid #999; color: #000; white-space: normal;}
-            body:not(.print-label-mode) th { background-color: #f0f0f0; border-bottom: 2px solid #000; }
-            body:not(.print-label-mode) .phase-row td { background-color: #e5e5e5; font-size: 10pt; border-top: 2px solid #000; border-bottom: 1px solid #000; }
-            body:not(.print-label-mode) .traceability-box { color: #000; font-size: 9pt; }
-            body:not(.print-label-mode) .total-row td { background: transparent; color: #000; border-top: 3px double #000; font-size: 11pt; }
-            body:not(.print-label-mode) .pct-label { color: #333; }
-            body:not(.print-label-mode) .instructions-box { background: transparent; color: #000; border: 1px solid #000; padding: 8px; page-break-inside: avoid; }
-            body:not(.print-label-mode) .instructions-list li { margin-bottom: 3px; }
-            input[type="checkbox"] { -webkit-print-color-adjust: exact; color-adjust: exact; }
-
-            body.print-label-mode #resultContainer { display: none !important; }
-            body.print-label-mode #labelPreview { display: block !important; position: fixed; top: 0; left: 0; width: 100mm; height: 62mm; border: none; margin: 0; padding: 0; }
+            #loginOverlay,.control-panel,.app-header { display:none !important; }
+            .container { box-shadow:none; border:none; margin:0; padding:0; width:100%; max-width:none; border-radius:0; }
+            body:not(.print-label-mode) #resultContainer { display:block; width:100%; border:none; box-shadow:none; border-radius:0; }
+            body:not(.print-label-mode) #labelPreview { display:none; }
+            body:not(.print-label-mode) { background:white; font-size:10pt; color:#000; }
+            @page { size:A4 portrait; margin:10mm 12mm; }
+            body:not(.print-label-mode) table { table-layout:auto; font-size:9.5pt; }
+            body:not(.print-label-mode) th:nth-child(1),body:not(.print-label-mode) td:nth-child(1) { width:5%; }
+            body:not(.print-label-mode) th:nth-child(2),body:not(.print-label-mode) td:nth-child(2) { width:35%; }
+            body:not(.print-label-mode) th:nth-child(3),body:not(.print-label-mode) td:nth-child(3) { width:40%; }
+            body:not(.print-label-mode) th:nth-child(4),body:not(.print-label-mode) td:nth-child(4) { width:20%; }
+            body:not(.print-label-mode) .print-doc-header { display:flex; justify-content:space-between; border-bottom:2px solid #000; padding-bottom:5px; margin-bottom:10px; font-weight:bold; font-size:10pt; color:#000; }
+            body:not(.print-label-mode) .recipe-header { background:transparent; color:#000; padding:0; margin-bottom:10px; text-align:center; }
+            body:not(.print-label-mode) .recipe-title { font-size:16pt; text-transform:uppercase; border-bottom:2px solid #000; display:inline-block; padding-bottom:3px; }
+            body:not(.print-label-mode) .recipe-desc { font-weight:bold; }
+            body:not(.print-label-mode) .target-info { background:transparent; color:#000; border:1px solid #000; padding:5px; font-size:11pt; margin-bottom:10px; }
+            body:not(.print-label-mode) .safety-box { background:transparent; color:#000; border:1px solid #000; border-left:5px solid #000; padding:5px 8px; margin-bottom:10px; font-weight:bold; }
+            body:not(.print-label-mode) table { border:1px solid #000; margin-bottom:15px; }
+            body:not(.print-label-mode) th,body:not(.print-label-mode) td { padding:6px 8px; border-bottom:1px solid #999; color:#000; white-space:normal; }
+            body:not(.print-label-mode) th { background-color:#f0f0f0; border-bottom:2px solid #000; }
+            body:not(.print-label-mode) .phase-row td { background-color:#e5e5e5; font-size:10pt; border-top:2px solid #000; }
+            body:not(.print-label-mode) .traceability-box { color:#000; font-size:9pt; }
+            body:not(.print-label-mode) .total-row td { background:transparent; color:#000; border-top:3px double #000; font-size:11pt; }
+            body:not(.print-label-mode) .pct-label { color:#333; }
+            body:not(.print-label-mode) .instructions-box { background:transparent; color:#000; border:1px solid #000; padding:8px; page-break-inside:avoid; }
+            body:not(.print-label-mode) .instructions-list li { margin-bottom:3px; }
+            input[type="checkbox"] { -webkit-print-color-adjust:exact; color-adjust:exact; }
+            body.print-label-mode #resultContainer { display:none !important; }
+            body.print-label-mode #labelPreview { display:block !important; position:fixed; top:0; left:0; width:100mm; height:62mm; border:none; margin:0; padding:0; }
         }
     </style>
 </head>
@@ -471,31 +169,37 @@
 <div class="container" id="mainApp">
     <div class="app-header">
         <h1>ZARKOLIA LAB</h1>
-        <span class="version">Production System v34</span>
+        <span class="version">Production System v35</span>
     </div>
-    
+
     <div class="control-panel">
         <label class="form-label">1. Επιλογή Προϊόντος</label>
         <select id="recipeSelect" onchange="toggleInputs()">
             <option value="" disabled selected>-- Επιλέξτε από τη λίστα --</option>
-            <optgroup label="Θεραπείες Σώματος & Αναπλαστικές">
-                <option value="zplast_classic">ZPLAST CREAM (Classic CPNP Formula)</option>
-                <option value="zplast">Zplast Total Repair (Light Version)</option>
-                <option value="bruise">Bruise Off (5kg Formula)</option>
+            <optgroup label="— Zplast Classic —">
+                <option value="zplast_classic">ZPLAST CREAM Classic (CPNP)</option>
+                <option value="zplast_classic_wound">ZPLAST CREAM Classic — Wound+ (Allantoin/Panthenol)</option>
+            </optgroup>
+            <optgroup label="— Zplast Total Repair —">
+                <option value="zplast">Zplast Total Repair — Skin Repair (v34b)</option>
+                <option value="zplast_wound">Zplast Total Repair — Wound+ (Allantoin/Panthenol)</option>
+            </optgroup>
+            <optgroup label="— Άλλα Σώματος —">
+                <option value="bruise">Bruise Off</option>
                 <option value="zplast_heavy">ZPLAST HEAVY (Test 0.5% Cet)</option>
             </optgroup>
-            <optgroup label="Συμπληρώματα">
+            <optgroup label="— Συμπληρώματα —">
                 <option value="zboost">Z-Boost Caps (Ginger/ALA)</option>
             </optgroup>
-            <optgroup label="Κρέμες Προσώπου">
+            <optgroup label="— Κρέμες Προσώπου —">
                 <option value="plus">Revitacell Plus</option>
                 <option value="eyes">Revitacell Eyes</option>
                 <option value="hydralia">Hydralia Face</option>
             </optgroup>
-            <optgroup label="Σιρόπι">
+            <optgroup label="— Σιρόπι —">
                 <option value="syrup_custom">ALVEOLAIR</option>
             </optgroup>
-            <optgroup label="Βάσεις">
+            <optgroup label="— Βάσεις —">
                 <option value="base">Βάση Gel-Cream</option>
             </optgroup>
         </select>
@@ -504,36 +208,19 @@
             <label class="form-label">2. Στόχος Παραγωγής (g)</label>
             <input type="number" id="totalWeightInput" value="1000" step="50">
         </div>
-
         <div class="form-row" style="display:none;" id="capsuleInput">
             <label class="form-label">2. Υπολογισμός Καψουλών</label>
             <div class="caps-panel">
-                <div class="caps-row">
-                    <span class="caps-label">💊 Χύμα Κάψουλες (τμχ)</span>
-                    <div class="caps-input"><input type="number" id="inCapsBulk" placeholder="0"></div>
-                </div>
-                <div class="caps-row">
-                    <span class="caps-label">📦 Πακέτα των 12</span>
-                    <div class="caps-input"><input type="number" id="inPacks12" placeholder="0"></div>
-                </div>
-                <div class="caps-row">
-                    <span class="caps-label">📦 Πακέτα των 30</span>
-                    <div class="caps-input"><input type="number" id="inPacks30" placeholder="0"></div>
-                </div>
+                <div class="caps-row"><span class="caps-label">💊 Χύμα Κάψουλες (τμχ)</span><div class="caps-input"><input type="number" id="inCapsBulk" placeholder="0"></div></div>
+                <div class="caps-row"><span class="caps-label">📦 Πακέτα των 12</span><div class="caps-input"><input type="number" id="inPacks12" placeholder="0"></div></div>
+                <div class="caps-row"><span class="caps-label">📦 Πακέτα των 30</span><div class="caps-input"><input type="number" id="inPacks30" placeholder="0"></div></div>
             </div>
         </div>
-        
-        <div class="checkbox-group">
-            <label class="checkbox-wrapper">
-                <input type="checkbox" id="showInstructions" checked>
-                <span>Εμφάνιση Οδηγιών Παρασκευής</span>
-            </label>
-            <label class="checkbox-wrapper print-label-toggle">
-                <input type="checkbox" id="printLabelMode" onchange="togglePrintMode()">
-                <span>🖨️ Λειτουργία Ετικέτας (Brother 62mm)</span>
-            </label>
-        </div>
 
+        <div class="checkbox-group">
+            <label class="checkbox-wrapper"><input type="checkbox" id="showInstructions" checked><span>Εμφάνιση Οδηγιών Παρασκευής</span></label>
+            <label class="checkbox-wrapper print-label-toggle"><input type="checkbox" id="printLabelMode" onchange="togglePrintMode()"><span>🖨️ Λειτουργία Ετικέτας (Brother 62mm)</span></label>
+        </div>
         <div class="btn-group">
             <button class="btn-calc" onclick="calculate()">ΥΠΟΛΟΓΙΣΜΟΣ</button>
             <button class="btn-print" onclick="window.print()">ΕΚΤΥΠΩΣΗ</button>
@@ -543,19 +230,16 @@
     <div id="labelPreview">
         <div class="lbl-container">
             <div class="lbl-left">
-                <div>
-                    <div class="lbl-header">ZARKOLIA LAB</div>
-                    <div class="lbl-title" id="lblTitle">PRODUCT NAME</div>
-                </div>
+                <div><div class="lbl-header">ZARKOLIA LAB</div><div class="lbl-title" id="lblTitle">PRODUCT</div></div>
                 <div class="lbl-meta">Made in Greece<br>Store in a cool dry place</div>
             </div>
             <div class="lbl-right">
                 <div class="lbl-data-row">LOT:<br><span class="lbl-data-val" id="lblLot">ZXX0000</span></div>
                 <div class="lbl-data-row">EXP:<br><span class="lbl-data-val" id="lblExpDate">00/00</span></div>
                 <svg class="pao-icon" viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="5">
-                    <path d="M15,35 L15,85 Q15,95 25,95 L75,95 Q85,95 85,85 L85,35" fill="none" />
-                    <path d="M85,35 L15,35 L10,15 Q50,5 90,15 Z" fill="none" />
-                    <text x="50" y="75" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="28" stroke="none" fill="black" id="paoText">6M</text>
+                    <path d="M15,35 L15,85 Q15,95 25,95 L75,95 Q85,95 85,85 L85,35" fill="none"/>
+                    <path d="M85,35 L15,35 L10,15 Q50,5 90,15 Z" fill="none"/>
+                    <text x="50" y="75" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="28" stroke="none" fill="black" id="paoText">12M</text>
                 </svg>
             </div>
         </div>
@@ -565,322 +249,425 @@
 </div>
 
 <script>
-    const _0x9f2a = "34b35aca37baf7d5d997466dff1ab8ca1dc901df7010f3279138670838e2c9e8";
+const _0x9f2a = "34b35aca37baf7d5d997466dff1ab8ca1dc901df7010f3279138670838e2c9e8";
 
-    async function checkLogin() {
-        const input = document.getElementById('passwordInput').value;
-        if (!input) return;
-        const encoder = new TextEncoder();
-        const data = encoder.encode(input);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        if (hashHex === _0x9f2a || input.toLowerCase() === 'zelia') {
-            document.getElementById('loginOverlay').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
-        } else {
-            alert("Λάθος κωδικός");
-            document.getElementById('passwordInput').value = "";
-        }
+async function checkLogin() {
+    const input = document.getElementById('passwordInput').value;
+    if (!input) return;
+    const encoder = new TextEncoder();
+    const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(input));
+    const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    if (hashHex === _0x9f2a || input.toLowerCase() === 'zelia') {
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+    } else {
+        alert("Λάθος κωδικός");
+        document.getElementById('passwordInput').value = "";
+    }
+}
+document.getElementById('passwordInput').addEventListener('keypress', e => { if(e.key==='Enter') checkLogin(); });
+
+function togglePrintMode() {
+    document.body.classList.toggle('print-label-mode', document.getElementById('printLabelMode').checked);
+}
+
+// ============================================================
+// RECIPES
+// ============================================================
+const recipes = {
+
+    // ── ZPLAST CLASSIC ──────────────────────────────────────
+    zplast_classic: {
+        title: "ZPLAST CREAM", desc: "Classic CPNP Formula", initials: "ZC", shelfLife: 12, type: "standard",
+        safetyNote: "Αυθεντική παχύρρευστη φόρμουλα CPNP. Προσφέρει άριστη επικάλυψη.",
+        ingredients: [
+            { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ) ---", isHeader: true },
+            { name: "Aqua",                                        pct: 0,    isQS: true },
+            { name: "Magnesium Aluminum Silicate",                 pct: 2.0 },
+            { name: "Xanthan Gum",                                 pct: 0.5 },
+            { name: "--- ΦΑΣΗ Β (ΣΚΟΝΕΣ) ---", isHeader: true },
+            { name: "Calamine Powder",                             pct: 8.0 },
+            { name: "Zea Mays Starch",                             pct: 8.0 },
+            { name: "--- ΦΑΣΗ Γ (ΛΙΠΑΡΗ 75°C) ---", isHeader: true },
+            { name: "Xalifin-15 (C12-20 Acid PEG-8 Ester)",       pct: 6.0 },
+            { name: "Petrolatum (Βαζελίνη)",                       pct: 6.0 },
+            { name: "Cetyl Alcohol",                               pct: 1.0 },
+            { name: "Linum Usitatissimum Oil",                     pct: 2.0 },
+            { name: "Avocado Oil",                                 pct: 2.0 },
+            { name: "Hypericum Perforatum Oil",                    pct: 2.0 },
+            { name: "Arnica Montana Flower Oil",                   pct: 2.0 },
+            { name: "--- ΦΑΣΗ Δ (ΕΝΕΡΓΑ <40°C) ---", isHeader: true },
+            { name: "Thymus Vulgaris Extract",                     pct: 2.0 },
+            { name: "Hippophae Rhamnoides Extract",                pct: 2.0 },
+            { name: "Pistacia Lentiscus Extract/Gum (Μαστίχα)",   pct: 2.0 },
+            { name: "Honey Extract",                               pct: 0.5 },
+            { name: "Alcohol Denat",                               pct: 2.0 },
+            { name: "Phenoxyethanol/Caprylyl Glycol/EHG",         pct: 1.0 },
+        ],
+        instructions: [
+            "1. Διασπορά Mg Al Silicate & Xanthan στο ζεστό νερό.",
+            "2. Σταδιακή ενσωμάτωση σκονών (Φάση Β) — ομοιόμορφη πάστα.",
+            "3. Θέρμανση Φάσης Γ στους 75°C. Μίξη σε Α+Β με έντονη ανάδευση.",
+            "4. Ψύξη με ανάδευση. Προσθήκη Φάσης Δ κάτω από 40°C.",
+        ]
+    },
+
+    // ── ZPLAST CLASSIC WOUND+ ────────────────────────────────
+    zplast_classic_wound: {
+        title: "ZPLAST CREAM — WOUND+", desc: "Classic + Allantoin 0.5% + D-Panthenol 2%", initials: "ZW", shelfLife: 12, type: "standard",
+        woundNote: "Ενισχυμένη επουλωτική έκδοση. Allantoin: επιταχύνει επαναεπιθηλιοποίηση. D-Panthenol: επιδιόρθωση κυτταρικής μεμβράνης. Κατάλληλη για ανοιχτές καθαρές πληγές.",
+        ingredients: [
+            { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ) ---", isHeader: true },
+            { name: "Aqua",                                        pct: 0,    isQS: true },
+            { name: "Magnesium Aluminum Silicate",                 pct: 2.0 },
+            { name: "Xanthan Gum",                                 pct: 0.5 },
+            { name: "Allantoin",                                   pct: 0.5,  isNew: true },
+            { name: "D-Panthenol",                                 pct: 2.0,  isNew: true },
+            { name: "--- ΦΑΣΗ Β (ΣΚΟΝΕΣ) ---", isHeader: true },
+            { name: "Calamine Powder",                             pct: 8.0 },
+            { name: "Zea Mays Starch",                             pct: 8.0 },
+            { name: "--- ΦΑΣΗ Γ (ΛΙΠΑΡΗ 75°C) ---", isHeader: true },
+            { name: "Xalifin-15 (C12-20 Acid PEG-8 Ester)",       pct: 6.0 },
+            { name: "Petrolatum (Βαζελίνη)",                       pct: 6.0 },
+            { name: "Cetyl Alcohol",                               pct: 1.0 },
+            { name: "Linum Usitatissimum Oil",                     pct: 2.0 },
+            { name: "Avocado Oil",                                 pct: 2.0 },
+            { name: "Hypericum Perforatum Oil",                    pct: 2.0 },
+            { name: "Arnica Montana Flower Oil",                   pct: 2.0 },
+            { name: "--- ΦΑΣΗ Δ (ΕΝΕΡΓΑ <40°C) ---", isHeader: true },
+            { name: "Thymus Vulgaris Extract",                     pct: 2.0 },
+            { name: "Hippophae Rhamnoides Extract",                pct: 2.0 },
+            { name: "Pistacia Lentiscus Extract/Gum (Μαστίχα)",   pct: 2.0 },
+            { name: "Honey Extract",                               pct: 0.5 },
+            { name: "Alcohol Denat",                               pct: 2.0 },
+            { name: "Phenoxyethanol/Caprylyl Glycol/EHG",         pct: 1.0 },
+        ],
+        instructions: [
+            "1. Διασπορά Mg Al Silicate & Xanthan στο ζεστό νερό.",
+            "2. Διάλυση Allantoin & D-Panthenol στη Φάση Α (~60°C).",
+            "3. Σταδιακή ενσωμάτωση σκονών (Φάση Β).",
+            "4. Θέρμανση Φάσης Γ 75°C. Μίξη με Α+Β.",
+            "5. Προσθήκη Φάσης Δ κάτω από 40°C.",
+        ]
+    },
+
+    // ── ZPLAST TOTAL REPAIR — SKIN REPAIR v34b ──────────────
+    zplast: {
+        title: "ZPLAST TOTAL REPAIR", desc: "Skin Repair v34b — Althaea/Centella/Mastic", initials: "ZT", shelfLife: 12, type: "standard",
+        safetyNote: "Skin repair / barrier cream. Για ερεθισμένο, ξηρό ή καταπονημένο δέρμα. Δεν ενδείκνυται για εκτεταμένες ανοιχτές πληγές.",
+        ingredients: [
+            { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ) ---", isHeader: true },
+            { name: "Aqua",                                        pct: 0,    isQS: true },
+            { name: "Glycerin",                                    pct: 4.0 },
+            { name: "Calamine Powder",                             pct: 5.0 },
+            { name: "Zea Mays Starch",                             pct: 2.0 },
+            { name: "Sodium Hyaluronate 1%",                       pct: 1.0 },
+            { name: "Citric Acid",                                 pct: 0.07 },
+            { name: "--- ΦΑΣΗ Β (ΛΙΠΑΡΗ 75°C) ---", isHeader: true },
+            { name: "Xalifin-15",                                  pct: 3.5 },
+            { name: "Paraffinum Liquidum",                         pct: 7.5 },
+            { name: "Avocado Oil",                                 pct: 2.0 },
+            { name: "Cetostearyl Alcohol",                         pct: 1.5 },
+            { name: "Tocopherol (Vit E)",                          pct: 0.5 },
+            { name: "--- ΦΑΣΗ Γ (ΕΝΕΡΓΑ <40°C) ---", isHeader: true },
+            { name: "Hypericum Ext",                               pct: 2.0 },
+            { name: "Hippophae Ext (dry 5:1)",                     pct: 0.2 },
+            { name: "Centella Asiatica Ext",                       pct: 4.0 },
+            { name: "Althaea Officinalis Root Ext",                pct: 2.0 },
+            { name: "Mel (Honey)",                                 pct: 3.0 },
+            { name: "Mastic in Olive Oil 20%",                     pct: 10.0, note: "= 2% μαστίχα + 8% ελαιόλαδο" },
+            { name: "Euxyl PE 9010",                               pct: 0.5 },
+            { name: "Alcohol Denat",                               pct: 0.25 },
+            { name: "Parfum",                                      pct: 0.07 },
+        ],
+        instructions: [
+            "1. Θέρμανση Φάσης Α 70-75°C — ανάδευση για ομοιόμορφη διανομή σκονών.",
+            "2. Θέρμανση Φάσης Β 75°C ξεχωριστά.",
+            "3. Αργή προσθήκη Β σε Α με έντονη ανάδευση.",
+            "4. Ψύξη με αδιάλειπτη ανάδευση.",
+            "5. Κάτω από 40°C: εκχυλίσματα, Althaea, Mel, Μαστίχα/ελαιόλαδο.",
+            "6. Τέλος Euxyl + Alcohol + Parfum.",
+            "7. Έλεγχος pH (στόχος 5.0-6.0).",
+        ]
+    },
+
+    // ── ZPLAST TOTAL REPAIR — WOUND+ ────────────────────────
+    zplast_wound: {
+        title: "ZPLAST TOTAL REPAIR — WOUND+", desc: "Wound Formula — Allantoin 0.5% + D-Panthenol 2%", initials: "ZR", shelfLife: 12, type: "standard",
+        woundNote: "Έκδοση για ανοιχτές καθαρές πληγές. Χωρίς Zea Mays, Alcohol, Parfum. Allantoin + D-Panthenol για μέγιστη επουλωτική δράση.",
+        ingredients: [
+            { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ) ---", isHeader: true },
+            { name: "Aqua",                                        pct: 0,    isQS: true },
+            { name: "Glycerin",                                    pct: 4.0 },
+            { name: "Calamine Powder",                             pct: 5.0 },
+            { name: "Sodium Hyaluronate 1%",                       pct: 1.0 },
+            { name: "Allantoin",                                   pct: 0.5,  isNew: true },
+            { name: "Citric Acid",                                 pct: 0.07 },
+            { name: "--- ΦΑΣΗ Β (ΛΙΠΑΡΗ 75°C) ---", isHeader: true },
+            { name: "Xalifin-15",                                  pct: 3.5 },
+            { name: "Paraffinum Liquidum",                         pct: 7.5 },
+            { name: "Avocado Oil",                                 pct: 2.0 },
+            { name: "Cetostearyl Alcohol",                         pct: 1.5 },
+            { name: "Tocopherol (Vit E)",                          pct: 0.5 },
+            { name: "--- ΦΑΣΗ Γ (ΕΝΕΡΓΑ <40°C) ---", isHeader: true },
+            { name: "Hypericum Ext",                               pct: 2.0 },
+            { name: "Hippophae Ext (dry 5:1)",                     pct: 0.2 },
+            { name: "Centella Asiatica Ext",                       pct: 4.0 },
+            { name: "Althaea Officinalis Root Ext",                pct: 2.0 },
+            { name: "D-Panthenol",                                 pct: 2.0,  isNew: true },
+            { name: "Mel (Honey)",                                 pct: 3.0 },
+            { name: "Mastic in Olive Oil 20%",                     pct: 10.0, note: "= 2% μαστίχα + 8% ελαιόλαδο" },
+            { name: "Euxyl PE 9010",                               pct: 0.5 },
+        ],
+        instructions: [
+            "1. Θέρμανση Φάσης Α 70-75°C — Allantoin διαλύεται πλήρως στο ζεστό νερό.",
+            "2. Θέρμανση Φάσης Β 75°C ξεχωριστά.",
+            "3. Αργή προσθήκη Β σε Α με έντονη ανάδευση.",
+            "4. Ψύξη με αδιάλειπτη ανάδευση.",
+            "5. Κάτω από 40°C: εκχυλίσματα, Althaea, D-Panthenol, Mel, Μαστίχα.",
+            "6. Τέλος Euxyl PE 9010.",
+            "7. Έλεγχος pH (στόχος 5.5-6.5). Εφαρμογή μόνο σε καθαρές πληγές.",
+        ]
+    },
+
+    // ── BRUISE OFF ───────────────────────────────────────────
+    bruise: {
+        title: "BRUISE OFF", desc: "Stearic Formula", initials: "BO", shelfLife: 18, type: "standard",
+        safetyNote: "Ενισχυμένο Cetostearyl/Stearic.",
+        ingredients: [
+            { name: "--- ΦΑΣΗ Α (ΛΙΠΑΡΗ 75°C) ---", isHeader: true },
+            { name: "Arnica Oil",             pct: 9.10 }, { name: "Vaseline",           pct: 9.10 },
+            { name: "Cetostearyl Alcohol",    pct: 7.70 }, { name: "Stearic Acid",        pct: 3.30 },
+            { name: "Linseed Oil",            pct: 1.80 }, { name: "Propyl Paraben",      pct: 0.10 },
+            { name: "--- ΦΑΣΗ Β (ΥΔΑΤΙΚΗ 75°C) ---", isHeader: true },
+            { name: "Aqua",                   pct: 0, isQS: true }, { name: "Polysorbate 80", pct: 3.70 },
+            { name: "Propylene Glycol",       pct: 1.80 }, { name: "Methyl Paraben",      pct: 0.10 },
+            { name: "--- ΦΑΣΗ Γ (<40°C) ---", isHeader: true },
+            { name: "Lavender Lemon Balm",    pct: 0.90 },
+        ],
+        instructions: ["1. Θέρμανση Α & Β 75°C ξεχωριστά.", "2. Προσθήκη Α σε Β με έντονη ανάδευση.", "3. Φάση Γ <40°C."]
+    },
+
+    // ── ZPLAST HEAVY ─────────────────────────────────────────
+    zplast_heavy: {
+        title: "ZPLAST REPAIR (Heavy)", desc: "Heavy Paraffin + 0.5% Cetostearyl", initials: "ZH", shelfLife: 12, type: "standard",
+        ingredients: [
+            { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ) ---", isHeader: true },
+            { name: "Aqua",                    pct: 0, isQS: true }, { name: "Glycerin",              pct: 3.77 },
+            { name: "Calamine Powder",         pct: 1.50 }, { name: "Zea Mays Starch",        pct: 0.50 },
+            { name: "Sodium Hyaluronate 1%",   pct: 1.27 }, { name: "Citric Acid",             pct: 0.07 },
+            { name: "--- ΦΑΣΗ Β (75°C) ---", isHeader: true },
+            { name: "Xalifin-15",              pct: 5.00 }, { name: "Paraffinum Liq. (HEAVY)", pct: 7.50 },
+            { name: "Linum Oil",               pct: 2.50 }, { name: "Avocado Oil",             pct: 2.00 },
+            { name: "Cetostearyl Alcohol",     pct: 0.50 }, { name: "Vit E",                   pct: 0.63 },
+            { name: "--- ΦΑΣΗ Γ (<40°C) ---", isHeader: true },
+            { name: "Hypericum Ext",           pct: 2.00 }, { name: "Hippophae Ext",           pct: 1.27 },
+            { name: "Centella",                pct: 3.77 }, { name: "Mel (Honey)",             pct: 1.27 },
+            { name: "Mastic Oil",              pct: 3.27 }, { name: "Euxyl PE 9010",           pct: 1.00 },
+            { name: "Alcohol Denat",           pct: 0.27 }, { name: "Parfum",                  pct: 0.07 },
+        ],
+        instructions: ["1. Θέρμανση Α & Β 75°C.", "2. Μίξη Β σε Α.", "3. Φάση Γ <40°C."]
+    },
+
+    // ── Z-BOOST CAPS ─────────────────────────────────────────
+    zboost: {
+        title: "Z-BOOST CAPS", desc: "Ginger/ALA", initials: "ZB", shelfLife: 24, type: "capsule", capsuleContentWeight: 0.5864,
+        safetyNote: "Ευαίσθητο στην υγρασία. Πλήρωση σε Dry Room.",
+        ingredients: [
+            { name: "a-Lipoic Acid (ALA)",      pct: 34.11 }, { name: "N-Acetyl-L-Cysteine (NAC)", pct: 34.11 },
+            { name: "Ginger Extract",            pct: 17.05 }, { name: "Coenzyme Q10",              pct: 8.53 },
+            { name: "Zinc Gluconate",            pct: 5.97 },  { name: "Magnesium Stearate",        pct: 0.19 },
+            { name: "Selenium Yeast",            pct: 0.03 },  { name: "Sodium Ascorbate",          pct: 0.02 },
+        ],
+        instructions: ["1. Κοσκινίστε όλες τις σκόνες.", "2. Γεωμετρική αραίωση μικρο-συστατικών με Ginger.", "3. Προσθήκη ALA & NAC.", "4. Τέλος Mg Stearate (μίξη 3 λεπτά)."]
+    },
+
+    // ── REVITACELL PLUS ──────────────────────────────────────
+    plus: {
+        title: "REVITACELL PLUS", desc: "New Formula", initials: "RP", shelfLife: 12, type: "standard",
+        ingredients: [
+            { name: "Βάση Gel-Cream", pct: 0, isQS: true }, { name: "Almond Oil",      pct: 2.0 },
+            { name: "Avocado Oil",    pct: 2.0 },            { name: "Jojoba Oil",       pct: 2.0 },
+            { name: "Pomegranate Oil",pct: 2.0 },            { name: "Mastic Oil",       pct: 1.0 },
+            { name: "Mastic Tincture",pct: 3.0 },            { name: "Vit E",            pct: 0.5 },
+        ],
+        instructions: ["1. Μίξη λαδιών με Βιταμίνη Ε.", "2. Προσθήκη Βάμματος.", "3. Ενσωμάτωση στη βάση."]
+    },
+
+    // ── REVITACELL EYES ──────────────────────────────────────
+    eyes: {
+        title: "REVITACELL EYES", desc: "Safe 8% Arnica", initials: "RE", shelfLife: 12, type: "standard",
+        ingredients: [
+            { name: "Βάση Gel-Cream",          pct: 0, isQS: true }, { name: "Arnica Oil",            pct: 8.0 },
+            { name: "Jojoba Oil",              pct: 1.0 },            { name: "Almond Oil",            pct: 1.0 },
+            { name: "Hyaluronic Acid 1%",      pct: 4.0 },            { name: "Glycerin",              pct: 2.0 },
+            { name: "Aesculus Hippocastanum",  pct: 2.0 },            { name: "Parfum",                pct: 0.2 },
+        ],
+        instructions: ["1. Μίξη λαδιών.", "2. Προσθήκη υδατικών.", "3. Ενσωμάτωση στη βάση."]
+    },
+
+    // ── HYDRALIA ─────────────────────────────────────────────
+    hydralia: {
+        title: "HYDRALIA FACE CREAM", desc: "Moisturizing Cream", initials: "HF", shelfLife: 12, type: "standard",
+        ingredients: [
+            { name: "Βάση Gel-Cream", pct: 0, isQS: true }, { name: "Avocado Oil",   pct: 4.0 },
+            { name: "Jojoba Oil",     pct: 2.5 },            { name: "Almond Oil",    pct: 2.5 },
+            { name: "Aloe Vera Gel",  pct: 8.0 },            { name: "Parfum",        pct: 0.3 },
+        ],
+        instructions: ["1. Προ-ανάμειξη λαδιών + άρωμα.", "2. Προσθήκη Αλόης.", "3. Ενσωμάτωση στη βάση."]
+    },
+
+    // ── ALVEOLAIR ────────────────────────────────────────────
+    syrup_custom: {
+        title: "ALVEOLAIR", desc: "66.7%", initials: "AL", shelfLife: 6, type: "standard",
+        ingredients: [
+            { name: "Fructose / Brown Sugar",  pct: 66.70 }, { name: "Aqua",              pct: 0, isQS: true },
+            { name: "Sodium Benzoate",         pct: 0.10 },
+            { name: "--- MIX ΒΑΜΜΑΤΩΝ (5%) ---", isHeader: true },
+            { name: "Βάμμα Αλθαίας",           pct: 2.10 },  { name: "Βάμμα Θυμαριού",   pct: 0.79 },
+            { name: "Βάμμα Ευκαλύπτου",        pct: 0.79 },  { name: "Βάμμα Κράνι",      pct: 0.79 },
+            { name: "Βάμμα Ιπποφαές",          pct: 0.79 },
+            { name: "--- ΥΠΟΛΟΙΠΑ ---", isHeader: true },
+            { name: "Vit C & Lemon EO",        pct: 0.15 },
+            { name: "Lemon Juice",             pct: 0, note: "q.s. ρύθμιση pH" },
+        ],
+        instructions: ["1. Ζέσταμα νερού 70°C.", "2. Λεμόνι + σάκχαρο.", "3. Βάμματα <40°C.", "4. pH < 4.5."]
+    },
+
+    // ── BASE GEL-CREAM ───────────────────────────────────────
+    base: {
+        title: "BASE GEL-CREAM", desc: "Base Formula", initials: "BG", shelfLife: 12, type: "standard",
+        ingredients: [
+            { name: "Aqua",           pct: 0, isQS: true }, { name: "Glycerin",       pct: 4.0 },
+            { name: "Hyaluronic Pw",  pct: 0.2 },           { name: "Carbomer",       pct: 0.25 },
+            { name: "Cetearyl Alcohol",pct: 2.0 },          { name: "Stearic Acid",   pct: 1.0 },
+            { name: "IPM",            pct: 2.0 },           { name: "Methyl Paraben", pct: 0.2 },
+            { name: "Propyl Paraben", pct: 0.1 },           { name: "Vit E",          pct: 0.5 },
+            { name: "TEA",            pct: 0.25 },
+        ],
+        instructions: ["1. Ενυδάτωση Carbomer στο νερό.", "2. Θέρμανση φάσεων 75°C.", "3. Ανάμειξη + εξουδετέρωση με TEA."]
+    },
+};
+
+// ============================================================
+// UI LOGIC
+// ============================================================
+function toggleInputs() {
+    const key = document.getElementById('recipeSelect').value;
+    const isCap = recipes[key]?.type === 'capsule';
+    document.getElementById('standardInput').style.display = isCap ? 'none' : 'block';
+    document.getElementById('capsuleInput').style.display = isCap ? 'block' : 'none';
+    document.getElementById('resultContainer').style.display = 'none';
+}
+
+function calculate() {
+    const key = document.getElementById('recipeSelect').value;
+    if (!key) return alert("Επιλέξτε προϊόν από τη λίστα.");
+    const recipe = recipes[key];
+
+    let weight = 0, info = "";
+    if (recipe.type === 'capsule') {
+        const bulk = parseFloat(document.getElementById('inCapsBulk').value) || 0;
+        const p12  = parseFloat(document.getElementById('inPacks12').value)  || 0;
+        const p30  = parseFloat(document.getElementById('inPacks30').value)  || 0;
+        const totalCaps = bulk + p12*12 + p30*30;
+        if (totalCaps <= 0) return alert("Εισάγετε αριθμό καψουλών.");
+        weight = totalCaps * recipe.capsuleContentWeight;
+        info = `ΣΤΟΧΟΣ: ${totalCaps} Κάψουλες (${bulk} χύμα + ${p12}×12 + ${p30}×30)`;
+    } else {
+        weight = parseFloat(document.getElementById('totalWeightInput').value);
+        if (!weight || weight <= 0) return alert("Λάθος ποσότητα.");
+        info = `ΣΤΟΧΟΣ ΠΑΡΑΓΩΓΗΣ: ${weight.toLocaleString('el-GR')} γραμμάρια`;
     }
 
-    document.getElementById('passwordInput').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') checkLogin();
+    const now = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const printDate = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} — ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    const monthStr = pad(now.getMonth()+1);
+    const yearStr  = now.getFullYear();
+    const shelfMonths = recipe.shelfLife || 12;
+    const lotNo  = "Z" + (recipe.initials||"XX") + monthStr + yearStr;
+    const expStr = monthStr + "/" + yearStr;
+
+    document.getElementById('lblTitle').innerText   = recipe.title;
+    document.getElementById('lblLot').innerText     = lotNo;
+    document.getElementById('lblExpDate').innerText = expStr;
+    document.getElementById('paoText').innerText    = shelfMonths + "M";
+
+    let sumPct = 0;
+    recipe.ingredients.forEach(i => { if (!i.isQS && !i.isHeader && i.pct) sumPct += i.pct; });
+
+    // safety / wound note
+    let noteHtml = "";
+    if (recipe.woundNote) {
+        noteHtml = `<div class="safety-box wound">✦ <strong>WOUND FORMULA:</strong> ${recipe.woundNote}</div>`;
+    } else if (recipe.safetyNote) {
+        noteHtml = `<div class="safety-box">⚠️ <strong>ΠΡΟΣΟΧΗ:</strong> ${recipe.safetyNote}</div>`;
+    }
+
+    let html = `
+        <div class="print-doc-header">
+            <span>ZARKOLIA LAB — GMP ΦΥΛΛΟ ΠΑΡΑΓΩΓΗΣ</span>
+            <span>Ημ/νία: ${printDate}</span>
+        </div>
+        <div class="recipe-header">
+            <span class="recipe-title">${recipe.title}</span>
+            <span class="recipe-desc">${recipe.desc} &nbsp;|&nbsp; Batch: ${lotNo}</span>
+        </div>
+        ${noteHtml}
+        <div class="target-info">${info}</div>
+        <div class="table-wrapper">
+            <table>
+                <tr>
+                    <th style="text-align:center;">✔</th>
+                    <th>Συστατικό</th>
+                    <th>Ιχνηλασιμότητα</th>
+                    <th style="text-align:right">Ποσότητα</th>
+                </tr>`;
+
+    recipe.ingredients.forEach(i => {
+        if (i.isHeader) {
+            html += `<tr class="phase-row"><td colspan="4">${i.name}</td></tr>`;
+        } else {
+            const finalPct = i.isQS ? Math.max(0, 100-sumPct) : i.pct;
+            const amt = (finalPct/100*weight).toFixed(2);
+            const noteStr = i.note ? `<br><small style="color:var(--text-muted);font-weight:500;">(${i.note})</small>` : '';
+            const newBadge = i.isNew ? ` <span style="background:#d1fae5;color:#065f46;font-size:.7em;padding:2px 7px;border-radius:20px;font-weight:700;margin-left:4px;">NEW</span>` : '';
+            html += `<tr>
+                <td style="text-align:center;"><input type="checkbox"></td>
+                <td><span class="ingredient-name">${i.name}${newBadge}</span>${noteStr}</td>
+                <td class="traceability-box">Lot: ___________<br>Exp: __/__/_____</td>
+                <td class="amount-col">
+                    ${amt} g
+                    <span class="pct-label">(${finalPct.toFixed(2)}%)</span>
+                </td>
+            </tr>`;
+        }
     });
 
-    function togglePrintMode() {
-        const isLabel = document.getElementById('printLabelMode').checked;
-        if (isLabel) document.body.classList.add('print-label-mode');
-        else document.body.classList.remove('print-label-mode');
-    }
+    html += `
+            <tr class="total-row">
+                <td colspan="3" style="text-align:right;font-weight:700;color:#065f46;">ΣΥΝΟΛΟ:</td>
+                <td class="amount-col" style="text-align:right;">
+                    ${weight.toFixed(1)} g
+                    <span class="pct-label">(100.00%)</span>
+                </td>
+            </tr>
+        </table></div>`;
 
-    // ===================== RECIPES =====================
-    const recipes = {
-        zplast_classic: {
-            title: "ZPLAST CREAM", desc: "Classic CPNP Formula", initials: "ZC", shelfLife: 12, type: "standard",
-            safetyNote: "Αυθεντική παχύρρευστη φόρμουλα CPNP (16% σκόνες + Βαζελίνη). Προσφέρει άριστη επικάλυψη.",
-            ingredients: [
-                { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ) ---", isHeader: true },
-                { name: "Aqua (Νερό)", pct: 0, isQS: true },
-                { name: "Magnesium Aluminum Silicate", pct: 2.0 },
-                { name: "Xanthan Gum", pct: 0.5 },
-                { name: "--- ΦΑΣΗ Β (ΣΚΟΝΕΣ) ---", isHeader: true },
-                { name: "Calamine Powder", pct: 8.0 },
-                { name: "Zea Mays Starch", pct: 8.0 },
-                { name: "--- ΦΑΣΗ Γ (ΛΙΠΑΡΗ - 75°C) ---", isHeader: true },
-                { name: "C12-20 Acid PEG-8 Ester (Xalifin-15)", pct: 6.0 },
-                { name: "Petrolatum (Βαζελίνη)", pct: 6.0 },
-                { name: "Cetyl Alcohol", pct: 1.0 },
-                { name: "Linum Usitatissimum Oil", pct: 2.0 },
-                { name: "Persea Gratissima (Avocado) Oil", pct: 2.0 },
-                { name: "Hypericum Perforatum Oil", pct: 2.0 },
-                { name: "Arnica Montana Flower Oil", pct: 2.0 },
-                { name: "--- ΦΑΣΗ Δ (ΕΝΕΡΓΑ <40°C) ---", isHeader: true },
-                { name: "Thymus Vulgaris Extract", pct: 2.0 },
-                { name: "Hippophae Rhamnoides Extract", pct: 2.0 },
-                { name: "Pistacia Lentiscus (Mastic) Extract/Gum", pct: 2.0 },
-                { name: "Honey Extract", pct: 0.5 },
-                { name: "Alcohol", pct: 2.0 },
-                { name: "Phenoxyethanol/Caprylyl Glycol/Ethylhexylglycerin", pct: 1.0 }
-            ],
-            instructions: [
-                "1. Διασπορά Mg Al Silicate & Xanthan στο ζεστό νερό.",
-                "2. Σταδιακή ενσωμάτωση σκονών (Φάση Β) μέχρι να γίνει ομοιόμορφη πάστα.",
-                "3. Θέρμανση Φάσης Γ στους 75°C. Μίξη με Α+Β.",
-                "4. Προσθήκη ενεργών συστατικών (Δ) όταν η θερμοκρασία πέσει κάτω από 40°C."
-            ]
-        },
-
-        // *** ZPLAST TOTAL REPAIR — ΑΝΑΝΕΩΜΕΝΗ ΦΟΡΜΟΥΛΑ v34 ***
-        zplast: {
-            title: "ZPLAST TOTAL REPAIR",
-            desc: "Light Formula v2 — Althaea/Centella/Mastic",
-            initials: "ZT",
-            shelfLife: 12,
-            type: "standard",
-            safetyNote: "Φόρμουλα v34: +Αλθαία, +Καλαμίνη 5%, Euxyl μειωμένο στο 0.5% (ελάχ. δραστικό). Δεν συνιστάται για εκτεταμένες ανοιχτές πληγές.",
-            ingredients: [
-                { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ) ---", isHeader: true },
-                { name: "Aqua (Νερό)", pct: 0, isQS: true },
-                { name: "Glycerin", pct: 4.0 },
-                { name: "Calamine Powder", pct: 5.0 },        // ↑ από 1.0% → 5.0% (ελάχ. αποτελεσματική δόση)
-                { name: "Zea Mays Starch", pct: 2.0 },        // ↑ από 0.5% → 2.0% (ελάχ. για ματ/μαλακτική υφή)
-                { name: "Sodium Hyaluronate 1%", pct: 1.0 },
-                { name: "Citric Acid", pct: 0.07 },
-                { name: "--- ΦΑΣΗ Β (75°C) ---", isHeader: true },
-                { name: "Xalifin-15", pct: 5.0 },
-                { name: "Paraffinum Liquidum", pct: 7.5 },
-                // Linum Usitatissimum αφαιρέθηκε (ασταθές, εκτοπίζεται από Avocado+Hyper.)
-                { name: "Avocado Oil", pct: 2.0 },
-                { name: "Cetostearyl Alcohol", pct: 1.0 },
-                { name: "Tocopherol (Vit E)", pct: 0.5 },
-                { name: "--- ΦΑΣΗ Γ (<40°C) ---", isHeader: true },
-                { name: "Hypericum Ext", pct: 2.0 },
-                { name: "Hippophae Ext", pct: 1.0 },
-                { name: "Centella Asiatica", pct: 4.0 },
-                { name: "Althaea Officinalis Root Extract", pct: 2.0 },   // ✦ ΝΕΟ — μουκιλάγη, καταπραϋντικό
-                { name: "Mel (Honey)", pct: 1.0 },
-                { name: "Mastic in Olive Oil 20%", pct: 5.0 },           // ↑ από Mastic Oil 1% → 5% (20% διάλυμα σε ελαιόλαδο)
-                { name: "Euxyl PE 9010", pct: 0.5 },                     // ↓ από 1.0% → 0.5% (ελάχ. δραστική δόση)
-                { name: "Alcohol Denat", pct: 0.25 },
-                { name: "Parfum", pct: 0.07 }
-            ],
-            instructions: [
-                "1. Θέρμανση Φάσης Α στους 70-75°C (ανάδευση για ομοιόμορφη διανομή σκονών).",
-                "2. Θέρμανση Φάσης Β στους 75°C ξεχωριστά.",
-                "3. Αργή προσθήκη Β σε Α με έντονη ανάδευση — emulsification.",
-                "4. Ψύξη με αδιάλειπτη ανάδευση.",
-                "5. Κάτω από 40°C: προσθήκη εκχυλισμάτων, Αλθαίας, Mel, Μαστίχα/ελαιόλαδο.",
-                "6. Τέλος το Euxyl PE 9010 + Alcohol + Parfum.",
-                "7. Έλεγχος pH (στόχος 5.0-6.0). Έλεγχος υφής."
-            ]
-        },
-
-        bruise: {
-            title: "BRUISE OFF", desc: "Stearic Formula", initials: "BO", shelfLife: 18, type: "standard",
-            safetyNote: "Ενισχυμένο Cetostearyl/Stearic.",
-            ingredients: [
-                { name: "--- ΦΑΣΗ Α (ΛΙΠΑΡΗ - 75°C) ---", isHeader: true },
-                { name: "Arnica Oil", pct: 9.10 }, { name: "Vaseline", pct: 9.10 }, { name: "Cetostearyl Alcohol", pct: 7.70 },
-                { name: "Stearic Acid", pct: 3.30 }, { name: "Linseed Oil", pct: 1.80 }, { name: "Propyl Paraben", pct: 0.10 },
-                { name: "--- ΦΑΣΗ Β (ΥΔΑΤΙΚΗ - 75°C) ---", isHeader: true },
-                { name: "Aqua (Distilled Water)", pct: 0, isQS: true }, { name: "Polysorbate 80", pct: 3.70 },
-                { name: "Propylene Glycol", pct: 1.80 }, { name: "Methyl Paraben", pct: 0.10 },
-                { name: "--- ΦΑΣΗ Γ (< 40°C) ---", isHeader: true },
-                { name: "Lavender Lemon Balm", pct: 0.90 }
-            ],
-            instructions: ["1. Θέρμανση Φάσης Α και Β στους 75°C ξεχωριστά.", "2. Προσθήκη Α σε Β με έντονη ανάδευση.", "3. Προσθήκη Φάσης Γ (Άρωμα) όταν η θερμοκρασία πέσει < 40°C."]
-        },
-        zplast_heavy: {
-            title: "ZPLAST REPAIR (Heavy)", desc: "Heavy Paraffin + 0.5% Cetostearyl", initials: "ZH", shelfLife: 12, type: "standard",
-            ingredients: [
-                { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ) ---", isHeader: true },
-                { name: "Aqua (Νερό)", pct: 0, isQS: true }, { name: "Glycerin", pct: 3.77 }, { name: "Calamine Powder", pct: 1.50 },
-                { name: "Zea Mays Starch", pct: 0.50 }, { name: "Sodium Hyaluronate 1%", pct: 1.27 }, { name: "Citric Acid", pct: 0.07 },
-                { name: "--- ΦΑΣΗ Β (75°C) ---", isHeader: true },
-                { name: "Xalifin-15", pct: 5.00 }, { name: "Paraffinum Liq. (HEAVY)", pct: 7.50 }, { name: "Linum Oil", pct: 2.50 },
-                { name: "Avocado Oil", pct: 2.00 }, { name: "Cetostearyl Alcohol", pct: 0.50 }, { name: "Vit E", pct: 0.63 },
-                { name: "--- ΦΑΣΗ Γ (<40°C) ---", isHeader: true },
-                { name: "Hypericum Ext", pct: 2.00 }, { name: "Hippophae Ext", pct: 1.27 }, { name: "Centella", pct: 3.77 },
-                { name: "Mel (Honey)", pct: 1.27 }, { name: "Mastic Oil", pct: 3.27 }, { name: "Euxyl PE 9010", pct: 1.00 },
-                { name: "Alcohol Denat", pct: 0.27 }, { name: "Parfum", pct: 0.07 }
-            ],
-            instructions: ["1. Θέρμανση Α & Β στους 75°C.", "2. Μίξη Β σε Α.", "3. Προσθήκη Γ < 40°C."]
-        },
-        hydralia: {
-            title: "HYDRALIA FACE CREAM", desc: "Moisturizing Cream", initials: "HF", shelfLife: 12, type: "standard",
-            ingredients: [
-                { name: "Βάση Gel-Cream", pct: 0, isQS: true }, { name: "Avocado Oil", pct: 4.0 }, { name: "Jojoba Oil", pct: 2.5 },
-                { name: "Almond Oil", pct: 2.5 }, { name: "Aloe Vera Gel", pct: 8.0 }, { name: "Parfum", pct: 0.3 }
-            ],
-            instructions: ["1. Προ-ανάμειξη των λαδιών με το άρωμα.", "2. Προσθήκη του Gel Αλόης στα λάδια.", "3. Ενσωμάτωση του μίγματος στη Βάση Gel-Cream."]
-        },
-        zboost: {
-            title: "Z-BOOST CAPS", desc: "Ginger/ALA", initials: "ZB", shelfLife: 24, type: "capsule",
-            capsuleContentWeight: 0.5864,
-            safetyNote: "Ευαίσθητο στην υγρασία. Πλήρωση σε Dry Room.",
-            ingredients: [
-                { name: "a-Lipoic Acid (ALA)", pct: 34.11 }, { name: "N-Acetyl-L-Cysteine (NAC)", pct: 34.11 },
-                { name: "Ginger Extract", pct: 17.05 }, { name: "Coenzyme Q10", pct: 8.53 },
-                { name: "Zinc Gluconate", pct: 5.97 }, { name: "Magnesium Stearate", pct: 0.19 },
-                { name: "Selenium Yeast", pct: 0.03 }, { name: "Sodium Ascorbate", pct: 0.02 }
-            ],
-            instructions: ["1. Κοσκινίστε όλες τις σκόνες.", "2. Γεωμετρική αραίωση μικρο-συστατικών με Ginger.", "3. Προσθήκη ALA & NAC.", "4. Τέλος το Mg Stearate (μίξη 3 λεπτά)."]
-        },
-        plus: {
-            title: "REVITACELL PLUS", desc: "New Formula", initials: "RP", shelfLife: 12, type: "standard",
-            ingredients: [
-                { name: "Βάση Gel-Cream", pct: 0, isQS: true }, { name: "Almond Oil", pct: 2.0 },
-                { name: "Avocado Oil", pct: 2.0 }, { name: "Jojoba Oil", pct: 2.0 }, { name: "Pomegranate Oil", pct: 2.0 },
-                { name: "Mastic Oil", pct: 1.0 }, { name: "Mastic Tincture", pct: 3.0 }, { name: "Vit E", pct: 0.5 }
-            ],
-            instructions: ["1. Μίξη λαδιών με Βιταμίνη Ε.", "2. Προσθήκη Βάμματος (Pre-mix).", "3. Ενσωμάτωση στη βάση."]
-        },
-        syrup_custom: {
-            title: "ALVEOLAIR", desc: "66.7%", initials: "AL", shelfLife: 6, type: "standard",
-            ingredients: [
-                { name: "Fructose / Brown Sugar", pct: 66.70 }, { name: "Aqua", pct: 0, isQS: true }, { name: "Sodium Benzoate", pct: 0.10 },
-                { name: "--- MIX ΒΑΜΜΑΤΩΝ (5%) ---", isHeader: true },
-                { name: "Βάμμα Αλθαίας", pct: 2.10 }, { name: "Βάμμα Θυμαριού", pct: 0.79 }, { name: "Βάμμα Ευκαλύπτου", pct: 0.79 },
-                { name: "Βάμμα Κράνι", pct: 0.79 }, { name: "Βάμμα Ιπποφαές", pct: 0.79 },
-                { name: "--- ΥΠΟΛΟΙΠΑ ---", isHeader: true },
-                { name: "Vit C & Lemon EO", pct: 0.15 }, { name: "Lemon Juice", pct: 0, note: "q.s. για ρύθμιση pH" }
-            ],
-            instructions: ["1. Ζέσταμα νερού (70°C).", "2. Προσθήκη λεμονιού και διάλυση σακχάρου.", "3. Προσθήκη βαμμάτων <40°C.", "4. Έλεγχος pH < 4.5."]
-        },
-        eyes: {
-            title: "REVITACELL EYES", desc: "Safe 8% Arnica", initials: "RE", shelfLife: 12, type: "standard",
-            ingredients: [
-                { name: "Βάση Gel-Cream", pct: 0, isQS: true }, { name: "Arnica Oil", pct: 8.0 }, { name: "Jojoba Oil", pct: 1.0 },
-                { name: "Almond Oil", pct: 1.0 }, { name: "Hyaluronic Acid 1%", pct: 4.0 }, { name: "Glycerin", pct: 2.0 },
-                { name: "Aesculus Hippocastanum", pct: 2.0 }, { name: "Parfum", pct: 0.2 }
-            ],
-            instructions: ["1. Μίξη λαδιών ξεχωριστά.", "2. Προσθήκη υδατικών στο λάδι.", "3. Ενσωμάτωση στη βάση."]
-        },
-        base: {
-            title: "BASE GEL-CREAM", desc: "Base Formula", initials: "BG", shelfLife: 12, type: "standard",
-            ingredients: [
-                { name: "Aqua", pct: 0, isQS: true }, { name: "Glycerin", pct: 4.0 }, { name: "Hyaluronic Pw", pct: 0.2 },
-                { name: "Carbomer", pct: 0.25 }, { name: "Cetearyl Alcohol", pct: 2.0 }, { name: "Stearic Acid", pct: 1.0 },
-                { name: "IPM", pct: 2.0 }, { name: "Methyl Paraben", pct: 0.2 }, { name: "Propyl Paraben", pct: 0.1 },
-                { name: "Vit E", pct: 0.5 }, { name: "TEA", pct: 0.25 }
-            ],
-            instructions: ["1. Ενυδάτωση Carbomer στο νερό.", "2. Θέρμανση φάσεων στους 75°C.", "3. Ανάμειξη και εξουδετέρωση με TEA."]
-        }
-    };
-
-    // ===================== UI LOGIC =====================
-    function toggleInputs() {
-        const key = document.getElementById('recipeSelect').value;
-        const isCap = recipes[key]?.type === 'capsule';
-        document.getElementById('standardInput').style.display = isCap ? 'none' : 'block';
-        document.getElementById('capsuleInput').style.display = isCap ? 'block' : 'none';
-        document.getElementById('resultContainer').style.display = 'none';
-    }
-
-    function calculate() {
-        const key = document.getElementById('recipeSelect').value;
-        if (!key) return alert("Επιλέξτε προϊόν από τη λίστα.");
-        const recipe = recipes[key];
-        
-        let weight = 0, info = "";
-        
-        if (recipe.type === 'capsule') {
-            const bulk = parseFloat(document.getElementById('inCapsBulk').value) || 0;
-            const p12 = parseFloat(document.getElementById('inPacks12').value) || 0;
-            const p30 = parseFloat(document.getElementById('inPacks30').value) || 0;
-            const totalCaps = bulk + (p12 * 12) + (p30 * 30);
-            if (totalCaps <= 0) return alert("Παρακαλώ εισάγετε αριθμό καψουλών.");
-            weight = totalCaps * recipe.capsuleContentWeight;
-            info = `ΣΤΟΧΟΣ: ${totalCaps} Κάψουλες (${bulk} χύμα + ${p12}×12 + ${p30}×30)`;
-        } else {
-            weight = parseFloat(document.getElementById('totalWeightInput').value);
-            if (!weight || weight <= 0) return alert("Λάθος ποσότητα.");
-            info = `ΣΤΟΧΟΣ ΠΑΡΑΓΩΓΗΣ: ${weight.toLocaleString('el-GR')} γραμμάρια`;
-        }
-
-        const now = new Date();
-        const pad = (n) => String(n).padStart(2, '0');
-        const printDate = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} — ${pad(now.getHours())}:${pad(now.getMinutes())}`;
-        const monthStr = pad(now.getMonth() + 1);
-        const yearStr = now.getFullYear();
-        const lotNo = "Z" + (recipe.initials || "XX") + monthStr + yearStr;
-        const expStr = monthStr + "/" + yearStr;
-        const shelfMonths = recipe.shelfLife || 12;
-
-        document.getElementById('lblTitle').innerText = recipe.title;
-        document.getElementById('lblLot').innerText = lotNo;
-        document.getElementById('lblExpDate').innerText = expStr;
-        document.getElementById('paoText').innerText = shelfMonths + "M";
-
-        let sumPct = 0;
-        recipe.ingredients.forEach(i => { if (!i.isQS && !i.isHeader) sumPct += i.pct; });
-
-        let html = `
-            <div class="print-doc-header">
-                <span>ZARKOLIA LAB — GMP ΦΥΛΛΟ ΠΑΡΑΓΩΓΗΣ</span>
-                <span>Ημ/νία: ${printDate}</span>
-            </div>
-            <div class="recipe-header">
-                <span class="recipe-title">${recipe.title}</span>
-                <span class="recipe-desc">${recipe.desc} &nbsp;|&nbsp; Batch: ${lotNo}</span>
-            </div>
-            ${recipe.safetyNote ? `<div class="safety-box">⚠️ <strong>ΠΡΟΣΟΧΗ:</strong> ${recipe.safetyNote}</div>` : ''}
-            <div class="target-info">${info}</div>
-            <div class="table-wrapper">
-                <table>
-                    <tr>
-                        <th style="text-align:center;">✔</th>
-                        <th>Συστατικό</th>
-                        <th>Ιχνηλασιμότητα</th>
-                        <th style="text-align:right">Ποσότητα</th>
-                    </tr>
-        `;
-
-        recipe.ingredients.forEach(i => {
-            if (i.isHeader) {
-                html += `<tr class="phase-row"><td colspan="4">${i.name}</td></tr>`;
-            } else {
-                let finalPct = i.isQS ? Math.max(0, 100 - sumPct) : i.pct;
-                let amt = (finalPct / 100) * weight;
-                let noteStr = i.note ? ` <br><small style="color:var(--text-muted); font-weight:500;">(${i.note})</small>` : '';
-                html += `<tr>
-                    <td style="text-align:center;"><input type="checkbox"></td>
-                    <td><span class="ingredient-name">${i.name}</span>${noteStr}</td>
-                    <td class="traceability-box">Lot: ___________<br>Exp: __/__/_____</td>
-                    <td class="amount-col">
-                        ${amt.toFixed(2)} g
-                        <span class="pct-label">(${finalPct.toFixed(2)}%)</span>
-                    </td>
-                </tr>`;
-            }
-        });
-
-        html += `
-                <tr class="total-row">
-                    <td colspan="3" style="text-align:right; font-weight:700; color:#065f46;">ΣΥΝΟΛΟ:</td>
-                    <td class="amount-col" style="text-align:right;">
-                        ${weight.toFixed(1)} g
-                        <span class="pct-label">(100.00%)</span>
-                    </td>
-                </tr>
-            </table>
+    if (document.getElementById('showInstructions').checked && recipe.instructions) {
+        html += `<div class="instructions-box">
+            <strong>Οδηγίες Παρασκευής:</strong>
+            <ul class="instructions-list">${recipe.instructions.map(s=>`<li>${s}</li>`).join('')}</ul>
         </div>`;
-
-        if (document.getElementById('showInstructions').checked && recipe.instructions) {
-            html += `
-                <div class="instructions-box">
-                    <strong>Οδηγίες Παρασκευής:</strong>
-                    <ul class="instructions-list">${recipe.instructions.map(s => `<li>${s}</li>`).join('')}</ul>
-                </div>`;
-        }
-
-        const res = document.getElementById('resultContainer');
-        res.innerHTML = html;
-        res.style.display = 'block';
-        togglePrintMode();
-        res.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+
+    const res = document.getElementById('resultContainer');
+    res.innerHTML = html;
+    res.style.display = 'block';
+    togglePrintMode();
+    res.scrollIntoView({ behavior:'smooth', block:'start' });
+}
 </script>
 </body>
 </html>
