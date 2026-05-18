@@ -118,7 +118,32 @@
         .lbl-data-val { font-size:13pt; display:block; font-family:monospace; }
         .pao-icon { width:38px; height:38px; margin-top:10px; }
 
-        @media (max-width:640px) {
+        /* REVERSE CALCULATION */
+        .rev-input {
+            width:100%; border:none; background:transparent; font-family:var(--font-mono);
+            font-size:1.05em; font-weight:800; color:var(--success); text-align:right;
+            padding:2px 4px; border-radius:6px; outline:none;
+            transition:background .15s, box-shadow .15s;
+            -moz-appearance:textfield;
+        }
+        .rev-input::-webkit-outer-spin-button,
+        .rev-input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+        .rev-input:focus {
+            background:var(--primary-light); 
+            box-shadow:0 0 0 2px var(--primary);
+            color:var(--primary);
+        }
+        .rev-input:hover { background:#f0fdf7; }
+        .rev-badge {
+            display:inline-block; font-size:.68em; background:#dbeafe; color:#1e40af;
+            padding:1px 6px; border-radius:10px; font-weight:700; margin-left:4px;
+            vertical-align:middle; font-family:var(--font-base);
+        }
+        .rev-hint {
+            font-size:.72em; color:var(--text-muted); text-align:center;
+            padding:6px 14px; background:#fafbff; border-bottom:1px solid var(--border-color);
+            font-style:italic;
+        }
             body { padding:12px; font-size:15px; }
             .control-panel { padding:20px 16px; }
             .recipe-header { padding:20px 16px; }
@@ -156,6 +181,9 @@
             body:not(.print-label-mode) .pct-label { color:#333; }
             body:not(.print-label-mode) .instructions-box { background:transparent; color:#000; border:1px solid #000; padding:8px; page-break-inside:avoid; }
             body:not(.print-label-mode) .instructions-list li { margin-bottom:3px; }
+            .rev-hint { display:none; }
+            .rev-badge { display:none; }
+            .rev-input { background:transparent !important; box-shadow:none !important; color:#000 !important; font-size:9.5pt; font-weight:700; text-align:right; border:none; width:auto; }
             input[type="checkbox"] { -webkit-print-color-adjust:exact; color-adjust:exact; }
             body.print-label-mode #resultContainer { display:none !important; }
             body.print-label-mode #labelPreview { display:block !important; position:fixed; top:0; left:0; width:100mm; height:62mm; border:none; margin:0; padding:0; }
@@ -724,6 +752,35 @@ function toggleInputs() {
     document.getElementById('resultContainer').style.display = 'none';
 }
 
+// ── REVERSE CALCULATION ─────────────────────────────────────
+function recalcFromIngredient(el) {
+    const newGrams = parseFloat(el.value);
+    if (isNaN(newGrams) || newGrams <= 0) return;
+    const pct = parseFloat(el.dataset.pct);
+    if (!pct || pct <= 0) return;
+
+    const newTotal = newGrams / (pct / 100);
+
+    // Update all ingredient inputs except the one being edited
+    document.querySelectorAll('.rev-input').forEach(input => {
+        if (input === el) return;
+        const p = parseFloat(input.dataset.pct);
+        input.value = (p / 100 * newTotal).toFixed(2);
+    });
+
+    // Update total row
+    const totalGramsEl = document.getElementById('revTotalGrams');
+    if (totalGramsEl) totalGramsEl.textContent = newTotal.toFixed(1) + ' g';
+
+    // Update target-info banner
+    const targetEl = document.getElementById('revTargetInfo');
+    if (targetEl) targetEl.textContent = `ΣΤΟΧΟΣ ΠΑΡΑΓΩΓΗΣ: ${newTotal.toFixed(1)} γραμμάρια ← reverse`;
+
+    // Sync main weight input so next manual calculation is consistent
+    document.getElementById('totalWeightInput').value = Math.round(newTotal * 10) / 10;
+}
+
+// ── MAIN CALCULATE ───────────────────────────────────────────
 function calculate() {
     const key = document.getElementById('recipeSelect').value;
     if (!key) return alert("Επιλέξτε προϊόν από τη λίστα.");
@@ -779,14 +836,15 @@ function calculate() {
             <span class="recipe-desc">${recipe.desc} &nbsp;|&nbsp; Batch: ${lotNo}</span>
         </div>
         ${noteHtml}
-        <div class="target-info">${info}</div>
+        <div class="target-info" id="revTargetInfo">${info}</div>
+        <div class="rev-hint">✏️ Αλλάξτε οποιαδήποτε ποσότητα γραμμαρίων — όλες οι υπόλοιπες και το σύνολο θα ενημερωθούν αυτόματα</div>
         <div class="table-wrapper">
             <table>
                 <tr>
                     <th style="text-align:center;">✔</th>
                     <th>Συστατικό</th>
                     <th>Ιχνηλασιμότητα</th>
-                    <th style="text-align:right">Ποσότητα</th>
+                    <th style="text-align:right">Ποσότητα <span class="rev-badge">↕ επεξεργάσιμο</span></th>
                 </tr>`;
 
     recipe.ingredients.forEach(i => {
@@ -801,8 +859,12 @@ function calculate() {
                 <td style="text-align:center;"><input type="checkbox"></td>
                 <td><span class="ingredient-name">${i.name}${newBadge}</span>${noteStr}</td>
                 <td class="traceability-box">Lot: ___________<br>Exp: __/__/_____</td>
-                <td class="amount-col">
-                    ${amt} g
+                <td class="amount-col" style="text-align:right;">
+                    <input type="number" class="rev-input"
+                           data-pct="${finalPct}"
+                           value="${amt}"
+                           step="0.1" min="0"
+                           oninput="recalcFromIngredient(this)">
                     <span class="pct-label">(${finalPct.toFixed(2)}%)</span>
                 </td>
             </tr>`;
@@ -813,7 +875,7 @@ function calculate() {
             <tr class="total-row">
                 <td colspan="3" style="text-align:right;font-weight:700;color:#065f46;">ΣΥΝΟΛΟ:</td>
                 <td class="amount-col" style="text-align:right;">
-                    ${weight.toFixed(1)} g
+                    <span id="revTotalGrams">${weight.toFixed(1)} g</span>
                     <span class="pct-label">(100.00%)</span>
                 </td>
             </tr>
