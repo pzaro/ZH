@@ -243,7 +243,8 @@
             </optgroup>
             <optgroup label="— Spray / Gel —">
                 <option value="zderm_gel">Z-Derm Aspis Gel (Original 70% Alcohol)</option>
-                <option value="zderm_spray">Z-Derm Aspis Spray (Low-Alcohol v2)</option>
+                <option value="zderm_spray">Z-Derm Aspis Spray (Low-Alcohol 25%)</option>
+                <option value="zderm_ecofarm">Z-Derm Aspis Spray (Ecofarm 95° — 70% τελικό)</option>
             </optgroup>
             <optgroup label="— Βάσεις —">
                 <option value="base">Βάση Gel-Cream</option>
@@ -714,7 +715,41 @@ const recipes = {
         ]
     },
 
-    // ── Z-DERM ASPIS SPRAY ───────────────────────────────────
+    // ── Z-DERM ASPIS SPRAY — ECOFARM 95° ────────────────────
+    zderm_ecofarm: {
+        title: "Z-DERM ASPIS SPRAY — ECOFARM",
+        desc: "Ecofarm 95° Alcoholic Lotion → 25% τελικό | CPNP 3345106",
+        initials: "ZE", shelfLife: 24, type: "standard",
+        safetyNote: "Χρήση Ecofarm Alcoholic Lotion 95° ως φυσική πηγή αιθανόλης. Τελική συγκέντρωση αιθανόλης ~25% (26.32% × 0.95 = 25.0%). Ήπιο spray χαμηλής αλκοόλης. Εξωτερική χρήση μόνο.",
+        ingredients: [
+            { name: "--- ΦΑΣΗ Α (ECOFARM premix + EOs) ---", isHeader: true },
+            { name: "Ecofarm Alcoholic Lotion 95°",               pct: 26.32, note: "→ 25% τελική αιθανόλη (26.32% × 0.95)" },
+            { name: "Polysorbate 80",                             pct: 1.50,  note: "solubilizer — λόγος PS80:EO = 4.7:1" },
+            { name: "Euxyl PE 9010",                              pct: 0.50  },
+            { name: "Eucalyptus Citriodora Oil",                  pct: 0.08  },
+            { name: "Geranium Maculatum Oil",                     pct: 0.08  },
+            { name: "Lavandula Angustifolia Herb Oil",            pct: 0.08  },
+            { name: "Cymbopogon Winterianus Oil (Citronella)",    pct: 0.08  },
+            { name: "--- ΦΑΣΗ Β (ΥΔΑΤΙΚΗ) ---", isHeader: true },
+            { name: "Aqua",                                       pct: 0,    isQS: true },
+            { name: "Glycerin",                                   pct: 6.00  },
+            { name: "Aloe Barbadensis Leaf Juice",                pct: 3.00  },
+        ],
+        instructions: [
+            "ΦΑΣΗ Α — Ζύγιση Ecofarm Alcoholic Lotion 95° σε γυάλινο δοχείο.",
+            "Προσθήκη Polysorbate 80 — ανάδευση 2 λεπτά.",
+            "Διαδοχική προσθήκη αιθερίων: Eucalyptus → Geranium → Lavender → Citronella. Ανάδευση μεταξύ κάθε EO μέχρι clear διάλυμα.",
+            "Προσθήκη Euxyl PE 9010 — ανάδευση.",
+            "ΦΑΣΗ Β — Ανάμειξη Aqua + Glycerin + Aloe Barbadensis σε θερμοκρασία δωματίου.",
+            "ΕΝΩΣΗ — Αργή ρίψη Φάσης Β σε Φάση Α υπό συνεχή ανάδευση. ΜΗΝ αντιστρέψετε τη σειρά.",
+            "Έλεγχος clarity: διαυγές διάλυμα. Αν θολώσει — αύξηση PS80 κατά 0.2%.",
+            "ΕΠΑΛΗΘΕΥΣΗ: Αλκοολομέτρηση — στόχος 23-27% v/v.",
+            "Γέμισμα σε spray φιάλες.",
+            "QC: Αλκοολομέτρηση | Διαύγεια | pH 5.5-7.0 | Οσμή | Spray pattern.",
+        ]
+    },
+
+    // ── Z-DERM ASPIS SPRAY (LOW-ALCOHOL) ────────────────────
     zderm_spray: {
         title: "Z-DERM ASPIS SPRAY", desc: "Low-Alcohol v2 — CPNP 3345106", initials: "ZD", shelfLife: 24, type: "standard",
         safetyNote: "Υδατοαλκοολική spray βάση. Αλκοόλη 25%. CPNP τροποποίηση απαιτείται (αλλαγή βάσης από 70% → 25% Ethanol, προσθήκη PS20/Phenoxyethanol, αφαίρεση Carbomer/TEA). EOs εντός δηλωμένων ορίων ≤0.1%.",
