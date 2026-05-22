@@ -241,10 +241,11 @@
             <optgroup label="— Σιρόπι —">
                 <option value="syrup_custom">ALVEOLAIR</option>
             </optgroup>
-            <optgroup label="— Spray / Gel —">
+            <optgroup label="— Spray / Gel / Lotion —">
                 <option value="zderm_gel">Z-Derm Aspis Gel (Original 70% Alcohol)</option>
                 <option value="zderm_spray">Z-Derm Aspis Spray (Low-Alcohol 25%)</option>
-                <option value="zderm_ecofarm">Z-Derm Aspis Spray (Ecofarm 95° — 70% τελικό)</option>
+                <option value="zderm_ecofarm">Z-Derm Aspis Spray (Ecofarm 95° → 25% τελικό)</option>
+                <option value="zderm_lotion">Z-Derm Aspis Lotion (Emulsion — Παρατεταμένη Δράση)</option>
             </optgroup>
             <optgroup label="— Βάσεις —">
                 <option value="base">Βάση Gel-Cream</option>
@@ -683,6 +684,44 @@ const recipes = {
             "Προσθήκη Vit C & Lemon EO.",
             "Τελικός έλεγχος pH — στόχος <4.5 (αντιμικροβιακή ασφάλεια σιροπιού). Ρύθμιση με Lemon Juice αν χρειαστεί.",
             "QC: pH <4.5 | Brix (°Bx) ανάλογα παρτίδας | Χρώμα, διαύγεια, οσμή, γεύση.",
+        ]
+    },
+
+    // ── Z-DERM ASPIS LOTION (EMULSION) ──────────────────────
+    zderm_lotion: {
+        title: "Z-DERM ASPIS LOTION",
+        desc: "O/W Emulsion — Παρατεταμένη αποδέσμευση αιθερίων",
+        initials: "ZL", shelfLife: 12, type: "standard",
+        safetyNote: "Ελαφριά o/w emulsion. Τα αιθέρια εγκλωβίζονται στη λιπαρή φάση — παρατεταμένη επαφή με επιδερμίδα vs spray. Pump dispenser ή tube. Χωρίς αλκοόλη.",
+        ingredients: [
+            { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ 75°C) ---", isHeader: true },
+            { name: "Aqua",                                       pct: 0,    isQS: true },
+            { name: "Glycerin",                                   pct: 5.0  },
+            { name: "Aloe Barbadensis Leaf Juice",                pct: 3.0  },
+            { name: "--- ΦΑΣΗ Β (ΛΙΠΑΡΗ 75°C) ---", isHeader: true },
+            { name: "Xalifin-15",                                 pct: 4.0  },
+            { name: "Cetostearyl Alcohol",                        pct: 1.5  },
+            { name: "Avocado Oil",                                pct: 5.0,  note: "κύριος φορέας αιθερίων" },
+            { name: "Jojoba Oil",                                 pct: 3.0  },
+            { name: "Tocopherol (Vit E)",                         pct: 0.3  },
+            { name: "--- ΦΑΣΗ Γ — ΑΙΘΕΡΙΑ (<40°C) ---", isHeader: true },
+            { name: "Eucalyptus Citriodora Oil",                  pct: 0.15, note: "↑ από 0.08% — εγκλωβισμός στο emulsion" },
+            { name: "Geranium Maculatum Oil",                     pct: 0.15, isNew: true },
+            { name: "Lavandula Angustifolia Herb Oil",            pct: 0.15, isNew: true },
+            { name: "Cymbopogon Winterianus Oil (Citronella)",    pct: 0.15, isNew: true },
+            { name: "Euxyl PE 9010",                              pct: 0.5  },
+            { name: "Citric Acid",                                pct: 0.05, note: "ρύθμιση pH στόχος 5.5-6.0" },
+        ],
+        instructions: [
+            "ΦΑΣΗ Α — Θερμάνετε Aqua + Glycerin + Aloe στους 75°C.",
+            "ΦΑΣΗ Β — Τήξη Cetostearyl Alcohol 75°C. Προσθήκη Xalifin-15 + Avocado Oil + Jojoba + Vit E. Διατήρηση 75°C.",
+            "EMULSIFICATION — Αργή ρίψη Φάσης Β σε Α υπό ισχυρή ανάδευση. Homogenizer αν διαθέσιμος για λεπτόκοκκο emulsion — κρίσιμο για ομοιόμορφη κατανομή oil droplets.",
+            "Συνεχής ανάδευση κατά ψύξη.",
+            "ΦΑΣΗ Γ — Κάτω από 40°C: προσθήκη αιθερίων ένα-ένα υπό ήπια ανάδευση — εγκλωβίζονται στα oil droplets.",
+            "Euxyl PE 9010 — ανάδευση 3 λεπτά.",
+            "Ρύθμιση pH με Citric Acid — στόχος 5.5-6.0.",
+            "Γέμισμα σε pump dispenser ή tube.",
+            "QC: pH 5.5-6.0 | Viscosity (lotion consistency) | Οσμή — τα αιθέρια πρέπει να είναι διακριτά αλλά ήπια | Ομοιογένεια | Stability check 48h.",
         ]
     },
 
