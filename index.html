@@ -246,6 +246,7 @@
                 <option value="zderm_spray">Z-Derm Aspis Spray (Low-Alcohol 25%)</option>
                 <option value="zderm_ecofarm">Z-Derm Aspis Spray (Ecofarm 95° → 25% τελικό)</option>
                 <option value="zderm_lotion">Z-Derm Aspis Lotion (Emulsion — Παρατεταμένη Δράση)</option>
+                <option value="zderm_gelcream">Z-Derm Aspis Gel-Cream (Βάση Gel-Cream)</option>
             </optgroup>
             <optgroup label="— Βάσεις —">
                 <option value="base">Βάση Gel-Cream</option>
@@ -305,7 +306,7 @@ async function checkLogin() {
     const encoder = new TextEncoder();
     const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(input));
     const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b=>b.toString(16).padStart(2,'0')).join('');
-    if (hashHex === _0x9f2a || input.toLowerCase() === 'zelia') {
+    if (hashHex === _0x9f2a) {
         document.getElementById('loginOverlay').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
     } else {
@@ -684,6 +685,36 @@ const recipes = {
             "Προσθήκη Vit C & Lemon EO.",
             "Τελικός έλεγχος pH — στόχος <4.5 (αντιμικροβιακή ασφάλεια σιροπιού). Ρύθμιση με Lemon Juice αν χρειαστεί.",
             "QC: pH <4.5 | Brix (°Bx) ανάλογα παρτίδας | Χρώμα, διαύγεια, οσμή, γεύση.",
+        ]
+    },
+
+    // ── Z-DERM ASPIS GEL-CREAM (ΒΑΣΗ) ───────────────────────
+    zderm_gelcream: {
+        title: "Z-DERM ASPIS GEL-CREAM",
+        desc: "Βάση Gel-Cream + EOs — Απλοποιημένη παρασκευή",
+        initials: "ZB", shelfLife: 12, type: "standard",
+        safetyNote: "Βασίζεται στην έτοιμη Βάση Gel-Cream (ήδη συντηρημένη με parabens). Δεν χρειάζεται Euxyl. Παρατεταμένη αποδέσμευση αιθερίων μέσω Carbomer matrix.",
+        ingredients: [
+            { name: "--- ΒΑΣΗ ---", isHeader: true },
+            { name: "Βάση Gel-Cream",                             pct: 0,    isQS: true },
+            { name: "Glycerin (extra)",                           pct: 2.0  },
+            { name: "Aloe Barbadensis Leaf Juice",                pct: 3.0  },
+            { name: "--- SOLUBILIZER + ΑΙΘΕΡΙΑ (premix) ---", isHeader: true },
+            { name: "Polysorbate 80",                             pct: 1.5,  note: "προδιάλυση EOs — λόγος PS80:EO = 2.5:1" },
+            { name: "Eucalyptus Citriodora Oil",                  pct: 0.15 },
+            { name: "Geranium Maculatum Oil",                     pct: 0.15 },
+            { name: "Lavandula Angustifolia Herb Oil",            pct: 0.15 },
+            { name: "Cymbopogon Winterianus Oil (Citronella)",    pct: 0.15 },
+        ],
+        instructions: [
+            "PREMIX ΑΙΘΕΡΙΩΝ — Ζύγιση Polysorbate 80 σε μικρό δοχείο.",
+            "Προσθήκη αιθερίων ένα-ένα στο PS80: Eucalyptus → Geranium → Lavender → Citronella. Ανάδευση μέχρι διαυγές ομοιόμορφο μίγμα.",
+            "Ζύγιση Βάσης Gel-Cream σε κύριο δοχείο.",
+            "Προσθήκη Glycerin extra + Aloe Barbadensis — ανάδευση με spatula.",
+            "Αργή ενσωμάτωση premix PS80/EOs στη βάση — κυκλικές κινήσεις, χωρίς παγίδευση αέρα.",
+            "ΠΡΟΣΟΧΗ: Μη χρησιμοποιείτε Euxyl — η βάση είναι ήδη συντηρημένη (Methyl + Propyl Paraben).",
+            "Έλεγχος ομοιογένειας — δεν πρέπει να υπάρχουν ορατά σταγονίδια ή διαχωρισμός.",
+            "QC: pH 5.5-6.5 | Υφή (gel-cream consistency) | Οσμή αιθερίων ήπια και ομοιόμορφη | Ομοιογένεια.",
         ]
     },
 
