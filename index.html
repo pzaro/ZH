@@ -241,7 +241,8 @@
             <optgroup label="— Σιρόπι —">
                 <option value="syrup_custom">ALVEOLAIR</option>
             </optgroup>
-            <optgroup label="— Spray —">
+            <optgroup label="— Spray / Gel —">
+                <option value="zderm_gel">Z-Derm Aspis Gel (Original 70% Alcohol)</option>
                 <option value="zderm_spray">Z-Derm Aspis Spray (Low-Alcohol v2)</option>
             </optgroup>
             <optgroup label="— Βάσεις —">
@@ -684,6 +685,35 @@ const recipes = {
         ]
     },
 
+    // ── Z-DERM ASPIS GEL (ORIGINAL) ─────────────────────────
+    zderm_gel: {
+        title: "Z-DERM ASPIS GEL", desc: "Original Formula — 70% Alcohol | CPNP 3345106", initials: "ZG", shelfLife: 24, type: "standard",
+        safetyNote: "Hydroalcoholic gel 70% Ethanol. Εξωτερική χρήση μόνο. Μακριά από φλόγες.",
+        ingredients: [
+            { name: "--- ΦΑΣΗ Α (ΑΛΚΟΟΛΙΚΗ — premix EOs) ---", isHeader: true },
+            { name: "Alcohol Denat (Ethanol 96°)",               pct: 70.0 },
+            { name: "Cepimax (solubilizer)",                     pct: 0.5  },
+            { name: "Eucalyptus Citriodora Oil",                 pct: 0.10 },
+            { name: "Geranium Maculatum Oil",                    pct: 0.10 },
+            { name: "Lavandula Angustifolia Herb Oil",           pct: 0.10 },
+            { name: "Cymbopogon Winterianus Oil (Citronella)",   pct: 0.10 },
+            { name: "--- ΦΑΣΗ Β (ΥΔΑΤΙΚΗ) ---", isHeader: true },
+            { name: "Aqua",                                      pct: 0,    isQS: true },
+            { name: "Glycerin",                                  pct: 6.0  },
+            { name: "Aloe Barbadensis Leaf Juice",               pct: 3.0  },
+        ],
+        instructions: [
+            "ΦΑΣΗ Α — Ζύγιση Alcohol Denat σε γυάλινο ανοξείδωτο δοχείο. ΠΡΟΣΟΧΗ: αναλοίωτος χώρος, μακριά από φλόγες.",
+            "Προσθήκη Cepimax στην αλκοόλη — ανάδευση 2 λεπτά.",
+            "Διαδοχική προσθήκη αιθερίων: Eucalyptus → Geranium → Lavender → Citronella. Ανάδευση μεταξύ κάθε EO μέχρι clear διάλυμα.",
+            "ΦΑΣΗ Β — Ανάμειξη Aqua + Glycerin + Aloe Barbadensis σε θερμοκρασία δωματίου.",
+            "ΕΝΩΣΗ — Αργή ρίψη Φάσης Β σε Φάση Α υπό συνεχή ανάδευση. ΜΗΝ αντιστρέψετε τη σειρά.",
+            "Έλεγχος clarity: διαυγές διάλυμα. Αν θολώσει — αύξηση Cepimax κατά 0.1%.",
+            "Γέμισμα σε φιάλες. Σφράγισμα.",
+            "QC: Διαύγεια | Αλκοολομέτρηση (στόχος ~70% v/v) | pH 5.5-7.0 | Οσμή | Έλεγχος spray pattern αν απαιτείται.",
+        ]
+    },
+
     // ── Z-DERM ASPIS SPRAY ───────────────────────────────────
     zderm_spray: {
         title: "Z-DERM ASPIS SPRAY", desc: "Low-Alcohol v2 — CPNP 3345106", initials: "ZD", shelfLife: 24, type: "standard",
@@ -695,7 +725,7 @@ const recipes = {
             { name: "Aloe Barbadensis Leaf Juice",                 pct: 3.0 },
             { name: "--- ΦΑΣΗ Β (ΑΛΚΟΟΛΙΚΗ premix + solubilizer) ---", isHeader: true },
             { name: "Alcohol Denat (Ethanol 96°)",                 pct: 25.0 },
-            { name: "Polysorbate 20",                              pct: 1.5,  note: "solubilizer — λόγος PS20:EO = 4.7:1" },
+            { name: "Polysorbate 80",                              pct: 1.5,  note: "solubilizer — λόγος PS80:EO = 4.7:1" },
             { name: "Euxyl PE 9010",                              pct: 0.5 },
             { name: "--- ΦΑΣΗ Γ (ΑΙΘΕΡΙΑ — διαλύονται στη Β) ---", isHeader: true },
             { name: "Lavandula Angustifolia Herb Oil",             pct: 0.08 },
@@ -706,7 +736,7 @@ const recipes = {
         instructions: [
             "ΦΑΣΗ Β — Ζύγιση Alcohol Denat σε γυάλινο δοχείο.",
             "Διαδοχική προσθήκη αιθερίων στην αλκοόλη — ανάδευση μεταξύ κάθε EO μέχρι πλήρη διάλυση (clear διάλυμα).",
-            "Προσθήκη Polysorbate 20 στο αλκοολικό μίγμα — ανάδευση 2 λεπτά.",
+            "Προσθήκη Polysorbate 80 στο αλκοολικό μίγμα — ανάδευση 2 λεπτά.",
             "Προσθήκη Phenoxyethanol — ανάδευση.",
             "ΦΑΣΗ Α — Ανάμειξη Aqua + Glycerin + Aloe Barbadensis σε ξεχωριστό δοχείο σε θερμοκρασία δωματίου.",
             "ΕΝΩΣΗ — Αργή ρίψη Φάσης Α σε Φάση Β υπό συνεχή ανάδευση. ΜΗΝ αντιστρέψετε τη σειρά.",
