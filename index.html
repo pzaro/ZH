@@ -155,38 +155,56 @@
         }
 
         @media print {
-            #loginOverlay,.control-panel,.app-header { display:none !important; }
+            /* ── Κρύψε τα πάντα εκτός από το αποτέλεσμα ── */
+            #loginOverlay, .control-panel, .app-header,
+            .print-doc-header, .safety-box, .target-info,
+            .rev-hint, .rev-badge, #labelPreview { display:none !important; }
+
+            body { background:white; font-size:10pt; color:#000; margin:0; padding:0; }
+            @page { size:A4 portrait; margin:12mm 14mm; }
+
             .container { box-shadow:none; border:none; margin:0; padding:0; width:100%; max-width:none; border-radius:0; }
-            body:not(.print-label-mode) #resultContainer { display:block; width:100%; border:none; box-shadow:none; border-radius:0; }
-            body:not(.print-label-mode) #labelPreview { display:none; }
-            body:not(.print-label-mode) { background:white; font-size:10pt; color:#000; }
-            @page { size:A4 portrait; margin:10mm 12mm; }
-            body:not(.print-label-mode) table { table-layout:auto; font-size:9.5pt; }
-            body:not(.print-label-mode) th:nth-child(1),body:not(.print-label-mode) td:nth-child(1) { width:5%; }
-            body:not(.print-label-mode) th:nth-child(2),body:not(.print-label-mode) td:nth-child(2) { width:35%; }
-            body:not(.print-label-mode) th:nth-child(3),body:not(.print-label-mode) td:nth-child(3) { width:40%; }
-            body:not(.print-label-mode) th:nth-child(4),body:not(.print-label-mode) td:nth-child(4) { width:20%; }
-            body:not(.print-label-mode) .print-doc-header { display:flex; justify-content:space-between; border-bottom:2px solid #000; padding-bottom:5px; margin-bottom:10px; font-weight:bold; font-size:10pt; color:#000; }
-            body:not(.print-label-mode) .recipe-header { background:transparent; color:#000; padding:0; margin-bottom:10px; text-align:center; }
-            body:not(.print-label-mode) .recipe-title { font-size:16pt; text-transform:uppercase; border-bottom:2px solid #000; display:inline-block; padding-bottom:3px; }
-            body:not(.print-label-mode) .recipe-desc { font-weight:bold; }
-            body:not(.print-label-mode) .target-info { background:transparent; color:#000; border:1px solid #000; padding:5px; font-size:11pt; margin-bottom:10px; }
-            body:not(.print-label-mode) .safety-box { background:transparent; color:#000; border:1px solid #000; border-left:5px solid #000; padding:5px 8px; margin-bottom:10px; font-weight:bold; }
-            body:not(.print-label-mode) table { border:1px solid #000; margin-bottom:15px; }
-            body:not(.print-label-mode) th,body:not(.print-label-mode) td { padding:6px 8px; border-bottom:1px solid #999; color:#000; white-space:normal; }
-            body:not(.print-label-mode) th { background-color:#f0f0f0; border-bottom:2px solid #000; }
-            body:not(.print-label-mode) .phase-row td { background-color:#e5e5e5; font-size:10pt; border-top:2px solid #000; }
-            body:not(.print-label-mode) .traceability-box { color:#000; font-size:9pt; }
-            body:not(.print-label-mode) .total-row td { background:transparent; color:#000; border-top:3px double #000; font-size:11pt; }
-            body:not(.print-label-mode) .pct-label { color:#333; }
-            body:not(.print-label-mode) .instructions-box { background:transparent; color:#000; border:1px solid #000; padding:8px; page-break-inside:avoid; }
-            body:not(.print-label-mode) .instructions-list li { margin-bottom:3px; }
-            .rev-hint { display:none; }
-            .rev-badge { display:none; }
-            .rev-input { background:transparent !important; box-shadow:none !important; color:#000 !important; font-size:9.5pt; font-weight:700; text-align:right; border:none; width:auto; }
-            input[type="checkbox"] { -webkit-print-color-adjust:exact; color-adjust:exact; }
+
+            /* ── Result container ── */
+            body:not(.print-label-mode) #resultContainer {
+                display:block; width:100%; border:none; box-shadow:none; border-radius:0;
+            }
+
+            /* ── Recipe title — απλό, χωρίς χρώμα ── */
+            .recipe-header {
+                background:transparent !important; color:#000 !important;
+                padding:0 0 8px 0; margin-bottom:12px;
+                text-align:center; border-bottom:2px solid #000;
+            }
+            .recipe-title { font-size:15pt; font-weight:900; text-transform:uppercase; letter-spacing:1px; }
+            .recipe-desc  { font-size:9pt; font-weight:600; color:#333 !important; }
+
+            /* ── Πίνακας ── */
+            table { width:100%; border-collapse:collapse; font-size:9.5pt; table-layout:auto; border:1px solid #000; margin-bottom:14px; }
+            th, td { padding:5px 7px; border-bottom:1px solid #bbb; color:#000; white-space:normal; word-wrap:break-word; }
+            th { background:#efefef; border-bottom:2px solid #000; font-size:8.5pt; text-transform:uppercase; letter-spacing:.5px; }
+            th:nth-child(1), td:nth-child(1) { width:5%;  text-align:center; }
+            th:nth-child(2), td:nth-child(2) { width:36%; }
+            th:nth-child(3), td:nth-child(3) { width:39%; }
+            th:nth-child(4), td:nth-child(4) { width:20%; text-align:right; }
+            .phase-row td { background:#e8e8e8; font-size:9pt; font-weight:800; border-top:2px solid #000; text-transform:uppercase; }
+            .total-row td { background:transparent; color:#000; border-top:3px double #000; font-size:10pt; font-weight:800; }
+            .pct-label    { color:#444; display:block; font-size:8pt; }
+            .traceability-box { font-size:8pt; color:#555; line-height:1.9; }
+
+            /* ── Editable inputs — εμφάνισε ως κείμενο ── */
+            .rev-input { background:transparent !important; box-shadow:none !important; color:#000 !important; font-size:9.5pt; font-weight:700; text-align:right; border:none; width:auto; padding:0; }
+
+            /* ── Οδηγίες ── */
+            .instructions-box { background:transparent; color:#000; border:1px solid #000; padding:8px 10px; page-break-inside:avoid; margin-top:4px; }
+            .instructions-box strong { font-size:9pt; text-transform:uppercase; letter-spacing:.5px; display:block; margin-bottom:6px; }
+            .instructions-list li { margin-bottom:4px; font-size:9pt; line-height:1.5; }
+
+            /* ── Label mode ── */
             body.print-label-mode #resultContainer { display:none !important; }
             body.print-label-mode #labelPreview { display:block !important; position:fixed; top:0; left:0; width:100mm; height:62mm; border:none; margin:0; padding:0; }
+
+            input[type="checkbox"] { -webkit-print-color-adjust:exact; color-adjust:exact; }
         }
     </style>
 </head>
@@ -917,9 +935,11 @@ function recalcFromIngredient(el) {
 
 // ── MAIN CALCULATE ───────────────────────────────────────────
 function calculate() {
+  try {
     const key = document.getElementById('recipeSelect').value;
     if (!key) return alert("Επιλέξτε προϊόν από τη λίστα.");
     const recipe = recipes[key];
+    if (!recipe) return alert("Δεν βρέθηκε η συνταγή: " + key);
 
     let weight = 0, info = "";
     if (recipe.type === 'capsule') {
@@ -1028,6 +1048,10 @@ function calculate() {
     res.style.display = 'block';
     togglePrintMode();
     res.scrollIntoView({ behavior:'smooth', block:'start' });
+  } catch(err) {
+    alert('Σφάλμα: ' + err.message + '\n\nΠαρακαλώ αναφέρετε αυτό το μήνυμα.');
+    console.error(err);
+  }
 }
 </script>
 </body>
