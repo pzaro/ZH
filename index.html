@@ -177,7 +177,7 @@
         <div class="logo-text">ZARKOLIA</div>
         <div class="logo-sub" style="margin-bottom:12px;">Επαλήθευση Εισόδου</div>
         <p style="color:rgba(255,255,255,0.75);font-size:.9em;margin-bottom:20px;font-weight:500;">
-            Στάλθηκε κωδικός OTP στο email σας.<br>Ισχύει για <span id="otpTimer" style="color:#e8a020;font-weight:800;">5:00</span>
+            Στάλθηκε κωδικός OTP στο email σας.<br>Ισχύει για <span id="otpTimer" style="color:#e8a020;font-weight:800;">15:00</span>
         </p>
         <input type="text" id="otpInput" placeholder="6-ψήφιος κωδικός"
                maxlength="6" autocomplete="off"
@@ -302,7 +302,7 @@ let _otp = null, _otpExpiry = null, _otpTimerInterval = null;
 function _generateOTP() { return String(Math.floor(100000 + Math.random() * 900000)); }
 
 function _startOTPTimer() {
-    let remaining = 5 * 60;
+    let remaining = 15 * 60;
     _otpExpiry = Date.now() + remaining * 1000;
     _otpTimerInterval = setInterval(() => {
         remaining--;
@@ -327,7 +327,9 @@ async function checkLogin() {
         _otp = _generateOTP();
         const timeStr = new Date().toLocaleString('el-GR', { dateStyle:'short', timeStyle:'short' });
         try {
-            await emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, { otp: _otp, time: timeStr });
+            const expiry = new Date(Date.now() + 15*60*1000);
+            const expiryStr = expiry.toLocaleString('el-GR', { dateStyle:'short', timeStyle:'short' });
+            await emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, { passcode: _otp, time: expiryStr });
         } catch(err) { console.error('EmailJS:', err); }
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('otpBox').style.display = 'block';
@@ -336,7 +338,7 @@ async function checkLogin() {
         _startOTPTimer();
     } else {
         const timeStr = new Date().toLocaleString('el-GR', { dateStyle:'short', timeStyle:'short' });
-        emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, { otp: '⚠️ ΑΠΟΤΥΧΗΜΕΝΗ ΑΠΟΠΕΙΡΑ', time: timeStr }).catch(()=>{});
+        emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, { passcode: '⚠️ ΑΠΟΤΥΧΗΜΕΝΗ ΑΠΟΠΕΙΡΑ', time: timeStr }).catch(()=>{});
         alert("Λάθος κωδικός");
         document.getElementById('passwordInput').value = "";
     }
