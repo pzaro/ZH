@@ -120,32 +120,7 @@
         .lbl-data-val { font-size:13pt; display:block; font-family:monospace; }
         .pao-icon { width:38px; height:38px; margin-top:10px; }
 
-        /* REVERSE CALCULATION */
-        .rev-input {
-            width:100%; border:none; background:transparent; font-family:var(--font-mono);
-            font-size:1.05em; font-weight:800; color:var(--success); text-align:right;
-            padding:2px 4px; border-radius:6px; outline:none;
-            transition:background .15s, box-shadow .15s;
-            -moz-appearance:textfield;
-        }
-        .rev-input::-webkit-outer-spin-button,
-        .rev-input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
-        .rev-input:focus {
-            background:var(--primary-light); 
-            box-shadow:0 0 0 2px var(--primary);
-            color:var(--primary);
-        }
-        .rev-input:hover { background:#f0fdf7; }
-        .rev-badge {
-            display:inline-block; font-size:.68em; background:#dbeafe; color:#1e40af;
-            padding:1px 6px; border-radius:10px; font-weight:700; margin-left:4px;
-            vertical-align:middle; font-family:var(--font-base);
-        }
-        .rev-hint {
-            font-size:.72em; color:var(--text-muted); text-align:center;
-            padding:6px 14px; background:#fafbff; border-bottom:1px solid var(--border-color);
-            font-style:italic;
-        }
+        @media (max-width:640px) {
             body { padding:12px; font-size:15px; }
             .control-panel { padding:20px 16px; }
             .recipe-header { padding:20px 16px; }
@@ -157,56 +132,35 @@
         }
 
         @media print {
-            /* ── Κρύψε τα πάντα εκτός από το αποτέλεσμα ── */
-            #loginOverlay, .control-panel, .app-header,
-            .print-doc-header, .safety-box, .target-info,
-            .rev-hint, .rev-badge, #labelPreview { display:none !important; }
-
-            body { background:white; font-size:10pt; color:#000; margin:0; padding:0; }
-            @page { size:A4 portrait; margin:12mm 14mm; }
-
+            #loginOverlay,.control-panel,.app-header { display:none !important; }
             .container { box-shadow:none; border:none; margin:0; padding:0; width:100%; max-width:none; border-radius:0; }
-
-            /* ── Result container ── */
-            body:not(.print-label-mode) #resultContainer {
-                display:block; width:100%; border:none; box-shadow:none; border-radius:0;
-            }
-
-            /* ── Recipe title — απλό, χωρίς χρώμα ── */
-            .recipe-header {
-                background:transparent !important; color:#000 !important;
-                padding:0 0 8px 0; margin-bottom:12px;
-                text-align:center; border-bottom:2px solid #000;
-            }
-            .recipe-title { font-size:15pt; font-weight:900; text-transform:uppercase; letter-spacing:1px; }
-            .recipe-desc  { font-size:9pt; font-weight:600; color:#333 !important; }
-
-            /* ── Πίνακας ── */
-            table { width:100%; border-collapse:collapse; font-size:9.5pt; table-layout:auto; border:1px solid #000; margin-bottom:14px; }
-            th, td { padding:5px 7px; border-bottom:1px solid #bbb; color:#000; white-space:normal; word-wrap:break-word; }
-            th { background:#efefef; border-bottom:2px solid #000; font-size:8.5pt; text-transform:uppercase; letter-spacing:.5px; }
-            th:nth-child(1), td:nth-child(1) { width:5%;  text-align:center; }
-            th:nth-child(2), td:nth-child(2) { width:36%; }
-            th:nth-child(3), td:nth-child(3) { width:39%; }
-            th:nth-child(4), td:nth-child(4) { width:20%; text-align:right; }
-            .phase-row td { background:#e8e8e8; font-size:9pt; font-weight:800; border-top:2px solid #000; text-transform:uppercase; }
-            .total-row td { background:transparent; color:#000; border-top:3px double #000; font-size:10pt; font-weight:800; }
-            .pct-label    { color:#444; display:block; font-size:8pt; }
-            .traceability-box { font-size:8pt; color:#555; line-height:1.9; }
-
-            /* ── Editable inputs — εμφάνισε ως κείμενο ── */
-            .rev-input { background:transparent !important; box-shadow:none !important; color:#000 !important; font-size:9.5pt; font-weight:700; text-align:right; border:none; width:auto; padding:0; }
-
-            /* ── Οδηγίες ── */
-            .instructions-box { background:transparent; color:#000; border:1px solid #000; padding:8px 10px; page-break-inside:avoid; margin-top:4px; }
-            .instructions-box strong { font-size:9pt; text-transform:uppercase; letter-spacing:.5px; display:block; margin-bottom:6px; }
-            .instructions-list li { margin-bottom:4px; font-size:9pt; line-height:1.5; }
-
-            /* ── Label mode ── */
+            body:not(.print-label-mode) #resultContainer { display:block; width:100%; border:none; box-shadow:none; border-radius:0; }
+            body:not(.print-label-mode) #labelPreview { display:none; }
+            body:not(.print-label-mode) { background:white; font-size:10pt; color:#000; }
+            @page { size:A4 portrait; margin:10mm 12mm; }
+            body:not(.print-label-mode) table { table-layout:auto; font-size:9.5pt; }
+            body:not(.print-label-mode) th:nth-child(1),body:not(.print-label-mode) td:nth-child(1) { width:5%; }
+            body:not(.print-label-mode) th:nth-child(2),body:not(.print-label-mode) td:nth-child(2) { width:35%; }
+            body:not(.print-label-mode) th:nth-child(3),body:not(.print-label-mode) td:nth-child(3) { width:40%; }
+            body:not(.print-label-mode) th:nth-child(4),body:not(.print-label-mode) td:nth-child(4) { width:20%; }
+            body:not(.print-label-mode) .print-doc-header { display:flex; justify-content:space-between; border-bottom:2px solid #000; padding-bottom:5px; margin-bottom:10px; font-weight:bold; font-size:10pt; color:#000; }
+            body:not(.print-label-mode) .recipe-header { background:transparent; color:#000; padding:0; margin-bottom:10px; text-align:center; }
+            body:not(.print-label-mode) .recipe-title { font-size:16pt; text-transform:uppercase; border-bottom:2px solid #000; display:inline-block; padding-bottom:3px; }
+            body:not(.print-label-mode) .recipe-desc { font-weight:bold; }
+            body:not(.print-label-mode) .target-info { background:transparent; color:#000; border:1px solid #000; padding:5px; font-size:11pt; margin-bottom:10px; }
+            body:not(.print-label-mode) .safety-box { background:transparent; color:#000; border:1px solid #000; border-left:5px solid #000; padding:5px 8px; margin-bottom:10px; font-weight:bold; }
+            body:not(.print-label-mode) table { border:1px solid #000; margin-bottom:15px; }
+            body:not(.print-label-mode) th,body:not(.print-label-mode) td { padding:6px 8px; border-bottom:1px solid #999; color:#000; white-space:normal; }
+            body:not(.print-label-mode) th { background-color:#f0f0f0; border-bottom:2px solid #000; }
+            body:not(.print-label-mode) .phase-row td { background-color:#e5e5e5; font-size:10pt; border-top:2px solid #000; }
+            body:not(.print-label-mode) .traceability-box { color:#000; font-size:9pt; }
+            body:not(.print-label-mode) .total-row td { background:transparent; color:#000; border-top:3px double #000; font-size:11pt; }
+            body:not(.print-label-mode) .pct-label { color:#333; }
+            body:not(.print-label-mode) .instructions-box { background:transparent; color:#000; border:1px solid #000; padding:8px; page-break-inside:avoid; }
+            body:not(.print-label-mode) .instructions-list li { margin-bottom:3px; }
+            input[type="checkbox"] { -webkit-print-color-adjust:exact; color-adjust:exact; }
             body.print-label-mode #resultContainer { display:none !important; }
             body.print-label-mode #labelPreview { display:block !important; position:fixed; top:0; left:0; width:100mm; height:62mm; border:none; margin:0; padding:0; }
-
-            input[type="checkbox"] { -webkit-print-color-adjust:exact; color-adjust:exact; }
         }
     </style>
 </head>
@@ -219,7 +173,6 @@
         <input type="password" id="passwordInput" placeholder="PIN ή Κωδικός">
         <button id="loginBtn" onclick="checkLogin()">ΕΙΣΟΔΟΣ</button>
     </div>
-
     <div id="otpBox" style="display:none;">
         <div class="logo-text">ZARKOLIA</div>
         <div class="logo-sub" style="margin-bottom:12px;">Επαλήθευση Εισόδου</div>
@@ -286,12 +239,8 @@
             <optgroup label="— Σιρόπι —">
                 <option value="syrup_custom">ALVEOLAIR</option>
             </optgroup>
-            <optgroup label="— Spray / Gel / Lotion —">
-                <option value="zderm_gel">Z-Derm Aspis Gel (Original 70% Alcohol)</option>
-                <option value="zderm_spray">Z-Derm Aspis Spray (Low-Alcohol 25%)</option>
-                <option value="zderm_ecofarm">Z-Derm Aspis Spray (Ecofarm 95° → 25% τελικό)</option>
-                <option value="zderm_lotion">Z-Derm Aspis Lotion (Emulsion — Παρατεταμένη Δράση)</option>
-                <option value="zderm_gelcream">Z-Derm Aspis Gel-Cream (Βάση Gel-Cream)</option>
+            <optgroup label="— Spray —">
+                <option value="zderm_spray">Z-Derm Aspis Spray (Low-Alcohol v2)</option>
             </optgroup>
             <optgroup label="— Βάσεις —">
                 <option value="base">Βάση Gel-Cream</option>
@@ -317,7 +266,7 @@
         </div>
         <div class="btn-group">
             <button class="btn-calc" onclick="calculate()">ΥΠΟΛΟΓΙΣΜΟΣ</button>
-            <button class="btn-print" onclick="printFormula()">ΕΚΤΥΠΩΣΗ</button>
+            <button class="btn-print" onclick="window.print()">ΕΚΤΥΠΩΣΗ</button>
         </div>
     </div>
 
@@ -345,32 +294,23 @@
 <script>
 // ── AUTH & OTP ───────────────────────────────────────────────
 const _0x9f2a = "34b35aca37baf7d5d997466dff1ab8ca1dc901df7010f3279138670838e2c9e8";
-const EMAILJS_SERVICE  = "service_e2kqdl6";
+const EMAILJS_SERVICE  = "service_g59c3kc";
 const EMAILJS_TEMPLATE = "template_rgyiz5u";
-const OWNER_EMAIL      = "pzaro2010@gmail.com";
 
-let _otp = null;
-let _otpExpiry = null;
-let _otpTimerInterval = null;
+let _otp = null, _otpExpiry = null, _otpTimerInterval = null;
 
-function _generateOTP() {
-    return String(Math.floor(100000 + Math.random() * 900000));
-}
+function _generateOTP() { return String(Math.floor(100000 + Math.random() * 900000)); }
 
 function _startOTPTimer() {
-    const duration = 5 * 60; // 5 minutes
-    let remaining = duration;
-    _otpExpiry = Date.now() + duration * 1000;
-
+    let remaining = 5 * 60;
+    _otpExpiry = Date.now() + remaining * 1000;
     _otpTimerInterval = setInterval(() => {
         remaining--;
-        const m = Math.floor(remaining / 60);
-        const s = remaining % 60;
+        const m = Math.floor(remaining / 60), s = remaining % 60;
         const el = document.getElementById('otpTimer');
         if (el) el.textContent = `${m}:${s.toString().padStart(2,'0')}`;
         if (remaining <= 0) {
-            clearInterval(_otpTimerInterval);
-            _otp = null;
+            clearInterval(_otpTimerInterval); _otp = null;
             alert("Ο κωδικός OTP έληξε. Παρακαλώ ξαναπροσπαθήστε.");
             resetLogin();
         }
@@ -380,45 +320,23 @@ function _startOTPTimer() {
 async function checkLogin() {
     const input = document.getElementById('passwordInput').value;
     if (!input) return;
-
     const encoder = new TextEncoder();
     const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(input));
     const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b=>b.toString(16).padStart(2,'0')).join('');
-
     if (hashHex === _0x9f2a) {
-        // Σωστό PIN — αποστολή OTP
         _otp = _generateOTP();
-        const now = new Date();
-        const timeStr = now.toLocaleString('el-GR', { dateStyle:'short', timeStyle:'short' });
-
+        const timeStr = new Date().toLocaleString('el-GR', { dateStyle:'short', timeStyle:'short' });
         try {
-            await emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {
-                to_email: OWNER_EMAIL,
-                otp:  _otp,
-                time: timeStr
-            });
-        } catch(err) {
-            console.error('EmailJS error:', err);
-            // Αν αποτύχει το email, μην μπλοκάρεις — συνέχισε
-        }
-
-        // Εμφάνισε OTP screen
+            await emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, { otp: _otp, time: timeStr });
+        } catch(err) { console.error('EmailJS:', err); }
         document.getElementById('loginBox').style.display = 'none';
-        document.getElementById('otpBox').style.display   = 'block';
+        document.getElementById('otpBox').style.display = 'block';
         document.getElementById('otpInput').value = '';
         document.getElementById('otpInput').focus();
         _startOTPTimer();
-
     } else {
-        // Λάθος PIN — ειδοποίηση χωρίς OTP
-        const now = new Date();
-        const timeStr = now.toLocaleString('el-GR', { dateStyle:'short', timeStyle:'short' });
-        emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {
-            to_email: OWNER_EMAIL,
-            otp:  '⚠️ ΑΠΟΤΥΧΗΜΕΝΗ ΑΠΟΠΕΙΡΑ',
-            time: timeStr
-        }).catch(()=>{});
-
+        const timeStr = new Date().toLocaleString('el-GR', { dateStyle:'short', timeStyle:'short' });
+        emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, { otp: '⚠️ ΑΠΟΤΥΧΗΜΕΝΗ ΑΠΟΠΕΙΡΑ', time: timeStr }).catch(()=>{});
         alert("Λάθος κωδικός");
         document.getElementById('passwordInput').value = "";
     }
@@ -426,15 +344,9 @@ async function checkLogin() {
 
 function verifyOTP() {
     const entered = document.getElementById('otpInput').value.trim();
-    if (!_otp) return alert("Ο κωδικός έληξε. Ξαναπροσπαθήστε.");
-    if (Date.now() > _otpExpiry) {
-        _otp = null;
-        alert("Ο κωδικός OTP έληξε.");
-        return resetLogin();
-    }
+    if (!_otp || Date.now() > _otpExpiry) { _otp = null; alert("Ο κωδικός έληξε."); return resetLogin(); }
     if (entered === _otp) {
-        clearInterval(_otpTimerInterval);
-        _otp = null;
+        clearInterval(_otpTimerInterval); _otp = null;
         document.getElementById('loginOverlay').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
     } else {
@@ -445,23 +357,16 @@ function verifyOTP() {
 }
 
 function resetLogin() {
-    clearInterval(_otpTimerInterval);
-    _otp = null;
-    document.getElementById('otpBox').style.display   = 'none';
+    clearInterval(_otpTimerInterval); _otp = null;
+    document.getElementById('otpBox').style.display = 'none';
     document.getElementById('loginBox').style.display = 'block';
-    document.getElementById('passwordInput').value    = '';
+    document.getElementById('passwordInput').value = '';
     document.getElementById('passwordInput').focus();
 }
 
-document.getElementById('passwordInput').addEventListener('keypress', e => {
-    if (e.key === 'Enter') checkLogin();
-});
-
-// Allow Enter on OTP input
+document.getElementById('passwordInput').addEventListener('keypress', e => { if(e.key==='Enter') checkLogin(); });
 document.addEventListener('keypress', e => {
-    if (e.key === 'Enter' && document.getElementById('otpBox').style.display !== 'none') {
-        verifyOTP();
-    }
+    if (e.key === 'Enter' && document.getElementById('otpBox').style.display !== 'none') verifyOTP();
 });
 
 let currentFontSize = parseInt(localStorage.getItem('zk_fontsize') || '16');
@@ -819,7 +724,7 @@ const recipes = {
             { name: "--- MIX ΒΑΜΜΑΤΩΝ (5%) ---", isHeader: true },
             { name: "Βάμμα Αλθαίας",           pct: 2.10 },  { name: "Βάμμα Θυμαριού",   pct: 0.79 },
             { name: "Βάμμα Ευκαλύπτου",        pct: 0.79 },  { name: "Βάμμα Κράνι",      pct: 0.79 },
-            { name: "Hippophae Ext (dry 5:1)",  pct: 0.16,    note: "αντί βάμματος 0.79% — ισοδύναμο 5:1" },
+            { name: "Βάμμα Ιπποφαές",          pct: 0.79 },
             { name: "--- ΥΠΟΛΟΙΠΑ ---", isHeader: true },
             { name: "Vit C & Lemon EO",        pct: 0.15 },
             { name: "Lemon Juice",             pct: 0, note: "q.s. ρύθμιση pH" },
@@ -836,138 +741,7 @@ const recipes = {
         ]
     },
 
-    // ── Z-DERM ASPIS GEL-CREAM (ΒΑΣΗ) ───────────────────────
-    zderm_gelcream: {
-        title: "Z-DERM ASPIS GEL-CREAM",
-        desc: "Βάση Gel-Cream + EOs — Απλοποιημένη παρασκευή",
-        initials: "ZB", shelfLife: 12, type: "standard",
-        safetyNote: "Βασίζεται στην έτοιμη Βάση Gel-Cream (ήδη συντηρημένη με parabens). Δεν χρειάζεται Euxyl. Παρατεταμένη αποδέσμευση αιθερίων μέσω Carbomer matrix.",
-        ingredients: [
-            { name: "--- ΒΑΣΗ ---", isHeader: true },
-            { name: "Βάση Gel-Cream",                             pct: 0,    isQS: true },
-            { name: "Glycerin (extra)",                           pct: 2.0  },
-            { name: "Aloe Barbadensis Leaf Juice",                pct: 3.0  },
-            { name: "--- SOLUBILIZER + ΑΙΘΕΡΙΑ (premix) ---", isHeader: true },
-            { name: "Polysorbate 80",                             pct: 1.5,  note: "προδιάλυση EOs — λόγος PS80:EO = 2.5:1" },
-            { name: "Eucalyptus Citriodora Oil",                  pct: 0.15 },
-            { name: "Geranium Maculatum Oil",                     pct: 0.15 },
-            { name: "Lavandula Angustifolia Herb Oil",            pct: 0.15 },
-            { name: "Cymbopogon Winterianus Oil (Citronella)",    pct: 0.15 },
-        ],
-        instructions: [
-            "PREMIX ΑΙΘΕΡΙΩΝ — Ζύγιση Polysorbate 80 σε μικρό δοχείο.",
-            "Προσθήκη αιθερίων ένα-ένα στο PS80: Eucalyptus → Geranium → Lavender → Citronella. Ανάδευση μέχρι διαυγές ομοιόμορφο μίγμα.",
-            "Ζύγιση Βάσης Gel-Cream σε κύριο δοχείο.",
-            "Προσθήκη Glycerin extra + Aloe Barbadensis — ανάδευση με spatula.",
-            "Αργή ενσωμάτωση premix PS80/EOs στη βάση — κυκλικές κινήσεις, χωρίς παγίδευση αέρα.",
-            "ΠΡΟΣΟΧΗ: Μη χρησιμοποιείτε Euxyl — η βάση είναι ήδη συντηρημένη (Methyl + Propyl Paraben).",
-            "Έλεγχος ομοιογένειας — δεν πρέπει να υπάρχουν ορατά σταγονίδια ή διαχωρισμός.",
-            "QC: pH 5.5-6.5 | Υφή (gel-cream consistency) | Οσμή αιθερίων ήπια και ομοιόμορφη | Ομοιογένεια.",
-        ]
-    },
-
-    // ── Z-DERM ASPIS LOTION (EMULSION) ──────────────────────
-    zderm_lotion: {
-        title: "Z-DERM ASPIS LOTION",
-        desc: "O/W Emulsion — Παρατεταμένη αποδέσμευση αιθερίων",
-        initials: "ZL", shelfLife: 12, type: "standard",
-        safetyNote: "Ελαφριά o/w emulsion. Τα αιθέρια εγκλωβίζονται στη λιπαρή φάση — παρατεταμένη επαφή με επιδερμίδα vs spray. Pump dispenser ή tube. Χωρίς αλκοόλη.",
-        ingredients: [
-            { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ 75°C) ---", isHeader: true },
-            { name: "Aqua",                                       pct: 0,    isQS: true },
-            { name: "Glycerin",                                   pct: 5.0  },
-            { name: "Aloe Barbadensis Leaf Juice",                pct: 3.0  },
-            { name: "--- ΦΑΣΗ Β (ΛΙΠΑΡΗ 75°C) ---", isHeader: true },
-            { name: "Xalifin-15",                                 pct: 4.0  },
-            { name: "Cetostearyl Alcohol",                        pct: 1.5  },
-            { name: "Avocado Oil",                                pct: 5.0,  note: "κύριος φορέας αιθερίων" },
-            { name: "Jojoba Oil",                                 pct: 3.0  },
-            { name: "Tocopherol (Vit E)",                         pct: 0.3  },
-            { name: "--- ΦΑΣΗ Γ — ΑΙΘΕΡΙΑ (<40°C) ---", isHeader: true },
-            { name: "Eucalyptus Citriodora Oil",                  pct: 0.15, note: "↑ από 0.08% — εγκλωβισμός στο emulsion" },
-            { name: "Geranium Maculatum Oil",                     pct: 0.15, isNew: true },
-            { name: "Lavandula Angustifolia Herb Oil",            pct: 0.15, isNew: true },
-            { name: "Cymbopogon Winterianus Oil (Citronella)",    pct: 0.15, isNew: true },
-            { name: "Euxyl PE 9010",                              pct: 0.5  },
-            { name: "Citric Acid",                                pct: 0.05, note: "ρύθμιση pH στόχος 5.5-6.0" },
-        ],
-        instructions: [
-            "ΦΑΣΗ Α — Θερμάνετε Aqua + Glycerin + Aloe στους 75°C.",
-            "ΦΑΣΗ Β — Τήξη Cetostearyl Alcohol 75°C. Προσθήκη Xalifin-15 + Avocado Oil + Jojoba + Vit E. Διατήρηση 75°C.",
-            "EMULSIFICATION — Αργή ρίψη Φάσης Β σε Α υπό ισχυρή ανάδευση. Homogenizer αν διαθέσιμος για λεπτόκοκκο emulsion — κρίσιμο για ομοιόμορφη κατανομή oil droplets.",
-            "Συνεχής ανάδευση κατά ψύξη.",
-            "ΦΑΣΗ Γ — Κάτω από 40°C: προσθήκη αιθερίων ένα-ένα υπό ήπια ανάδευση — εγκλωβίζονται στα oil droplets.",
-            "Euxyl PE 9010 — ανάδευση 3 λεπτά.",
-            "Ρύθμιση pH με Citric Acid — στόχος 5.5-6.0.",
-            "Γέμισμα σε pump dispenser ή tube.",
-            "QC: pH 5.5-6.0 | Viscosity (lotion consistency) | Οσμή — τα αιθέρια πρέπει να είναι διακριτά αλλά ήπια | Ομοιογένεια | Stability check 48h.",
-        ]
-    },
-
-    // ── Z-DERM ASPIS GEL (ORIGINAL) ─────────────────────────
-    zderm_gel: {
-        title: "Z-DERM ASPIS GEL", desc: "Original Formula — 70% Alcohol | CPNP 3345106", initials: "ZG", shelfLife: 24, type: "standard",
-        safetyNote: "Hydroalcoholic gel 70% Ethanol. Εξωτερική χρήση μόνο. Μακριά από φλόγες.",
-        ingredients: [
-            { name: "--- ΦΑΣΗ Α (ΑΛΚΟΟΛΙΚΗ — premix EOs) ---", isHeader: true },
-            { name: "Alcohol Denat (Ethanol 96°)",               pct: 70.0 },
-            { name: "Cepimax (solubilizer)",                     pct: 0.5  },
-            { name: "Eucalyptus Citriodora Oil",                 pct: 0.10 },
-            { name: "Geranium Maculatum Oil",                    pct: 0.10 },
-            { name: "Lavandula Angustifolia Herb Oil",           pct: 0.10 },
-            { name: "Cymbopogon Winterianus Oil (Citronella)",   pct: 0.10 },
-            { name: "--- ΦΑΣΗ Β (ΥΔΑΤΙΚΗ) ---", isHeader: true },
-            { name: "Aqua",                                      pct: 0,    isQS: true },
-            { name: "Glycerin",                                  pct: 6.0  },
-            { name: "Aloe Barbadensis Leaf Juice",               pct: 3.0  },
-        ],
-        instructions: [
-            "ΦΑΣΗ Α — Ζύγιση Alcohol Denat σε γυάλινο ανοξείδωτο δοχείο. ΠΡΟΣΟΧΗ: αναλοίωτος χώρος, μακριά από φλόγες.",
-            "Προσθήκη Cepimax στην αλκοόλη — ανάδευση 2 λεπτά.",
-            "Διαδοχική προσθήκη αιθερίων: Eucalyptus → Geranium → Lavender → Citronella. Ανάδευση μεταξύ κάθε EO μέχρι clear διάλυμα.",
-            "ΦΑΣΗ Β — Ανάμειξη Aqua + Glycerin + Aloe Barbadensis σε θερμοκρασία δωματίου.",
-            "ΕΝΩΣΗ — Αργή ρίψη Φάσης Β σε Φάση Α υπό συνεχή ανάδευση. ΜΗΝ αντιστρέψετε τη σειρά.",
-            "Έλεγχος clarity: διαυγές διάλυμα. Αν θολώσει — αύξηση Cepimax κατά 0.1%.",
-            "Γέμισμα σε φιάλες. Σφράγισμα.",
-            "QC: Διαύγεια | Αλκοολομέτρηση (στόχος ~70% v/v) | pH 5.5-7.0 | Οσμή | Έλεγχος spray pattern αν απαιτείται.",
-        ]
-    },
-
-    // ── Z-DERM ASPIS SPRAY — ECOFARM 95° ────────────────────
-    zderm_ecofarm: {
-        title: "Z-DERM ASPIS SPRAY — ECOFARM",
-        desc: "Ecofarm 95° Alcoholic Lotion → 25% τελικό | CPNP 3345106",
-        initials: "ZE", shelfLife: 24, type: "standard",
-        safetyNote: "Χρήση Ecofarm Alcoholic Lotion 95° ως φυσική πηγή αιθανόλης. Τελική συγκέντρωση αιθανόλης ~25% (26.32% × 0.95 = 25.0%). Ήπιο spray χαμηλής αλκοόλης. Εξωτερική χρήση μόνο.",
-        ingredients: [
-            { name: "--- ΦΑΣΗ Α (ECOFARM premix + EOs) ---", isHeader: true },
-            { name: "Ecofarm Alcoholic Lotion 95°",               pct: 26.32, note: "→ 25% τελική αιθανόλη (26.32% × 0.95)" },
-            { name: "Polysorbate 80",                             pct: 1.50,  note: "solubilizer — λόγος PS80:EO = 4.7:1" },
-            { name: "Euxyl PE 9010",                              pct: 0.50  },
-            { name: "Eucalyptus Citriodora Oil",                  pct: 0.08  },
-            { name: "Geranium Maculatum Oil",                     pct: 0.08  },
-            { name: "Lavandula Angustifolia Herb Oil",            pct: 0.08  },
-            { name: "Cymbopogon Winterianus Oil (Citronella)",    pct: 0.08  },
-            { name: "--- ΦΑΣΗ Β (ΥΔΑΤΙΚΗ) ---", isHeader: true },
-            { name: "Aqua",                                       pct: 0,    isQS: true },
-            { name: "Glycerin",                                   pct: 6.00  },
-            { name: "Aloe Barbadensis Leaf Juice",                pct: 3.00  },
-        ],
-        instructions: [
-            "ΦΑΣΗ Α — Ζύγιση Ecofarm Alcoholic Lotion 95° σε γυάλινο δοχείο.",
-            "Προσθήκη Polysorbate 80 — ανάδευση 2 λεπτά.",
-            "Διαδοχική προσθήκη αιθερίων: Eucalyptus → Geranium → Lavender → Citronella. Ανάδευση μεταξύ κάθε EO μέχρι clear διάλυμα.",
-            "Προσθήκη Euxyl PE 9010 — ανάδευση.",
-            "ΦΑΣΗ Β — Ανάμειξη Aqua + Glycerin + Aloe Barbadensis σε θερμοκρασία δωματίου.",
-            "ΕΝΩΣΗ — Αργή ρίψη Φάσης Β σε Φάση Α υπό συνεχή ανάδευση. ΜΗΝ αντιστρέψετε τη σειρά.",
-            "Έλεγχος clarity: διαυγές διάλυμα. Αν θολώσει — αύξηση PS80 κατά 0.2%.",
-            "ΕΠΑΛΗΘΕΥΣΗ: Αλκοολομέτρηση — στόχος 23-27% v/v.",
-            "Γέμισμα σε spray φιάλες.",
-            "QC: Αλκοολομέτρηση | Διαύγεια | pH 5.5-7.0 | Οσμή | Spray pattern.",
-        ]
-    },
-
-    // ── Z-DERM ASPIS SPRAY (LOW-ALCOHOL) ────────────────────
+    // ── Z-DERM ASPIS SPRAY ───────────────────────────────────
     zderm_spray: {
         title: "Z-DERM ASPIS SPRAY", desc: "Low-Alcohol v2 — CPNP 3345106", initials: "ZD", shelfLife: 24, type: "standard",
         safetyNote: "Υδατοαλκοολική spray βάση. Αλκοόλη 25%. CPNP τροποποίηση απαιτείται (αλλαγή βάσης από 70% → 25% Ethanol, προσθήκη PS20/Phenoxyethanol, αφαίρεση Carbomer/TEA). EOs εντός δηλωμένων ορίων ≤0.1%.",
@@ -978,7 +752,7 @@ const recipes = {
             { name: "Aloe Barbadensis Leaf Juice",                 pct: 3.0 },
             { name: "--- ΦΑΣΗ Β (ΑΛΚΟΟΛΙΚΗ premix + solubilizer) ---", isHeader: true },
             { name: "Alcohol Denat (Ethanol 96°)",                 pct: 25.0 },
-            { name: "Polysorbate 80",                              pct: 1.5,  note: "solubilizer — λόγος PS80:EO = 4.7:1" },
+            { name: "Polysorbate 20",                              pct: 1.5,  note: "solubilizer — λόγος PS20:EO = 4.7:1" },
             { name: "Euxyl PE 9010",                              pct: 0.5 },
             { name: "--- ΦΑΣΗ Γ (ΑΙΘΕΡΙΑ — διαλύονται στη Β) ---", isHeader: true },
             { name: "Lavandula Angustifolia Herb Oil",             pct: 0.08 },
@@ -989,7 +763,7 @@ const recipes = {
         instructions: [
             "ΦΑΣΗ Β — Ζύγιση Alcohol Denat σε γυάλινο δοχείο.",
             "Διαδοχική προσθήκη αιθερίων στην αλκοόλη — ανάδευση μεταξύ κάθε EO μέχρι πλήρη διάλυση (clear διάλυμα).",
-            "Προσθήκη Polysorbate 80 στο αλκοολικό μίγμα — ανάδευση 2 λεπτά.",
+            "Προσθήκη Polysorbate 20 στο αλκοολικό μίγμα — ανάδευση 2 λεπτά.",
             "Προσθήκη Phenoxyethanol — ανάδευση.",
             "ΦΑΣΗ Α — Ανάμειξη Aqua + Glycerin + Aloe Barbadensis σε ξεχωριστό δοχείο σε θερμοκρασία δωματίου.",
             "ΕΝΩΣΗ — Αργή ρίψη Φάσης Α σε Φάση Β υπό συνεχή ανάδευση. ΜΗΝ αντιστρέψετε τη σειρά.",
@@ -1035,117 +809,10 @@ function toggleInputs() {
     document.getElementById('resultContainer').style.display = 'none';
 }
 
-// ── PRINT ────────────────────────────────────────────────────
-function printFormula() {
-    const rc = document.getElementById('resultContainer');
-    if (!rc || rc.style.display === 'none') {
-        alert('Πρώτα κάντε Υπολογισμό.');
-        return;
-    }
-
-    // Collect only what we want: recipe-header + table + instructions
-    const header     = rc.querySelector('.recipe-header');
-    const tableWrap  = rc.querySelector('.table-wrapper');
-    const instrBox   = rc.querySelector('.instructions-box');
-
-    // Build print HTML
-    const headerHTML = header    ? header.outerHTML    : '';
-    const tableHTML  = tableWrap ? tableWrap.outerHTML : '';
-    const instrHTML  = instrBox  ? instrBox.outerHTML  : '';
-
-    const printWindow = window.open('', '_blank', 'width=900,height=700');
-    printWindow.document.write(`<!DOCTYPE html>
-<html lang="el">
-<head>
-<meta charset="UTF-8">
-<title>ZARKOLIA LAB — Φύλλο Παραγωγής</title>
-<style>
-  @page { size: A4 portrait; margin: 12mm 14mm; }
-  * { box-sizing: border-box; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10pt; color: #000; background: white; margin: 0; padding: 0; }
-
-  .recipe-header { text-align: center; padding: 0 0 8px 0; margin-bottom: 14px; border-bottom: 2.5px solid #000; }
-  .recipe-title  { font-size: 16pt; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; display: block; }
-  .recipe-desc   { font-size: 9pt; font-weight: 600; color: #444; display: block; margin-top: 3px; }
-
-  table { width: 100%; border-collapse: collapse; font-size: 9.5pt; border: 1px solid #000; margin-bottom: 14px; table-layout: auto; }
-  th, td { padding: 5px 7px; border-bottom: 1px solid #bbb; color: #000; word-wrap: break-word; vertical-align: middle; }
-  th { background: #efefef; border-bottom: 2px solid #000; font-size: 8.5pt; text-transform: uppercase; letter-spacing: .5px; text-align: left; }
-  th:nth-child(1), td:nth-child(1) { width: 5%;  text-align: center; }
-  th:nth-child(2), td:nth-child(2) { width: 36%; }
-  th:nth-child(3), td:nth-child(3) { width: 38%; }
-  th:nth-child(4), td:nth-child(4) { width: 21%; text-align: right; }
-
-  .phase-row td  { background: #e0e0e0; font-weight: 800; font-size: 8.5pt; border-top: 2px solid #000; text-transform: uppercase; letter-spacing: .5px; }
-  .total-row td  { background: #f0f0f0; font-weight: 800; font-size: 10pt; border-top: 3px double #000; }
-  .amount-col    { font-weight: 800; text-align: right; }
-  .pct-label     { display: block; font-size: 7.5pt; color: #555; font-weight: 600; margin-top: 2px; }
-  .traceability-box { font-size: 7.5pt; color: #666; line-height: 1.9; font-family: monospace; }
-  .ingredient-name  { font-weight: 700; }
-
-  /* Rev inputs — show as plain text */
-  .rev-input { border: none; background: transparent; font-weight: 800; font-size: 9.5pt; text-align: right; width: auto; color: #000; padding: 0; }
-  .rev-badge { display: none; }
-
-  /* Instructions */
-  .instructions-box { border: 1px solid #000; padding: 8px 10px; page-break-inside: avoid; margin-top: 2px; }
-  .instructions-box strong { font-size: 9pt; text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 6px; font-weight: 900; }
-  .instructions-list { padding-left: 18px; margin: 0; }
-  .instructions-list li { margin-bottom: 4px; font-size: 9pt; line-height: 1.5; }
-
-  input[type="checkbox"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-</style>
-</head>
-<body>
-${headerHTML}
-${tableHTML}
-${instrHTML}
-</body>
-</html>`);
-
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-    }, 400);
-}
-
-// ── REVERSE CALCULATION ─────────────────────────────────────
-function recalcFromIngredient(el) {
-    const newGrams = parseFloat(el.value);
-    if (isNaN(newGrams) || newGrams <= 0) return;
-    const pct = parseFloat(el.dataset.pct);
-    if (!pct || pct <= 0) return;
-
-    const newTotal = newGrams / (pct / 100);
-
-    // Update all ingredient inputs except the one being edited
-    document.querySelectorAll('.rev-input').forEach(input => {
-        if (input === el) return;
-        const p = parseFloat(input.dataset.pct);
-        input.value = (p / 100 * newTotal).toFixed(2);
-    });
-
-    // Update total row
-    const totalGramsEl = document.getElementById('revTotalGrams');
-    if (totalGramsEl) totalGramsEl.textContent = newTotal.toFixed(1) + ' g';
-
-    // Update target-info banner
-    const targetEl = document.getElementById('revTargetInfo');
-    if (targetEl) targetEl.textContent = `ΣΤΟΧΟΣ ΠΑΡΑΓΩΓΗΣ: ${newTotal.toFixed(1)} γραμμάρια ← reverse`;
-
-    // Sync main weight input so next manual calculation is consistent
-    document.getElementById('totalWeightInput').value = Math.round(newTotal * 10) / 10;
-}
-
-// ── MAIN CALCULATE ───────────────────────────────────────────
 function calculate() {
-  try {
     const key = document.getElementById('recipeSelect').value;
     if (!key) return alert("Επιλέξτε προϊόν από τη λίστα.");
     const recipe = recipes[key];
-    if (!recipe) return alert("Δεν βρέθηκε η συνταγή: " + key);
 
     let weight = 0, info = "";
     if (recipe.type === 'capsule') {
@@ -1197,15 +864,14 @@ function calculate() {
             <span class="recipe-desc">${recipe.desc} &nbsp;|&nbsp; Batch: ${lotNo}</span>
         </div>
         ${noteHtml}
-        <div class="target-info" id="revTargetInfo">${info}</div>
-        <div class="rev-hint">✏️ Αλλάξτε οποιαδήποτε ποσότητα γραμμαρίων — όλες οι υπόλοιπες και το σύνολο θα ενημερωθούν αυτόματα</div>
+        <div class="target-info">${info}</div>
         <div class="table-wrapper">
             <table>
                 <tr>
                     <th style="text-align:center;">✔</th>
                     <th>Συστατικό</th>
                     <th>Ιχνηλασιμότητα</th>
-                    <th style="text-align:right">Ποσότητα <span class="rev-badge">↕ επεξεργάσιμο</span></th>
+                    <th style="text-align:right">Ποσότητα</th>
                 </tr>`;
 
     recipe.ingredients.forEach(i => {
@@ -1220,12 +886,8 @@ function calculate() {
                 <td style="text-align:center;"><input type="checkbox"></td>
                 <td><span class="ingredient-name">${i.name}${newBadge}</span>${noteStr}</td>
                 <td class="traceability-box">Lot: ___________<br>Exp: __/__/_____</td>
-                <td class="amount-col" style="text-align:right;">
-                    <input type="number" class="rev-input"
-                           data-pct="${finalPct}"
-                           value="${amt}"
-                           step="0.1" min="0"
-                           oninput="recalcFromIngredient(this)">
+                <td class="amount-col">
+                    ${amt} g
                     <span class="pct-label">(${finalPct.toFixed(2)}%)</span>
                 </td>
             </tr>`;
@@ -1236,7 +898,7 @@ function calculate() {
             <tr class="total-row">
                 <td colspan="3" style="text-align:right;font-weight:700;color:#065f46;">ΣΥΝΟΛΟ:</td>
                 <td class="amount-col" style="text-align:right;">
-                    <span id="revTotalGrams">${weight.toFixed(1)} g</span>
+                    ${weight.toFixed(1)} g
                     <span class="pct-label">(100.00%)</span>
                 </td>
             </tr>
@@ -1254,10 +916,6 @@ function calculate() {
     res.style.display = 'block';
     togglePrintMode();
     res.scrollIntoView({ behavior:'smooth', block:'start' });
-  } catch(err) {
-    alert('Σφάλμα: ' + err.message + '\n\nΠαρακαλώ αναφέρετε αυτό το μήνυμα.');
-    console.error(err);
-  }
 }
 </script>
 </body>
