@@ -131,6 +131,22 @@
             .app-header h1 { font-size:1.8em; }
         }
 
+
+        /* REVERSE CALCULATION */
+        .rev-input {
+            width:100%; border:none; background:transparent; font-family:var(--font-mono);
+            font-size:1.05em; font-weight:800; color:var(--success); text-align:right;
+            padding:2px 4px; border-radius:6px; outline:none;
+            transition:background .15s, box-shadow .15s;
+            -moz-appearance:textfield;
+        }
+        .rev-input::-webkit-outer-spin-button,
+        .rev-input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+        .rev-input:focus { background:var(--primary-light); box-shadow:0 0 0 2px var(--primary); color:var(--primary); }
+        .rev-input:hover { background:#f0fdf7; }
+        .rev-badge { display:inline-block; font-size:.68em; background:#dbeafe; color:#1e40af; padding:1px 6px; border-radius:10px; font-weight:700; margin-left:4px; vertical-align:middle; font-family:var(--font-base); }
+        .rev-hint { font-size:.72em; color:var(--text-muted); text-align:center; padding:6px 14px; background:#fafbff; border-bottom:1px solid var(--border-color); font-style:italic; }
+
         @media print {
             #loginOverlay,.control-panel,.app-header { display:none !important; }
             .container { box-shadow:none; border:none; margin:0; padding:0; width:100%; max-width:none; border-radius:0; }
@@ -325,17 +341,19 @@ async function checkLogin() {
     const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b=>b.toString(16).padStart(2,'0')).join('');
     if (hashHex === _0x9f2a) {
         _otp = _generateOTP();
-        const timeStr = new Date().toLocaleString('el-GR', { dateStyle:'short', timeStyle:'short' });
-        try {
-            const expiry = new Date(Date.now() + 15*60*1000);
-            const expiryStr = expiry.toLocaleString('el-GR', { dateStyle:'short', timeStyle:'short' });
-            await emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, { passcode: _otp, time: expiryStr });
-        } catch(err) { console.error('EmailJS:', err); }
+
+        // Εμφάνισε OTP οθόνη ΑΜΕΣΑ
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('otpBox').style.display = 'block';
         document.getElementById('otpInput').value = '';
         document.getElementById('otpInput').focus();
         _startOTPTimer();
+
+        // Αποστολή email παρασκηνίου (non-blocking)
+        const expiry = new Date(Date.now() + 15*60*1000);
+        const expiryStr = expiry.toLocaleString('el-GR', { dateStyle:'short', timeStyle:'short' });
+        emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, { passcode: _otp, time: expiryStr })
+            .catch(err => console.error('EmailJS error:', err));
     } else {
         const timeStr = new Date().toLocaleString('el-GR', { dateStyle:'short', timeStyle:'short' });
         emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, { passcode: '⚠️ ΑΠΟΤΥΧΗΜΕΝΗ ΑΠΟΠΕΙΡΑ', time: timeStr }).catch(()=>{});
@@ -866,14 +884,15 @@ function calculate() {
             <span class="recipe-desc">${recipe.desc} &nbsp;|&nbsp; Batch: ${lotNo}</span>
         </div>
         ${noteHtml}
-        <div class="target-info">${info}</div>
+        <div class="target-info" id="revTargetInfo">${info}</div>
+        <div class="rev-hint">✏️ Αλλάξτε οποιαδήποτε ποσότητα — όλες οι υπόλοιπες θα ενημερωθούν αυτόματα</div>
         <div class="table-wrapper">
             <table>
                 <tr>
                     <th style="text-align:center;">✔</th>
                     <th>Συστατικό</th>
                     <th>Ιχνηλασιμότητα</th>
-                    <th style="text-align:right">Ποσότητα</th>
+                    <th style="text-align:right">Ποσότητα <span class="rev-badge">↕ επεξεργάσιμο</span></th>
                 </tr>`;
 
     recipe.ingredients.forEach(i => {
@@ -888,8 +907,12 @@ function calculate() {
                 <td style="text-align:center;"><input type="checkbox"></td>
                 <td><span class="ingredient-name">${i.name}${newBadge}</span>${noteStr}</td>
                 <td class="traceability-box">Lot: ___________<br>Exp: __/__/_____</td>
-                <td class="amount-col">
-                    ${amt} g
+                <td class="amount-col" style="text-align:right;">
+                    <input type="number" class="rev-input"
+                           data-pct="${finalPct}"
+                           value="${amt}"
+                           step="0.1" min="0"
+                           oninput="recalcFromIngredient(this)">
                     <span class="pct-label">(${finalPct.toFixed(2)}%)</span>
                 </td>
             </tr>`;
@@ -900,7 +923,7 @@ function calculate() {
             <tr class="total-row">
                 <td colspan="3" style="text-align:right;font-weight:700;color:#065f46;">ΣΥΝΟΛΟ:</td>
                 <td class="amount-col" style="text-align:right;">
-                    ${weight.toFixed(1)} g
+                    <span id="revTotalGrams">${weight.toFixed(1)} g</span>
                     <span class="pct-label">(100.00%)</span>
                 </td>
             </tr>
