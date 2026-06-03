@@ -829,6 +829,26 @@ function toggleInputs() {
     document.getElementById('resultContainer').style.display = 'none';
 }
 
+
+// ── REVERSE CALCULATION ─────────────────────────────────────
+function recalcFromIngredient(el) {
+    const newGrams = parseFloat(el.value);
+    if (isNaN(newGrams) || newGrams <= 0) return;
+    const pct = parseFloat(el.getAttribute('data-pct'));
+    if (!pct || pct <= 0) return;
+    const newTotal = newGrams / (pct / 100);
+    document.querySelectorAll('.rev-input').forEach(function(input) {
+        if (input === el) return;
+        const p = parseFloat(input.getAttribute('data-pct'));
+        if (p) input.value = (p / 100 * newTotal).toFixed(2);
+    });
+    var totalEl = document.getElementById('revTotalGrams');
+    if (totalEl) totalEl.textContent = newTotal.toFixed(1) + ' g';
+    var targetEl = document.getElementById('revTargetInfo');
+    if (targetEl) targetEl.textContent = 'ΣΤΟΧΟΣ: ' + newTotal.toFixed(1) + ' g ← reverse';
+    document.getElementById('totalWeightInput').value = Math.round(newTotal * 10) / 10;
+}
+
 function calculate() {
     const key = document.getElementById('recipeSelect').value;
     if (!key) return alert("Επιλέξτε προϊόν από τη λίστα.");
