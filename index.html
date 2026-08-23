@@ -147,6 +147,36 @@
         .rev-badge { display:inline-block; font-size:.68em; background:#dbeafe; color:#1e40af; padding:1px 6px; border-radius:10px; font-weight:700; margin-left:4px; vertical-align:middle; font-family:var(--font-base); }
         .rev-hint { font-size:.72em; color:var(--text-muted); text-align:center; padding:6px 14px; background:#fafbff; border-bottom:1px solid var(--border-color); font-style:italic; }
 
+
+        /* ── STOCK MANAGEMENT ── */
+        .stock-panel { background:#f8faff; border:1px solid var(--border-color); border-radius:16px; margin-bottom:24px; overflow:hidden; display:none; }
+        .stock-header { background:linear-gradient(135deg,#0f4c81,#1a6baa); color:white; padding:16px 20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+        .stock-header h3 { margin:0; font-size:1em; font-weight:800; letter-spacing:1px; text-transform:uppercase; }
+        .stock-search { padding:8px 12px; border-radius:8px; border:none; font-size:.9em; width:200px; outline:none; }
+        .stock-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:8px; padding:16px; max-height:380px; overflow-y:auto; }
+        .stock-item { background:white; border:1.5px solid var(--border-color); border-radius:10px; padding:10px 12px; display:flex; align-items:center; gap:8px; }
+        .stock-item.low { border-color:#fca5a5; background:#fff5f5; }
+        .stock-name { flex:1; font-size:.82em; font-weight:600; color:var(--text-main); line-height:1.3; }
+        .stock-input { width:80px; padding:6px 8px; border:1.5px solid var(--border-color); border-radius:8px; font-size:.9em; font-weight:700; text-align:right; font-family:var(--font-mono); outline:none; color:var(--text-main); }
+        .stock-input:focus { border-color:var(--primary); }
+        .stock-unit { font-size:.78em; color:var(--text-muted); font-weight:600; min-width:20px; }
+        .stock-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+        .dot-ok   { background:#22c55e; }
+        .dot-low  { background:#ef4444; }
+        .dot-zero { background:#d1d5db; }
+        .stock-footer { padding:12px 16px; background:#f1f5f9; border-top:1px solid var(--border-color); display:flex; gap:10px; align-items:center; }
+        .btn-stock-save { background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:10px; font-weight:700; cursor:pointer; font-size:.88em; letter-spacing:.5px; }
+        .btn-stock-save:hover { background:var(--primary-mid); }
+        .btn-stock-clear { background:#ef4444; color:white; border:none; padding:10px 16px; border-radius:10px; font-weight:700; cursor:pointer; font-size:.88em; }
+        .stock-saved-msg { font-size:.82em; color:#15803d; font-weight:700; display:none; }
+
+        /* Stock column in formula */
+        .stock-col { font-size:.78em; text-align:right; padding-right:8px; }
+        .sc-ok   { color:#15803d; font-weight:700; }
+        .sc-warn { color:#dc2626; font-weight:700; }
+        .sc-na   { color:#9ca3af; }
+        .sc-after { display:block; font-size:.7em; color:var(--text-muted); }
+
         @media print {
             #loginOverlay,.control-panel,.app-header { display:none !important; }
             .container { box-shadow:none; border:none; margin:0; padding:0; width:100%; max-width:none; border-radius:0; }
@@ -282,7 +312,8 @@
         </div>
         <div class="btn-group">
             <button class="btn-calc" onclick="calculate()">ΥΠΟΛΟΓΙΣΜΟΣ</button>
-            <button class="btn-print" onclick="window.print()">ΕΚΤΥΠΩΣΗ</button>
+            <button class="btn-print" onclick="printFormula()">ΕΚΤΥΠΩΣΗ</button>
+            <button class="btn-print" style="background:#0f4c81;" onclick="toggleStock()">📦 ΑΠΟΘΗΚΗ</button>
         </div>
     </div>
 
@@ -301,6 +332,19 @@
                     <text x="50" y="75" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="28" stroke="none" fill="black" id="paoText">12M</text>
                 </svg>
             </div>
+        </div>
+    </div>
+
+    <div class="stock-panel" id="stockPanel">
+        <div class="stock-header">
+            <h3>📦 Αποθήκη Α' Υλών</h3>
+            <input type="text" class="stock-search" id="stockSearch" placeholder="Αναζήτηση..." oninput="filterStock()">
+        </div>
+        <div class="stock-grid" id="stockGrid"></div>
+        <div class="stock-footer">
+            <button class="btn-stock-save" onclick="saveStock()">💾 ΑΠΟΘΗΚΕΥΣΗ</button>
+            <button class="btn-stock-clear" onclick="if(confirm('Μηδενισμός όλων;')){localStorage.removeItem('zk_stock');renderStockGrid();}">🗑 ΜΗΔΕΝΙΣΜΟΣ</button>
+            <span class="stock-saved-msg" id="stockSavedMsg">✓ Αποθηκεύτηκε</span>
         </div>
     </div>
 
@@ -830,6 +874,199 @@ function toggleInputs() {
 }
 
 
+
+// ── STOCK MANAGEMENT — Google Sheets ─────────────────────────
+// Βάλε εδώ το URL του deployed Apps Script Web App:
+const GS_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+const STOCK_KEY = 'zk_stock_cache'; // local cache fallback
+
+// ── Βοηθητικές ──
+function getCachedStock() {
+    try { return JSON.parse(localStorage.getItem(STOCK_KEY) || '{}'); }
+    catch(e) { return {}; }
+}
+function setCachedStock(data) {
+    localStorage.setItem(STOCK_KEY, JSON.stringify(data));
+}
+
+// ── Ανάγνωση από Google Sheets ──
+async function fetchStockFromSheets() {
+    if (!GS_URL || GS_URL === 'YOUR_APPS_SCRIPT_URL_HERE') return getCachedStock();
+    try {
+        const res  = await fetch(GS_URL + '?action=read');
+        const data = await res.json();
+        // Flatten: {name: {qty, min, updated}} → {name: qty}
+        const flat = {};
+        for (const [k,v] of Object.entries(data)) flat[k] = v.qty || 0;
+        setCachedStock(flat);
+        return flat;
+    } catch(e) {
+        console.warn('Sheets offline — χρήση cache:', e);
+        return getCachedStock();
+    }
+}
+
+// ── Αποθήκευση στο Google Sheets ──
+async function pushStockToSheets(stockObj) {
+    if (!GS_URL || GS_URL === 'YOUR_APPS_SCRIPT_URL_HERE') return;
+    try {
+        await fetch(GS_URL + '?action=writeAll&data=' + encodeURIComponent(JSON.stringify(stockObj)));
+    } catch(e) { console.warn('Sheets write failed:', e); }
+}
+
+function getStock() { return getCachedStock(); }
+
+async function saveStock() {
+    const stock = {};
+    document.querySelectorAll('.stock-input').forEach(inp => {
+        const name = inp.dataset.name;
+        const val  = parseFloat(inp.value) || 0;
+        if (name) stock[name] = val;
+    });
+    setCachedStock(stock);
+    const msg = document.getElementById('stockSavedMsg');
+    if (msg) { msg.style.display='inline'; msg.textContent='💾 Αποθήκευση...'; }
+    await pushStockToSheets(stock);
+    if (msg) { msg.textContent='✓ Αποθηκεύτηκε'; setTimeout(()=>msg.style.display='none', 2500); }
+}
+
+function getAllIngredientNames() {
+    const names = new Set();
+    Object.values(recipes).forEach(r => {
+        if (r.ingredients) r.ingredients.forEach(i => {
+            if (!i.isHeader && i.name) names.add(i.name);
+        });
+    });
+    return Array.from(names).sort((a,b) => a.localeCompare(b, 'el'));
+}
+
+function renderStockGrid(filter='') {
+    const stock  = getStock();
+    const names  = getAllIngredientNames();
+    const grid   = document.getElementById('stockGrid');
+    if (!grid) return;
+    const fl = filter.toLowerCase();
+    const filtered = fl ? names.filter(n => n.toLowerCase().includes(fl)) : names;
+    grid.innerHTML = filtered.map(name => {
+        const qty = stock[name] || 0;
+        const dotCls = qty <= 0 ? 'dot-zero' : qty < 50 ? 'dot-low' : 'dot-ok';
+        const itemCls = qty > 0 && qty < 50 ? 'low' : '';
+        return `<div class="stock-item ${itemCls}">
+            <div class="stock-dot ${dotCls}"></div>
+            <span class="stock-name">${name}</span>
+            <input type="number" class="stock-input" data-name="${name.replace(/"/g,'&quot;')}"
+                   value="${qty}" min="0" step="0.1" onchange="autoSaveStock(this)">
+            <span class="stock-unit">g</span>
+        </div>`;
+    }).join('');
+}
+
+function autoSaveStock(el) {
+    const stock = getCachedStock();
+    stock[el.dataset.name] = parseFloat(el.value) || 0;
+    setCachedStock(stock);
+    // Update dot
+    const item = el.closest('.stock-item');
+    const dot  = item.querySelector('.stock-dot');
+    const qty  = parseFloat(el.value) || 0;
+    dot.className = 'stock-dot ' + (qty <= 0 ? 'dot-zero' : qty < 50 ? 'dot-low' : 'dot-ok');
+    item.className = 'stock-item ' + (qty > 0 && qty < 50 ? 'low' : '');
+    // Push single update to Sheets
+    if (GS_URL && GS_URL !== 'YOUR_APPS_SCRIPT_URL_HERE') {
+        fetch(GS_URL + '?action=write&name=' + encodeURIComponent(el.dataset.name) + '&qty=' + qty).catch(()=>{});
+    }
+}
+
+function filterStock() {
+    const q = document.getElementById('stockSearch').value;
+    renderStockGrid(q);
+}
+
+async function toggleStock() {
+    const panel = document.getElementById('stockPanel');
+    if (!panel) return;
+    const visible = panel.style.display === 'block';
+    if (visible) {
+        panel.style.display = 'none';
+    } else {
+        panel.style.display = 'block';
+        const btn = document.querySelector('[onclick="toggleStock()"]');
+        if (btn) btn.textContent = '⏳ Φόρτωση...';
+        await fetchStockFromSheets();
+        renderStockGrid();
+        if (btn) btn.textContent = '📦 ΑΠΟΘΗΚΗ';
+        panel.scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+}
+
+function getStockStatus(name, required) {
+    const stock = getCachedStock();
+    const qty = stock[name];
+    if (qty === undefined) return null;
+    const after = qty - required;
+    return { qty, required, after, ok: after >= 0 };
+}
+
+// ── PRINT ────────────────────────────────────────────────────
+function printFormula() {
+    const rc = document.getElementById('resultContainer');
+    if (!rc || rc.style.display === 'none') { alert('Πρώτα κάντε Υπολογισμό.'); return; }
+
+    const header    = rc.querySelector('.recipe-header');
+    const tableWrap = rc.querySelector('.table-wrapper');
+    const instrBox  = rc.querySelector('.instructions-box');
+
+    const pw = window.open('', '_blank', 'width=800,height=650');
+    pw.document.write(`<!DOCTYPE html>
+<html lang="el"><head><meta charset="UTF-8">
+<title>ZARKOLIA LAB</title>
+<style>
+  @page { size:A4 portrait; margin:8mm 10mm; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:Arial,sans-serif; font-size:8pt; color:#000; background:white; }
+
+  .recipe-header { text-align:center; padding-bottom:5px; margin-bottom:8px; border-bottom:2px solid #000; }
+  .recipe-title  { font-size:13pt; font-weight:900; text-transform:uppercase; display:block; }
+  .recipe-desc   { font-size:7.5pt; color:#444; display:block; margin-top:2px; }
+
+  .table-wrapper { width:100%; }
+  table { width:100%; border-collapse:collapse; font-size:7.5pt; border:1px solid #000; margin-bottom:8px; table-layout:fixed; }
+  th { background:#e8e8e8; border-bottom:1.5px solid #000; font-size:7pt; text-transform:uppercase; letter-spacing:.3px; padding:3px 5px; text-align:left; }
+  td { padding:3px 5px; border-bottom:1px solid #ccc; vertical-align:middle; word-wrap:break-word; }
+  th:nth-child(1),td:nth-child(1) { width:4%;  text-align:center; }
+  th:nth-child(2),td:nth-child(2) { width:35%; }
+  th:nth-child(3),td:nth-child(3) { width:38%; }
+  th:nth-child(4),td:nth-child(4) { width:23%; text-align:right; }
+
+  .phase-row td { background:#d8d8d8; font-weight:800; font-size:7pt; border-top:1.5px solid #000; text-transform:uppercase; padding:4px 5px; }
+  .total-row td { background:#f0f0f0; font-weight:800; font-size:8pt; border-top:2px double #000; }
+  .ingredient-name { font-weight:700; font-size:7.5pt; }
+  .amount-col { font-weight:800; text-align:right; }
+  .pct-label  { display:block; font-size:6.5pt; color:#555; margin-top:1px; }
+  .traceability-box { font-size:6.5pt; color:#666; line-height:1.7; font-family:monospace; }
+  small { font-size:6.5pt; color:#555; }
+
+  /* Rev inputs as plain text */
+  .rev-input { border:none; background:transparent; font-weight:800; font-size:7.5pt; text-align:right; width:auto; color:#000; padding:0; }
+  .rev-badge { display:none; }
+
+  /* Instructions — compact */
+  .instructions-box { border:1px solid #000; padding:5px 7px; page-break-inside:avoid; margin-top:4px; }
+  .instructions-box strong { font-size:7.5pt; text-transform:uppercase; display:block; margin-bottom:4px; font-weight:900; }
+  .instructions-list { padding-left:14px; }
+  .instructions-list li { margin-bottom:2px; font-size:7.5pt; line-height:1.4; }
+
+  input[type="checkbox"] { -webkit-print-color-adjust:exact; print-color-adjust:exact; width:10px; height:10px; }
+</style></head><body>
+${header ? header.outerHTML : ''}
+${tableWrap ? tableWrap.outerHTML : ''}
+${instrBox ? instrBox.outerHTML : ''}
+</body></html>`);
+    pw.document.close();
+    pw.focus();
+    setTimeout(() => { pw.print(); pw.close(); }, 350);
+}
+
 // ── REVERSE CALCULATION ─────────────────────────────────────
 function recalcFromIngredient(el) {
     const newGrams = parseFloat(el.value);
@@ -847,6 +1084,17 @@ function recalcFromIngredient(el) {
     var targetEl = document.getElementById('revTargetInfo');
     if (targetEl) targetEl.textContent = 'ΣΤΟΧΟΣ: ' + newTotal.toFixed(1) + ' g ← reverse';
     document.getElementById('totalWeightInput').value = Math.round(newTotal * 10) / 10;
+}
+
+
+function getStockCell(name, required) {
+    const s = getStockStatus(name, required);
+    if (!s) return '<span class="sc-na">—</span>';
+    const qtyFmt = s.qty.toFixed(0) + 'g';
+    const afterFmt = (s.after >= 0 ? '+' : '') + s.after.toFixed(0) + 'g';
+    const cls = s.ok ? 'sc-ok' : 'sc-warn';
+    const icon = s.ok ? '✓' : '⚠️';
+    return `<span class="${cls}">${icon} ${qtyFmt}<span class="sc-after">→ ${afterFmt}</span></span>`;
 }
 
 function calculate() {
@@ -912,12 +1160,13 @@ function calculate() {
                     <th style="text-align:center;">✔</th>
                     <th>Συστατικό</th>
                     <th>Ιχνηλασιμότητα</th>
-                    <th style="text-align:right">Ποσότητα <span class="rev-badge">↕ επεξεργάσιμο</span></th>
+                    <th style="text-align:right">Ποσότητα <span class="rev-badge">↕</span></th>
+                    <th class="stock-col">Αποθήκη</th>
                 </tr>`;
 
     recipe.ingredients.forEach(i => {
         if (i.isHeader) {
-            html += `<tr class="phase-row"><td colspan="4">${i.name}</td></tr>`;
+            html += `<tr class="phase-row"><td colspan="5">${i.name}</td></tr>`;
         } else {
             const finalPct = i.isQS ? Math.max(0, 100-sumPct) : i.pct;
             const amt = (finalPct/100*weight).toFixed(2);
@@ -935,13 +1184,14 @@ function calculate() {
                            oninput="recalcFromIngredient(this)">
                     <span class="pct-label">(${finalPct.toFixed(2)}%)</span>
                 </td>
+                <td class="stock-col">${getStockCell(i.name, parseFloat(amt))}</td>
             </tr>`;
         }
     });
 
     html += `
             <tr class="total-row">
-                <td colspan="3" style="text-align:right;font-weight:700;color:#065f46;">ΣΥΝΟΛΟ:</td>
+                <td colspan="4" style="text-align:right;font-weight:700;color:#065f46;">ΣΥΝΟΛΟ:</td>
                 <td class="amount-col" style="text-align:right;">
                     <span id="revTotalGrams">${weight.toFixed(1)} g</span>
                     <span class="pct-label">(100.00%)</span>
