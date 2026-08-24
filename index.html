@@ -132,6 +132,20 @@
         }
 
 
+
+        /* LOT inputs in traceability column */
+        .lot-row { display:flex; align-items:center; gap:5px; margin-bottom:4px; }
+        .lot-row:last-child { margin-bottom:0; }
+        .lot-label { font-size:.72em; color:var(--text-muted); font-weight:700; min-width:28px; font-family:var(--font-mono); }
+        .lot-input {
+            flex:1; border:1px solid var(--border-color); border-radius:6px;
+            padding:3px 7px; font-size:.8em; font-family:var(--font-mono);
+            font-weight:600; color:var(--text-main); outline:none;
+            background:#fafbff; transition:border .15s;
+        }
+        .lot-input:focus { border-color:var(--primary); background:white; }
+        .lot-input::placeholder { color:#d1d5db; font-weight:400; }
+
         /* REVERSE CALCULATION */
         .rev-input {
             width:100%; border:none; background:transparent; font-family:var(--font-mono);
@@ -284,7 +298,9 @@
                 <option value="syrup_custom">ALVEOLAIR</option>
             </optgroup>
             <optgroup label="— Spray —">
-                <option value="zderm_spray">Z-Derm Aspis Spray (Low-Alcohol v2)</option>
+                <option value="zderm_gel">Z-Derm Aspis Gel (Ecopharm 95° → 70%)</option>
+                <option value="zderm_lotion">Z-Derm Aspis Lotion (O/W Emulsion)</option>
+                <option value="zderm_gelcream">Z-Derm Aspis Gel-Cream (Βάση Gel-Cream)</option>
             </optgroup>
             <optgroup label="— Βάσεις —">
                 <option value="base">Βάση Gel-Cream</option>
@@ -803,38 +819,100 @@ const recipes = {
         ]
     },
 
-    // ── Z-DERM ASPIS SPRAY ───────────────────────────────────
-    zderm_spray: {
-        title: "Z-DERM ASPIS SPRAY", desc: "Low-Alcohol v2 — CPNP 3345106", initials: "ZD", shelfLife: 24, type: "standard",
-        safetyNote: "Υδατοαλκοολική spray βάση. Αλκοόλη 25%. CPNP τροποποίηση απαιτείται (αλλαγή βάσης από 70% → 25% Ethanol, προσθήκη PS20/Phenoxyethanol, αφαίρεση Carbomer/TEA). EOs εντός δηλωμένων ορίων ≤0.1%.",
+    // ── Z-DERM ASPIS GEL (Ecopharm 95°) ───────────────────────
+    zderm_gel: {
+        title: "Z-DERM ASPIS GEL",
+        desc: "Ecopharm 95° \u2192 70% \u03c4\u03b5\u03bb\u03b9\u03ba\u03cc | CPNP 3345106",
+        initials: "ZG", shelfLife: 24, type: "standard",
+        safetyNote: "Hydroalcoholic gel ~70% \u03b1\u03b9\u03b8\u03b1\u03bd\u03cc\u03bb\u03b7. Ecopharm 95\u00b0 \u00d7 73.68% = 70% \u03c4\u03b5\u03bb\u03b9\u03ba\u03cc. \u0391\u03bd\u03c4\u03b9\u03c3\u03b7\u03c0\u03c4\u03b9\u03ba\u03ae \u03b4\u03c1\u03ac\u03c3\u03b7. \u03a7\u03c9\u03c1\u03af\u03c2 Euxyl \u2014 \u03b7 \u03b1\u03bb\u03ba\u03bf\u03cc\u03bb\u03b7 \u03b1\u03c1\u03ba\u03b5\u03af. \u0395\u03be\u03c9\u03c4\u03b5\u03c1\u03b9\u03ba\u03ae \u03c7\u03c1\u03ae\u03c3\u03b7 \u03bc\u03cc\u03bd\u03bf. \u039c\u03b1\u03ba\u03c1\u03b9\u03ac \u03b1\u03c0\u03cc \u03c6\u03bb\u03cc\u03b3\u03b5\u03c2.",
         ingredients: [
-            { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ premix) ---", isHeader: true },
-            { name: "Aqua",                                        pct: 0,    isQS: true },
-            { name: "Glycerin",                                    pct: 5.0 },
-            { name: "Aloe Barbadensis Leaf Juice",                 pct: 3.0 },
-            { name: "--- ΦΑΣΗ Β (ΑΛΚΟΟΛΙΚΗ premix + solubilizer) ---", isHeader: true },
-            { name: "Alcohol Denat (Ethanol 96°)",                 pct: 25.0 },
-            { name: "Polysorbate 20",                              pct: 1.5,  note: "solubilizer — λόγος PS20:EO = 4.7:1" },
-            { name: "Euxyl PE 9010",                              pct: 0.5 },
-            { name: "--- ΦΑΣΗ Γ (ΑΙΘΕΡΙΑ — διαλύονται στη Β) ---", isHeader: true },
-            { name: "Lavandula Angustifolia Herb Oil",             pct: 0.08 },
-            { name: "Cymbopogon Winterianus Leaf Oil (Citronella)", pct: 0.08 },
-            { name: "Eucalyptus Citriodora Oil",                   pct: 0.08 },
-            { name: "Geranium Maculatum Oil",                      pct: 0.08 },
+            { name: "--- \u03a6\u0391\u03a3\u0397 \u0391 (ECOPHARM premix + EOs) ---", isHeader: true },
+            { name: "Ecopharm Alcoholic Lotion 95\u00b0",             pct: 73.68, note: "73.68% \u00d7 0.95 = 70% \u03c4\u03b5\u03bb\u03b9\u03ba\u03ae \u03b1\u03b9\u03b8\u03b1\u03bd\u03cc\u03bb\u03b7" },
+            { name: "Cepimax (solubilizer EOs)",                  pct: 0.50  },
+            { name: "Eucalyptus Citriodora Oil",                  pct: 0.10  },
+            { name: "Geranium Maculatum Oil",                     pct: 0.10  },
+            { name: "Lavandula Angustifolia Herb Oil",            pct: 0.10  },
+            { name: "Cymbopogon Winterianus Oil (Citronella)",    pct: 0.10  },
+            { name: "--- \u03a6\u0391\u03a3\u0397 \u0392 (\u03a5\u0394\u0391\u03a4\u0399\u039a\u0397) ---", isHeader: true },
+            { name: "Aqua",                                       pct: 0, isQS: true },
+            { name: "Glycerin",                                   pct: 6.00  },
+            { name: "Aloe Barbadensis Leaf Juice",                pct: 3.00  },
         ],
         instructions: [
-            "ΦΑΣΗ Β — Ζύγιση Alcohol Denat σε γυάλινο δοχείο.",
-            "Διαδοχική προσθήκη αιθερίων στην αλκοόλη — ανάδευση μεταξύ κάθε EO μέχρι πλήρη διάλυση (clear διάλυμα).",
-            "Προσθήκη Polysorbate 20 στο αλκοολικό μίγμα — ανάδευση 2 λεπτά.",
-            "Προσθήκη Phenoxyethanol — ανάδευση.",
-            "ΦΑΣΗ Α — Ανάμειξη Aqua + Glycerin + Aloe Barbadensis σε ξεχωριστό δοχείο σε θερμοκρασία δωματίου.",
-            "ΕΝΩΣΗ — Αργή ρίψη Φάσης Α σε Φάση Β υπό συνεχή ανάδευση. ΜΗΝ αντιστρέψετε τη σειρά.",
-            "Έλεγχος clarity: το διάλυμα πρέπει να παραμείνει διαυγές. Αν θολώσει — αύξηση PS20 κατά 0.5%.",
-            "Γέμισμα σε spray φιάλες (trigger ή pump). Viscosity στόχος <20 cP.",
-            "QC: Διαύγεια | pH 5.5-7.0 | Έλεγχος spray pattern (ομοιόμορφος ψεκασμός) | Οσμή.",
+            "\u03a6\u0391\u03a3\u0397 \u0391 \u2014 \u0396\u03cd\u03b3\u03b9\u03c3\u03b7 Ecopharm Alcoholic Lotion 95\u00b0 \u03c3\u03b5 \u03b3\u03c5\u03ac\u03bb\u03b9\u03bd\u03bf \u03b4\u03bf\u03c7\u03b5\u03af\u03bf. \u03a0\u03a1\u039f\u03a3\u039f\u03a7\u0397: \u03bc\u03b1\u03ba\u03c1\u03b9\u03ac \u03b1\u03c0\u03cc \u03c6\u03bb\u03cc\u03b3\u03b5\u03c2.",
+            "\u03a0\u03c1\u03bf\u03c3\u03b8\u03ae\u03ba\u03b7 Cepimax \u2014 \u03b1\u03bd\u03ac\u03b4\u03b5\u03c5\u03c3\u03b7 2 \u03bb\u03b5\u03c0\u03c4\u03ac.",
+            "\u0394\u03b9\u03b1\u03b4\u03bf\u03c7\u03b9\u03ba\u03ae \u03c0\u03c1\u03bf\u03c3\u03b8\u03ae\u03ba\u03b7 \u03b1\u03b9\u03b8\u03b5\u03c1\u03af\u03c9\u03bd: Eucalyptus \u2192 Geranium \u2192 Lavender \u2192 Citronella.",
+            "\u03a6\u0391\u03a3\u0397 \u0392 \u2014 \u0391\u03bd\u03ac\u03bc\u03b5\u03b9\u03be\u03b7 Aqua + Glycerin + Aloe Barbadensis.",
+            "\u0395\u039d\u03a9\u03a3\u0397 \u2014 \u0391\u03c1\u03b3\u03ae \u03c1\u03af\u03c8\u03b7 \u03a6\u03ac\u03c3\u03b7\u03c2 \u0392 \u03c3\u03b5 \u0391 \u03c5\u03c0\u03cc \u03c3\u03c5\u03bd\u03b5\u03c7\u03ae \u03b1\u03bd\u03ac\u03b4\u03b5\u03c5\u03c3\u03b7.",
+            "\u0391\u03bb\u03ba\u03bf\u03bf\u03bb\u03bf\u03bc\u03ad\u03c4\u03c1\u03b7\u03c3\u03b7 \u2014 \u03c3\u03c4\u03cc\u03c7\u03bf\u03c2 68-72% v/v.",
+            "QC: \u0391\u03bb\u03ba\u03bf\u03bf\u03bb\u03bf\u03bc\u03ad\u03c4\u03c1\u03b7\u03c3\u03b7 | \u0394\u03b9\u03b1\u03cd\u03b3\u03b5\u03b9\u03b1 | pH 5.5-7.0 | \u039f\u03c3\u03bc\u03ae.",
         ]
     },
 
+    // ── Z-DERM ASPIS LOTION (O/W Emulsion) ──────────────────
+    zderm_lotion: {
+        title: "Z-DERM ASPIS LOTION",
+        desc: "O/W Emulsion \u2014 \u03a0\u03b1\u03c1\u03b1\u03c4\u03b5\u03c4\u03b1\u03bc\u03ad\u03bd\u03b7 \u03b1\u03c0\u03bf\u03b4\u03ad\u03c3\u03bc\u03b5\u03c5\u03c3\u03b7 \u03b1\u03b9\u03b8\u03b5\u03c1\u03af\u03c9\u03bd",
+        initials: "ZL", shelfLife: 12, type: "standard",
+        safetyNote: "O/W emulsion. Euxyl 0.5% \u03b1\u03bd\u03b1\u03b3\u03ba\u03b1\u03af\u03bf \u2014 \u03c7\u03c9\u03c1\u03af\u03c2 \u03b1\u03bb\u03ba\u03bf\u03cc\u03bb\u03b7. Pump dispenser \u03ae tube.",
+        ingredients: [
+            { name: "--- \u03a6\u0391\u03a3\u0397 \u0391 (\u03a5\u0394\u0391\u03a4\u0399\u039a\u0397 75\u00b0C) ---", isHeader: true },
+            { name: "Aqua",                                       pct: 0, isQS: true },
+            { name: "Glycerin",                                   pct: 5.00  },
+            { name: "Aloe Barbadensis Leaf Juice",                pct: 3.00  },
+            { name: "--- \u03a6\u0391\u03a3\u0397 \u0392 (\u039b\u0399\u03a0\u0391\u03a1\u0397 75\u00b0C) ---", isHeader: true },
+            { name: "Xalifin-15",                                 pct: 4.00  },
+            { name: "Cetostearyl Alcohol",                        pct: 1.50  },
+            { name: "Avocado Oil",                                pct: 5.00, note: "\u03ba\u03cd\u03c1\u03b9\u03bf\u03c2 \u03c6\u03bf\u03c1\u03ad\u03b1\u03c2 \u03b1\u03b9\u03b8\u03b5\u03c1\u03af\u03c9\u03bd" },
+            { name: "Jojoba Oil",                                 pct: 3.00  },
+            { name: "Tocopherol (Vit E)",                         pct: 0.30  },
+            { name: "--- \u03a6\u0391\u03a3\u0397 \u0393 \u2014 \u0391\u0399\u0398\u0395\u03a1\u0399\u0391 (<40\u00b0C) ---", isHeader: true },
+            { name: "Eucalyptus Citriodora Oil",                  pct: 0.15  },
+            { name: "Geranium Maculatum Oil",                     pct: 0.15  },
+            { name: "Lavandula Angustifolia Herb Oil",            pct: 0.15  },
+            { name: "Cymbopogon Winterianus Oil (Citronella)",    pct: 0.15  },
+            { name: "Euxyl PE 9010",                              pct: 0.50, note: "\u03b1\u03bd\u03b1\u03b3\u03ba\u03b1\u03af\u03bf \u2014 \u03c7\u03c9\u03c1\u03af\u03c2 \u03b1\u03bb\u03ba\u03bf\u03cc\u03bb\u03b7" },
+            { name: "Citric Acid",                                pct: 0.05, note: "pH \u03c3\u03c4\u03cc\u03c7\u03bf\u03c2 5.5-6.0" },
+        ],
+        instructions: [
+            "\u03a6\u0391\u03a3\u0397 \u0391 \u2014 Aqua + Glycerin + Aloe 75\u00b0C.",
+            "\u03a6\u0391\u03a3\u0397 \u0392 \u2014 \u03a4\u03ae\u03be\u03b7 Cetostearyl + Xalifin-15 + Avocado + Jojoba + Vit E 75\u00b0C.",
+            "EMULSIFICATION \u2014 \u0391\u03c1\u03b3\u03ae \u03c1\u03af\u03c8\u03b7 \u0392 \u03c3\u03b5 \u0391 \u03c5\u03c0\u03cc \u03b9\u03c3\u03c7\u03c5\u03c1\u03ae \u03b1\u03bd\u03ac\u03b4\u03b5\u03c5\u03c3\u03b7.",
+            "\u03a6\u0391\u03a3\u0397 \u0393 \u2014 <40\u00b0C: \u03b1\u03b9\u03b8\u03ad\u03c1\u03b9\u03b1 \u03ad\u03bd\u03b1-\u03ad\u03bd\u03b1, \u03b5\u03b3\u03ba\u03bb\u03c9\u03b2\u03af\u03b6\u03bf\u03bd\u03c4\u03b1\u03b9 \u03c3\u03c4\u03b1 oil droplets.",
+            "Euxyl PE 9010 \u2014 \u03b1\u03bd\u03ac\u03b4\u03b5\u03c5\u03c3\u03b7 3 \u03bb\u03b5\u03c0\u03c4\u03ac.",
+            "Citric Acid \u2014 pH 5.5-6.0.",
+            "QC: pH | Viscosity | \u039f\u03c3\u03bc\u03ae | \u039f\u03bc\u03bf\u03b9\u03bf\u03b3\u03ad\u03bd\u03b5\u03b9\u03b1 | Stability 48h.",
+        ]
+    },
+
+    // ── Z-DERM ASPIS GEL-CREAM ───────────────────────────────
+    zderm_gelcream: {
+        title: "Z-DERM ASPIS GEL-CREAM",
+        desc: "\u0392\u03ac\u03c3\u03b7 Gel-Cream + PS60 + EOs",
+        initials: "ZC", shelfLife: 12, type: "standard",
+        safetyNote: "\u0392\u03ac\u03c3\u03b7 Gel-Cream (\u03ae\u03b4\u03b7 \u03c3\u03c5\u03bd\u03c4\u03b7\u03c1\u03b7\u03bc\u03ad\u03bd\u03b7 \u03bc\u03b5 parabens). \u03a7\u03c9\u03c1\u03af\u03c2 Euxyl. Polysorbate 60 \u2014 \u03c4\u03ae\u03be\u03b7 \u03c3\u03c4\u03bf\u03c5\u03c2 35\u00b0C \u03c0\u03c1\u03b9\u03bd \u03c7\u03c1\u03ae\u03c3\u03b7.",
+        ingredients: [
+            { name: "--- \u0392\u0391\u03a3\u0397 ---", isHeader: true },
+            { name: "\u0392\u03ac\u03c3\u03b7 Gel-Cream",     pct: 0, isQS: true },
+            { name: "Glycerin (extra)",                           pct: 2.00  },
+            { name: "Aloe Barbadensis Leaf Juice",                pct: 3.00  },
+            { name: "--- PREMIX PS60 + \u0391\u0399\u0398\u0395\u03a1\u0399\u0391 ---", isHeader: true },
+            { name: "Polysorbate 60",                             pct: 1.50, note: "\u03c4\u03ae\u03be\u03b7 35\u00b0C \u03c0\u03c1\u03b9\u03bd \u03b5\u03bd\u03c3\u03c9\u03bc\u03ac\u03c4\u03c9\u03c3\u03b7 \u2014 \u03bb\u03cc\u03b3\u03bf\u03c2 PS60:EO = 2.5:1" },
+            { name: "Eucalyptus Citriodora Oil",                  pct: 0.15  },
+            { name: "Geranium Maculatum Oil",                     pct: 0.15  },
+            { name: "Lavandula Angustifolia Herb Oil",            pct: 0.15  },
+            { name: "Cymbopogon Winterianus Oil (Citronella)",    pct: 0.15  },
+        ],
+        instructions: [
+            "PREMIX PS60 \u2014 \u03a4\u03ae\u03be\u03b7 Polysorbate 60 \u03c3\u03b5 \u03bc\u03c0\u03b5\u03bd-\u03bc\u03b1\u03c1\u03af (~35\u00b0C). \u03a8\u03cd\u03be\u03b7 \u03c3\u03c4\u03bf\u03c5\u03c2 30\u00b0C.",
+            "\u03a0\u03c1\u03bf\u03c3\u03b8\u03ae\u03ba\u03b7 \u03b1\u03b9\u03b8\u03b5\u03c1\u03af\u03c9\u03bd: Eucalyptus \u2192 Geranium \u2192 Lavender \u2192 Citronella.",
+            "\u0396\u03cd\u03b3\u03b9\u03c3\u03b7 \u0392\u03ac\u03c3\u03b7\u03c2 Gel-Cream \u03c3\u03b5 \u03ba\u03cd\u03c1\u03b9\u03bf \u03b4\u03bf\u03c7\u03b5\u03af\u03bf.",
+            "\u03a0\u03c1\u03bf\u03c3\u03b8\u03ae\u03ba\u03b7 Glycerin extra + Aloe Barbadensis.",
+            "\u0391\u03c1\u03b3\u03ae \u03b5\u03bd\u03c3\u03c9\u03bc\u03ac\u03c4\u03c9\u03c3\u03b7 premix PS60/EOs \u03c3\u03c4\u03b7 \u03b2\u03ac\u03c3\u03b7 \u2014 \u03ba\u03c5\u03ba\u03bb\u03b9\u03ba\u03ad\u03c2 \u03ba\u03b9\u03bd\u03ae\u03c3\u03b5\u03b9\u03c2.",
+            "\u03a7\u03c9\u03c1\u03af\u03c2 Euxyl \u2014 \u03b7 \u03b2\u03ac\u03c3\u03b7 \u03b5\u03af\u03bd\u03b1\u03b9 \u03ae\u03b4\u03b7 \u03c3\u03c5\u03bd\u03c4\u03b7\u03c1\u03b7\u03bc\u03ad\u03bd\u03b7.",
+            "QC: pH 5.5-6.5 | \u03a5\u03c6\u03ae gel-cream | \u039f\u03c3\u03bc\u03ae.",
+        ]
+    },
     // ── BASE GEL-CREAM ───────────────────────────────────────
     base: {
         title: "BASE GEL-CREAM", desc: "Base Formula", initials: "BG", shelfLife: 12, type: "standard",
@@ -1173,7 +1251,16 @@ function calculate() {
             html += `<tr>
                 <td style="text-align:center;"><input type="checkbox"></td>
                 <td><span class="ingredient-name">${i.name}${newBadge}</span>${noteStr}${getStockTag(i.name, parseFloat(amt))}</td>
-                <td class="traceability-box">Lot: ___________<br>Exp: __/__/_____</td>
+                <td class="traceability-box">
+                    <div class="lot-row">
+                        <span class="lot-label">LOT:</span>
+                        <input type="text" class="lot-input" placeholder="π.χ. ABC2408" maxlength="20">
+                    </div>
+                    <div class="lot-row">
+                        <span class="lot-label">EXP:</span>
+                        <input type="text" class="lot-input" placeholder="MM/YYYY" maxlength="10">
+                    </div>
+                </td>
                 <td class="amount-col" style="text-align:right;">
                     <input type="number" class="rev-input"
                            data-pct="${finalPct}"
