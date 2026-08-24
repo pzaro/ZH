@@ -171,11 +171,9 @@
         .stock-saved-msg { font-size:.82em; color:#15803d; font-weight:700; display:none; }
 
         /* Stock column in formula */
-        .stock-col { font-size:.78em; text-align:right; padding-right:8px; }
-        .sc-ok   { color:#15803d; font-weight:700; }
-        .sc-warn { color:#dc2626; font-weight:700; }
-        .sc-na   { color:#9ca3af; }
-        .sc-after { display:block; font-size:.7em; color:var(--text-muted); }
+        .stock-tag { display:block; font-size:.78em; font-weight:700; margin-top:3px; color:#d97706; }
+        .stock-tag.warn { color:#dc2626; }
+        .stock-tag.na   { display:none; }
 
         @media print {
             #loginOverlay,.control-panel,.app-header { display:none !important; }
@@ -1087,14 +1085,14 @@ function recalcFromIngredient(el) {
 }
 
 
-function getStockCell(name, required) {
+function getStockTag(name, required) {
     const s = getStockStatus(name, required);
-    if (!s) return '<span class="sc-na">—</span>';
-    const qtyFmt = s.qty.toFixed(0) + 'g';
+    if (!s) return '';
+    const qtyFmt   = s.qty.toFixed(0) + 'g';
     const afterFmt = (s.after >= 0 ? '+' : '') + s.after.toFixed(0) + 'g';
-    const cls = s.ok ? 'sc-ok' : 'sc-warn';
-    const icon = s.ok ? '✓' : '⚠️';
-    return `<span class="${cls}">${icon} ${qtyFmt}<span class="sc-after">→ ${afterFmt}</span></span>`;
+    const cls  = s.ok ? '' : 'warn';
+    const icon = s.ok ? '📦' : '⚠️';
+    return `<span class="stock-tag ${cls}">${icon} Απόθεμα: ${qtyFmt} → ${afterFmt}</span>`;
 }
 
 function calculate() {
@@ -1161,12 +1159,12 @@ function calculate() {
                     <th>Συστατικό</th>
                     <th>Ιχνηλασιμότητα</th>
                     <th style="text-align:right">Ποσότητα <span class="rev-badge">↕</span></th>
-                    <th class="stock-col">Αποθήκη</th>
+
                 </tr>`;
 
     recipe.ingredients.forEach(i => {
         if (i.isHeader) {
-            html += `<tr class="phase-row"><td colspan="5">${i.name}</td></tr>`;
+            html += `<tr class="phase-row"><td colspan="4">${i.name}</td></tr>`;
         } else {
             const finalPct = i.isQS ? Math.max(0, 100-sumPct) : i.pct;
             const amt = (finalPct/100*weight).toFixed(2);
@@ -1174,7 +1172,7 @@ function calculate() {
             const newBadge = i.isNew ? ` <span style="background:#d1fae5;color:#065f46;font-size:.7em;padding:2px 7px;border-radius:20px;font-weight:700;margin-left:4px;">NEW</span>` : '';
             html += `<tr>
                 <td style="text-align:center;"><input type="checkbox"></td>
-                <td><span class="ingredient-name">${i.name}${newBadge}</span>${noteStr}</td>
+                <td><span class="ingredient-name">${i.name}${newBadge}</span>${noteStr}${getStockTag(i.name, parseFloat(amt))}</td>
                 <td class="traceability-box">Lot: ___________<br>Exp: __/__/_____</td>
                 <td class="amount-col" style="text-align:right;">
                     <input type="number" class="rev-input"
@@ -1184,14 +1182,13 @@ function calculate() {
                            oninput="recalcFromIngredient(this)">
                     <span class="pct-label">(${finalPct.toFixed(2)}%)</span>
                 </td>
-                <td class="stock-col">${getStockCell(i.name, parseFloat(amt))}</td>
             </tr>`;
         }
     });
 
     html += `
             <tr class="total-row">
-                <td colspan="4" style="text-align:right;font-weight:700;color:#065f46;">ΣΥΝΟΛΟ:</td>
+                <td colspan="3" style="text-align:right;font-weight:700;color:#065f46;">ΣΥΝΟΛΟ:</td>
                 <td class="amount-col" style="text-align:right;">
                     <span id="revTotalGrams">${weight.toFixed(1)} g</span>
                     <span class="pct-label">(100.00%)</span>
