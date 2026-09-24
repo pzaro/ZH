@@ -326,7 +326,7 @@
         </div>
         <div class="btn-group">
             <button class="btn-calc" onclick="calculate()">ΥΠΟΛΟΓΙΣΜΟΣ</button>
-            <button class="btn-print" onclick="printFormula()">ΕΚΤΥΠΩΣΗ</button>
+            <button class="btn-print" onclick="handlePrint()">ΕΚΤΥΠΩΣΗ</button>
             <button class="btn-print" style="background:#0f4c81;" onclick="toggleStock()">📦 ΑΠΟΘΗΚΗ</button>
         </div>
     </div>
@@ -1090,6 +1090,17 @@ function getStockStatus(name, required) {
 }
 
 // ── PRINT ────────────────────────────────────────────────────
+function handlePrint() {
+    const isLabelMode = document.getElementById('printLabelMode').checked;
+    if (isLabelMode) {
+        // Ετικέτα Brother 62mm — χρησιμοποιεί @media print CSS
+        window.print();
+    } else {
+        // Φύλλο παραγωγής A4 — καθαρό παράθυρο με τρέχουσες τιμές
+        printFormula();
+    }
+}
+
 function printFormula() {
     const rc = document.getElementById('resultContainer');
     if (!rc || rc.style.display === 'none') { alert('Πρώτα κάντε Υπολογισμό.'); return; }
