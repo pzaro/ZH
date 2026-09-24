@@ -108,17 +108,26 @@
         .instructions-list { padding-left:20px; margin:0; }
         .instructions-list li { margin-bottom:10px; font-size:1em; line-height:1.6; font-weight:500; }
 
-        /* LABEL */
-        #labelPreview { display:none; width:100mm; height:62mm; margin:20px auto; box-sizing:border-box; background:white; font-family:Arial,sans-serif; border:2px dashed #94a3b8; padding:2mm; border-radius:8px; }
-        .lbl-container { display:flex; width:100%; height:100%; border:3px solid #000; border-radius:6px; padding:5px; box-sizing:border-box; }
-        .lbl-left { flex:1.6; display:flex; flex-direction:column; justify-content:space-between; padding-right:10px; border-right:2px solid #000; }
-        .lbl-right { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding-left:10px; }
-        .lbl-header { font-size:9pt; font-weight:900; text-transform:uppercase; color:#000; border-bottom:2px solid #000; padding-bottom:3px; }
-        .lbl-title { font-size:15pt; font-weight:900; line-height:1.1; margin-top:5px; color:#000; }
-        .lbl-meta { font-size:8pt; margin-top:auto; color:#000; font-weight:bold; }
-        .lbl-data-row { font-size:10pt; font-weight:bold; margin:5px 0; width:100%; text-align:left; color:#000; }
-        .lbl-data-val { font-size:13pt; display:block; font-family:monospace; }
-        .pao-icon { width:38px; height:38px; margin-top:10px; }
+        /* LABEL v2 */
+        #labelPreview { display:none; width:100mm; height:62mm; margin:20px auto; box-sizing:border-box; background:white; font-family:Arial,Helvetica,sans-serif; border:2px dashed #94a3b8; padding:1.5mm; border-radius:6px; }
+        .lbl2 { width:100%; height:100%; border:2.5px solid #000; border-radius:4px; display:flex; flex-direction:column; overflow:hidden; }
+        /* Top bar */
+        .lbl2-topbar { background:#1a3272; color:white; padding:2.5px 7px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+        .lbl2-brand { font-size:8pt; font-weight:900; letter-spacing:2px; text-transform:uppercase; }
+        .lbl2-category { font-size:6pt; opacity:.8; letter-spacing:.5px; }
+        /* Middle */
+        .lbl2-middle { display:flex; flex:1; padding:3px 6px; align-items:center; gap:4px; }
+        .lbl2-left { flex:1; }
+        .lbl2-product { font-size:16pt; font-weight:900; line-height:1.1; color:#000; text-transform:uppercase; letter-spacing:-0.5px; }
+        .lbl2-sub { font-size:5.5pt; color:#555; margin-top:3px; }
+        .lbl2-right { display:flex; flex-direction:column; align-items:center; gap:2px; flex-shrink:0; }
+        .lbl2-pao { }
+        /* Bottom */
+        .lbl2-bottom { background:#f3f4f6; border-top:1.5px solid #000; padding:2px 6px; display:flex; align-items:center; gap:0; flex-shrink:0; }
+        .lbl2-lot-block { display:flex; flex-direction:column; align-items:center; flex:1; }
+        .lbl2-lbl { font-size:5.5pt; font-weight:900; color:#555; text-transform:uppercase; letter-spacing:1px; }
+        .lbl2-val { font-size:9pt; font-weight:900; font-family:monospace; color:#000; }
+        .lbl2-divider { width:1px; height:22px; background:#ccc; margin:0 2px; }
 
         @media (max-width:640px) {
             body { padding:12px; font-size:15px; }
@@ -218,7 +227,7 @@
             body:not(.print-label-mode) .instructions-list li { margin-bottom:3px; }
             input[type="checkbox"] { -webkit-print-color-adjust:exact; color-adjust:exact; }
             body.print-label-mode #resultContainer { display:none !important; }
-            body.print-label-mode #labelPreview { display:block !important; position:fixed; top:0; left:0; width:100mm; height:62mm; border:none; margin:0; padding:0; }
+            body.print-label-mode #labelPreview { display:block !important; position:fixed; top:0; left:0; width:100mm; height:62mm; border:none !important; margin:0; padding:1mm; }
         }
     </style>
 </head>
@@ -332,19 +341,44 @@
     </div>
 
     <div id="labelPreview">
-        <div class="lbl-container">
-            <div class="lbl-left">
-                <div><div class="lbl-header">ZARKOLIA LAB</div><div class="lbl-title" id="lblTitle">PRODUCT</div></div>
-                <div class="lbl-meta">Made in Greece<br>Store in a cool dry place</div>
+        <div class="lbl2">
+            <!-- TOP BAR -->
+            <div class="lbl2-topbar">
+                <span class="lbl2-brand">ZARKOLIA LAB</span>
+                <span class="lbl2-category">Dermocosmetic · Made in Greece</span>
             </div>
-            <div class="lbl-right">
-                <div class="lbl-data-row">LOT:<br><span class="lbl-data-val" id="lblLot">ZXX0000</span></div>
-                <div class="lbl-data-row">EXP:<br><span class="lbl-data-val" id="lblExpDate">00/00</span></div>
-                <svg class="pao-icon" viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="5">
-                    <path d="M15,35 L15,85 Q15,95 25,95 L75,95 Q85,95 85,85 L85,35" fill="none"/>
-                    <path d="M85,35 L15,35 L10,15 Q50,5 90,15 Z" fill="none"/>
-                    <text x="50" y="75" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="28" stroke="none" fill="black" id="paoText">12M</text>
-                </svg>
+            <!-- MIDDLE -->
+            <div class="lbl2-middle">
+                <div class="lbl2-left">
+                    <div class="lbl2-product" id="lblTitle">PRODUCT NAME</div>
+                    <div class="lbl2-sub">Εξωτερική χρήση · Τήρηση δροσερού χώρου</div>
+                </div>
+                <div class="lbl2-right">
+                    <div class="lbl2-pao">
+                        <svg viewBox="0 0 100 100" fill="none" stroke="#000" stroke-width="6" width="34" height="34">
+                            <path d="M15,35 L15,85 Q15,95 25,95 L75,95 Q85,95 85,85 L85,35" fill="none"/>
+                            <path d="M85,35 L15,35 L10,15 Q50,5 90,15 Z" fill="none"/>
+                            <text x="50" y="76" text-anchor="middle" font-family="Arial" font-weight="900" font-size="26" stroke="none" fill="#000" id="paoText">12M</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <!-- BOTTOM -->
+            <div class="lbl2-bottom">
+                <div class="lbl2-lot-block">
+                    <span class="lbl2-lbl">LOT</span>
+                    <span class="lbl2-val" id="lblLot">ZXX0924</span>
+                </div>
+                <div class="lbl2-divider"></div>
+                <div class="lbl2-lot-block">
+                    <span class="lbl2-lbl">EXP</span>
+                    <span class="lbl2-val" id="lblExpDate">09/2025</span>
+                </div>
+                <div class="lbl2-divider"></div>
+                <div class="lbl2-lot-block">
+                    <span class="lbl2-lbl">NET</span>
+                    <span class="lbl2-val">50 ml</span>
+                </div>
             </div>
         </div>
     </div>
@@ -1180,7 +1214,19 @@ ${instrBox ? instrBox.outerHTML : ''}
 </body></html>`);
     pw.document.close();
     pw.focus();
-    setTimeout(() => { pw.print(); pw.close(); }, 400);
+    // Auto-scale to fit A4
+    pw.document.addEventListener('DOMContentLoaded', function() {
+        var body = pw.document.body;
+        var pageH = 1050; // A4 portrait usable px at 96dpi
+        var h = body.scrollHeight;
+        if (h > pageH) {
+            var scale = pageH / h;
+            body.style.transformOrigin = 'top left';
+            body.style.transform = 'scale(' + scale.toFixed(3) + ')';
+            body.style.width = (100 / scale).toFixed(1) + '%';
+        }
+    });
+    setTimeout(() => { pw.print(); pw.close(); }, 600);
 }
 
 // ── REVERSE CALCULATION ─────────────────────────────────────
