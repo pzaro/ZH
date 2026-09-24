@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ZARKOLIA Lab</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#1a3272">
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script>if(typeof emailjs !== "undefined"){ emailjs.init("J_DaEzTUYRLMkupgD"); } else { console.warn("EmailJS CDN not loaded"); }</script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
+    
     <style>
         :root {
             --primary: #1a3272; --primary-mid: #2952b3; --primary-light: #eef3ff;
@@ -215,4 +215,1093 @@
             body:not(.print-label-mode) .total-row td { background:transparent; color:#000; border-top:3px double #000; font-size:11pt; }
             body:not(.print-label-mode) .pct-label { color:#333; }
             body:not(.print-label-mode) .instructions-box { background:transparent; color:#000; border:1px solid #000; padding:8px; page-break-inside:avoid; }
-            body:not(.print-label-mode) .instructions-list li { margin
+            body:not(.print-label-mode) .instructions-list li { margin-bottom:3px; }
+            input[type="checkbox"] { -webkit-print-color-adjust:exact; color-adjust:exact; }
+            body.print-label-mode #resultContainer { display:none !important; }
+            body.print-label-mode #labelPreview { display:block !important; position:fixed; top:0; left:0; width:100mm; height:62mm; border:none; margin:0; padding:0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="loginOverlay">
+    <div id="loginBox">
+        <div class="logo-text">ZARKOLIA</div>
+        <div class="logo-sub">Laboratory System</div>
+        <input type="password" id="passwordInput" placeholder="PIN ή Κωδικός">
+        <button id="loginBtn" onclick="checkLogin()">ΕΙΣΟΔΟΣ</button>
+    </div>
+    <div id="otpBox" style="display:none;">
+        <div class="logo-text">ZARKOLIA</div>
+        <div class="logo-sub" style="margin-bottom:12px;">Επαλήθευση Εισόδου</div>
+        <p style="color:rgba(255,255,255,0.75);font-size:.9em;margin-bottom:20px;font-weight:500;">
+            Στάλθηκε κωδικός OTP στο email σας.<br>Ισχύει για <span id="otpTimer" style="color:#e8a020;font-weight:800;">15:00</span>
+        </p>
+        <input type="text" id="otpInput" placeholder="6-ψήφιος κωδικός"
+               maxlength="6" autocomplete="off"
+               style="padding:16px 18px;font-size:1.8em;font-family:monospace;width:100%;
+                      margin-bottom:16px;border:1.5px solid rgba(255,255,255,.2);
+                      border-radius:12px;text-align:center;background:rgba(255,255,255,.08);
+                      color:white;outline:none;letter-spacing:8px;">
+        <button onclick="verifyOTP()"
+                style="background:#e8a020;color:white;border:none;padding:16px;width:100%;
+                       border-radius:12px;font-size:1.05em;font-weight:700;cursor:pointer;
+                       letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;">
+            ΕΠΑΛΗΘΕΥΣΗ
+        </button>
+        <button onclick="resetLogin()"
+                style="background:transparent;color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,.2);
+                       padding:10px;width:100%;border-radius:12px;font-size:.85em;cursor:pointer;">
+            ← Επιστροφή
+        </button>
+    </div>
+</div>
+
+<div class="container" id="mainApp">
+    <div class="app-header">
+        <h1>ZARKOLIA LAB</h1>
+        <span class="version">Production System v35</span>
+        <div class="font-ctrl">
+            <span class="font-ctrl-label" style="font-size:.85em;">Α</span>
+            <button class="font-btn" onclick="changeFontSize(-1)">−</button>
+            <span class="font-size-display" id="fontSizeDisplay">16px</span>
+            <button class="font-btn" onclick="changeFontSize(1)">+</button>
+            <span class="font-ctrl-label" style="font-size:1.1em;">Α</span>
+        </div>
+    </div>
+
+    <div class="control-panel">
+        <label class="form-label">1. Επιλογή Προϊόντος</label>
+        <select id="recipeSelect" onchange="toggleInputs()">
+            <option value="" disabled selected>-- Επιλέξτε από τη λίστα --</option>
+            <optgroup label="— Zplast Classic —">
+                <option value="zplast_classic">ZPLAST CREAM Classic (CPNP)</option>
+                <option value="zplast_classic_wound">ZPLAST CREAM Classic — Wound+ (Allantoin/Panthenol)</option>
+            </optgroup>
+            <optgroup label="— Zplast Total Repair —">
+                <option value="zplast">Zplast Total Repair — Skin Repair (v34b)</option>
+                <option value="zplast_wound">Zplast Total Repair — Wound+ (Allantoin/Panthenol)</option>
+            </optgroup>
+            <optgroup label="— Άλλα Σώματος —">
+                <option value="bruise">Bruise Off</option>
+                <option value="zplast_heavy">ZPLAST HEAVY (Test 0.5% Cet)</option>
+            </optgroup>
+            <optgroup label="— Συμπληρώματα —">
+                <option value="zboost">Z-Boost Caps (Ginger/ALA)</option>
+            </optgroup>
+            <optgroup label="— Κρέμες Προσώπου —">
+                <option value="plus">Revitacell Plus</option>
+                <option value="eyes">Revitacell Eyes</option>
+                <option value="hydralia">Hydralia Face</option>
+            </optgroup>
+            <optgroup label="— Σιρόπι —">
+                <option value="syrup_custom">ALVEOLAIR</option>
+            </optgroup>
+            <optgroup label="— Spray —">
+                <option value="zderm_gel">Z-Derm Aspis Gel (Ecopharm 95° → 70%)</option>
+                <option value="zderm_lotion">Z-Derm Aspis Lotion (O/W Emulsion)</option>
+                <option value="zderm_gelcream">Z-Derm Aspis Gel-Cream (Βάση Gel-Cream)</option>
+            </optgroup>
+            <optgroup label="— Βάσεις —">
+                <option value="base">Βάση Gel-Cream</option>
+            </optgroup>
+        </select>
+
+        <div class="form-row" id="standardInput">
+            <label class="form-label">2. Στόχος Παραγωγής (g)</label>
+            <input type="number" id="totalWeightInput" value="1000" step="50">
+        </div>
+        <div class="form-row" style="display:none;" id="capsuleInput">
+            <label class="form-label">2. Υπολογισμός Καψουλών</label>
+            <div class="caps-panel">
+                <div class="caps-row"><span class="caps-label">💊 Χύμα Κάψουλες (τμχ)</span><div class="caps-input"><input type="number" id="inCapsBulk" placeholder="0"></div></div>
+                <div class="caps-row"><span class="caps-label">📦 Πακέτα των 12</span><div class="caps-input"><input type="number" id="inPacks12" placeholder="0"></div></div>
+                <div class="caps-row"><span class="caps-label">📦 Πακέτα των 30</span><div class="caps-input"><input type="number" id="inPacks30" placeholder="0"></div></div>
+            </div>
+        </div>
+
+        <div class="checkbox-group">
+            <label class="checkbox-wrapper"><input type="checkbox" id="showInstructions" checked><span>Εμφάνιση Οδηγιών Παρασκευής</span></label>
+            <label class="checkbox-wrapper print-label-toggle"><input type="checkbox" id="printLabelMode" onchange="togglePrintMode()"><span>🖨️ Λειτουργία Ετικέτας (Brother 62mm)</span></label>
+        </div>
+        <div class="btn-group">
+            <button class="btn-calc" onclick="calculate()">ΥΠΟΛΟΓΙΣΜΟΣ</button>
+            <button class="btn-print" onclick="printFormula()">ΕΚΤΥΠΩΣΗ</button>
+            <button class="btn-print" style="background:#0f4c81;" onclick="toggleStock()">📦 ΑΠΟΘΗΚΗ</button>
+        </div>
+    </div>
+
+    <div id="labelPreview">
+        <div class="lbl-container">
+            <div class="lbl-left">
+                <div><div class="lbl-header">ZARKOLIA LAB</div><div class="lbl-title" id="lblTitle">PRODUCT</div></div>
+                <div class="lbl-meta">Made in Greece<br>Store in a cool dry place</div>
+            </div>
+            <div class="lbl-right">
+                <div class="lbl-data-row">LOT:<br><span class="lbl-data-val" id="lblLot">ZXX0000</span></div>
+                <div class="lbl-data-row">EXP:<br><span class="lbl-data-val" id="lblExpDate">00/00</span></div>
+                <svg class="pao-icon" viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="5">
+                    <path d="M15,35 L15,85 Q15,95 25,95 L75,95 Q85,95 85,85 L85,35" fill="none"/>
+                    <path d="M85,35 L15,35 L10,15 Q50,5 90,15 Z" fill="none"/>
+                    <text x="50" y="75" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="28" stroke="none" fill="black" id="paoText">12M</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="stock-panel" id="stockPanel">
+        <div class="stock-header">
+            <h3>📦 Αποθήκη Α' Υλών</h3>
+            <input type="text" class="stock-search" id="stockSearch" placeholder="Αναζήτηση..." oninput="filterStock()">
+        </div>
+        <div class="stock-grid" id="stockGrid"></div>
+        <div class="stock-footer">
+            <button class="btn-stock-save" onclick="saveStock()">💾 ΑΠΟΘΗΚΕΥΣΗ</button>
+            <button class="btn-stock-clear" onclick="if(confirm('Μηδενισμός όλων;')){localStorage.removeItem('zk_stock');renderStockGrid();}">🗑 ΜΗΔΕΝΙΣΜΟΣ</button>
+            <span class="stock-saved-msg" id="stockSavedMsg">✓ Αποθηκεύτηκε</span>
+        </div>
+    </div>
+
+    <div id="resultContainer"></div>
+</div>
+
+<script>
+// ── AUTH & OTP ───────────────────────────────────────────────
+const _0x9f2a = "34b35aca37baf7d5d997466dff1ab8ca1dc901df7010f3279138670838e2c9e8";
+const EMAILJS_SERVICE  = "service_g59c3kc";
+const EMAILJS_TEMPLATE = "template_rgyiz5u";
+
+let _otp = null, _otpExpiry = null, _otpTimerInterval = null;
+
+function _generateOTP() { return String(Math.floor(100000 + Math.random() * 900000)); }
+
+function _startOTPTimer() {
+    let remaining = 15 * 60;
+    _otpExpiry = Date.now() + remaining * 1000;
+    _otpTimerInterval = setInterval(() => {
+        remaining--;
+        const m = Math.floor(remaining / 60), s = remaining % 60;
+        const el = document.getElementById('otpTimer');
+        if (el) el.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+        if (remaining <= 0) {
+            clearInterval(_otpTimerInterval); _otp = null;
+            alert("Ο κωδικός OTP έληξε. Παρακαλώ ξαναπροσπαθήστε.");
+            resetLogin();
+        }
+    }, 1000);
+}
+
+async function checkLogin() {
+    const input = document.getElementById('passwordInput').value;
+    if (!input) return;
+    const encoder = new TextEncoder();
+    const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(input));
+    const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    if (hashHex === _0x9f2a) {
+        _otp = _generateOTP();
+
+        // Εμφάνισε OTP οθόνη ΑΜΕΣΑ
+        document.getElementById('loginBox').style.display = 'none';
+        document.getElementById('otpBox').style.display = 'block';
+        document.getElementById('otpInput').value = '';
+        document.getElementById('otpInput').focus();
+        _startOTPTimer();
+
+        // Αποστολή email παρασκηνίου (non-blocking)
+        const expiry = new Date(Date.now() + 15*60*1000);
+        const expiryStr = expiry.toLocaleString('el-GR', { dateStyle:'short', timeStyle:'short' });
+        if(typeof emailjs !== "undefined") { emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, { passcode: _otp, time: expiryStr }).catch(err => console.error('EmailJS error:', err)); }
+    } else {
+        const timeStr = new Date().toLocaleString('el-GR', { dateStyle:'short', timeStyle:'short' });
+        if(typeof emailjs !== "undefined") { emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, { passcode: '⚠️ ΑΠΟΤΥΧΗΜΕΝΗ ΑΠΟΠΕΙΡΑ', time: timeStr }).catch(()=>{}); }
+        alert("Λάθος κωδικός");
+        document.getElementById('passwordInput').value = "";
+    }
+}
+
+function verifyOTP() {
+    const entered = document.getElementById('otpInput').value.trim();
+    if (!_otp || Date.now() > _otpExpiry) { _otp = null; alert("Ο κωδικός έληξε."); return resetLogin(); }
+    if (entered === _otp) {
+        clearInterval(_otpTimerInterval); _otp = null;
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+    } else {
+        alert("Λάθος OTP. Δοκιμάστε ξανά.");
+        document.getElementById('otpInput').value = '';
+        document.getElementById('otpInput').focus();
+    }
+}
+
+function resetLogin() {
+    clearInterval(_otpTimerInterval); _otp = null;
+    document.getElementById('otpBox').style.display = 'none';
+    document.getElementById('loginBox').style.display = 'block';
+    document.getElementById('passwordInput').value = '';
+    document.getElementById('passwordInput').focus();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof emailjs !== "undefined") emailjs.init("J_DaEzTUYRLMkupgD");
+});
+document.getElementById('passwordInput').addEventListener('keypress', e => { if(e.key==='Enter') checkLogin(); });
+document.addEventListener('keypress', e => {
+    if (e.key === 'Enter' && document.getElementById('otpBox').style.display !== 'none') verifyOTP();
+});
+
+let currentFontSize = parseInt(localStorage.getItem('zk_fontsize') || '16');
+function applyFontSize(size) {
+    document.body.style.fontSize = size + 'px';
+    const el = document.getElementById('fontSizeDisplay');
+    if (el) el.textContent = size + 'px';
+}
+function changeFontSize(delta) {
+    currentFontSize = Math.min(26, Math.max(12, currentFontSize + delta));
+    localStorage.setItem('zk_fontsize', currentFontSize);
+    applyFontSize(currentFontSize);
+}
+applyFontSize(currentFontSize);
+
+function togglePrintMode() {
+    document.body.classList.toggle('print-label-mode', document.getElementById('printLabelMode').checked);
+}
+
+// ============================================================
+// RECIPES
+// ============================================================
+const recipes = {
+
+    // ── ZPLAST CLASSIC ──────────────────────────────────────
+    zplast_classic: {
+        title: "ZPLAST CREAM", desc: "Classic CPNP Formula", initials: "ZC", shelfLife: 12, type: "standard",
+        safetyNote: "Αυθεντική παχύρρευστη φόρμουλα CPNP. Προσφέρει άριστη επικάλυψη.",
+        ingredients: [
+            { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ) ---", isHeader: true },
+            { name: "Aqua",                                        pct: 0,    isQS: true },
+            { name: "Magnesium Aluminum Silicate",                 pct: 2.0 },
+            { name: "Xanthan Gum",                                 pct: 0.5 },
+            { name: "--- ΦΑΣΗ Β (ΣΚΟΝΕΣ) ---", isHeader: true },
+            { name: "Calamine Powder",                             pct: 8.0 },
+            { name: "Zea Mays Starch",                             pct: 8.0 },
+            { name: "--- ΦΑΣΗ Γ (ΛΙΠΑΡΗ 75°C) ---", isHeader: true },
+            { name: "Xalifin-15 (C12-20 Acid PEG-8 Ester)",       pct: 6.0 },
+            { name: "Petrolatum (Βαζελίνη)",                       pct: 6.0 },
+            { name: "Cetyl Alcohol",                               pct: 1.0 },
+            { name: "Linum Usitatissimum Oil",                     pct: 2.0 },
+            { name: "Avocado Oil",                                 pct: 2.0 },
+            { name: "Hypericum Perforatum Oil",                    pct: 2.0 },
+            { name: "Arnica Montana Flower Oil",                   pct: 2.0 },
+            { name: "--- ΦΑΣΗ Δ (ΕΝΕΡΓΑ <40°C) ---", isHeader: true },
+            { name: "Thymus Vulgaris Extract",                     pct: 2.0 },
+            { name: "Hippophae Rhamnoides Ext (dry 5:1)",          pct: 0.2 },
+            { name: "Pistacia Lentiscus Extract/Gum (Μαστίχα)",   pct: 2.0 },
+            { name: "Honey Extract",                               pct: 0.5 },
+            { name: "Alcohol Denat",                               pct: 2.0 },
+            { name: "Phenoxyethanol/Caprylyl Glycol/EHG",         pct: 1.0 },
+        ],
+        instructions: [
+            "ΦΑΣΗ Α — Θερμάνετε το νερό στους 80°C.",
+            "Διασπείρετε το Magnesium Aluminum Silicate με έντονη ανάδευση. Αφήστε να ενυδατωθεί 10-15 λεπτά.",
+            "Προσθέστε αργά το Xanthan Gum υπό συνεχή ανάδευση — αποφύγετε σβόλους. Ψύξη στους 75°C.",
+            "ΦΑΣΗ Β — Αναμείξτε Calamine + Zea Mays σε ξηρό δοχείο. Ενσωματώστε σταδιακά σε 3-4 δόσεις στη Φάση Α (75°C) με ισχυρή ανάδευση μεταξύ κάθε δόσης. Στόχος: ομοιόμορφη πάστα χωρίς σβόλους.",
+            "ΦΑΣΗ Γ — Τήξη Petrolatum + Cetyl Alcohol στους 75°C. Προσθήκη Xalifin-15 και λαδιών (Linum, Avocado, Hypericum, Arnica) — διατήρηση στους 75°C.",
+            "Αργή ρίψη Φάσης Γ σε Α+Β υπό ισχυρή συνεχή ανάδευση. Χρήση homogenizer αν διαθέσιμος.",
+            "Συνεχής ανάδευση κατά την ψύξη — μη σταματάτε.",
+            "ΦΑΣΗ Δ — Κάτω από 40°C: Thymus Vulgaris, Hippophae dry ext, Mastic, Honey Extract.",
+            "Προσθήκη Alcohol Denat + Phenoxyethanol/EHG. Ανάδευση 5 λεπτά.",
+            "QC: pH στόχος 5.5-6.5 | Έλεγχος υφής, χρώματος, ομοιογένειας | Brix αν απαιτείται.",
+        ]
+    },
+
+    // ── ZPLAST CLASSIC WOUND+ ────────────────────────────────
+    zplast_classic_wound: {
+        title: "ZPLAST CREAM — WOUND+", desc: "Classic + Allantoin 0.5% + D-Panthenol 2%", initials: "ZW", shelfLife: 12, type: "standard",
+        woundNote: "Ενισχυμένη επουλωτική έκδοση. Allantoin: επιταχύνει επαναεπιθηλιοποίηση. D-Panthenol: επιδιόρθωση κυτταρικής μεμβράνης. Κατάλληλη για ανοιχτές καθαρές πληγές.",
+        ingredients: [
+            { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ) ---", isHeader: true },
+            { name: "Aqua",                                        pct: 0,    isQS: true },
+            { name: "Magnesium Aluminum Silicate",                 pct: 2.0 },
+            { name: "Xanthan Gum",                                 pct: 0.5 },
+            { name: "Allantoin",                                   pct: 0.5,  isNew: true },
+            { name: "D-Panthenol",                                 pct: 2.0,  isNew: true },
+            { name: "--- ΦΑΣΗ Β (ΣΚΟΝΕΣ) ---", isHeader: true },
+            { name: "Calamine Powder",                             pct: 8.0 },
+            { name: "Zea Mays Starch",                             pct: 8.0 },
+            { name: "--- ΦΑΣΗ Γ (ΛΙΠΑΡΗ 75°C) ---", isHeader: true },
+            { name: "Xalifin-15 (C12-20 Acid PEG-8 Ester)",       pct: 6.0 },
+            { name: "Petrolatum (Βαζελίνη)",                       pct: 6.0 },
+            { name: "Cetyl Alcohol",                               pct: 1.0 },
+            { name: "Linum Usitatissimum Oil",                     pct: 2.0 },
+            { name: "Avocado Oil",                                 pct: 2.0 },
+            { name: "Hypericum Perforatum Oil",                    pct: 2.0 },
+            { name: "Arnica Montana Flower Oil",                   pct: 2.0 },
+            { name: "--- ΦΑΣΗ Δ (ΕΝΕΡΓΑ <40°C) ---", isHeader: true },
+            { name: "Thymus Vulgaris Extract",                     pct: 2.0 },
+            { name: "Hippophae Rhamnoides Ext (dry 5:1)",          pct: 0.2 },
+            { name: "Pistacia Lentiscus Extract/Gum (Μαστίχα)",   pct: 2.0 },
+            { name: "Honey Extract",                               pct: 0.5 },
+            { name: "Alcohol Denat",                               pct: 2.0 },
+            { name: "Phenoxyethanol/Caprylyl Glycol/EHG",         pct: 1.0 },
+        ],
+        instructions: [
+            "ΦΑΣΗ Α — Θερμάνετε το νερό στους 80°C. Διασπορά Mg Al Silicate — ενυδάτωση 10-15 λεπτά.",
+            "Προσθήκη Xanthan Gum υπό ανάδευση.",
+            "Ψύξη στους 60°C — διάλυση Allantoin (απαιτεί ~60°C για πλήρη διάλυση, ανάδευση 5 λεπτά).",
+            "Προσθήκη D-Panthenol — ανάδευση μέχρι πλήρη ομοιόμορφη διανομή. Ψύξη στους 75°C.",
+            "ΦΑΣΗ Β — Ανάμειξη Calamine + Zea Mays. Ενσωμάτωση σε 3-4 δόσεις στη Φάση Α (75°C).",
+            "ΦΑΣΗ Γ — Τήξη Petrolatum + Cetyl Alcohol 75°C. Προσθήκη Xalifin-15 + λαδιών.",
+            "Ρίψη Φάσης Γ σε Α+Β υπό ισχυρή ανάδευση. Συνεχής ανάδευση κατά ψύξη.",
+            "ΦΑΣΗ Δ — <40°C: Thymus, Hippophae dry ext, Mastic, Honey, Alcohol, Phenoxyethanol/EHG.",
+            "QC: pH 5.5-6.5 | Sterility check συνιστάται αν προορίζεται για ανοιχτές πληγές.",
+        ]
+    },
+
+    // ── ZPLAST TOTAL REPAIR — SKIN REPAIR v34b ──────────────
+    zplast: {
+        title: "ZPLAST TOTAL REPAIR", desc: "Skin Repair v34b — Althaea/Centella/Mastic", initials: "ZT", shelfLife: 12, type: "standard",
+        safetyNote: "Skin repair / barrier cream. Για ερεθισμένο, ξηρό ή καταπονημένο δέρμα. Δεν ενδείκνυται για εκτεταμένες ανοιχτές πληγές.",
+        ingredients: [
+            { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ) ---", isHeader: true },
+            { name: "Aqua",                                        pct: 0,    isQS: true },
+            { name: "Glycerin",                                    pct: 4.0 },
+            { name: "Calamine Powder",                             pct: 5.0 },
+            { name: "Zea Mays Starch",                             pct: 2.0 },
+            { name: "Sodium Hyaluronate 1%",                       pct: 1.0 },
+            { name: "Citric Acid",                                 pct: 0.07 },
+            { name: "--- ΦΑΣΗ Β (ΛΙΠΑΡΗ 75°C) ---", isHeader: true },
+            { name: "Xalifin-15",                                  pct: 3.5 },
+            { name: "Paraffinum Liquidum",                         pct: 7.5 },
+            { name: "Avocado Oil",                                 pct: 2.0 },
+            { name: "Cetostearyl Alcohol",                         pct: 1.5 },
+            { name: "Tocopherol (Vit E)",                          pct: 0.5 },
+            { name: "--- ΦΑΣΗ Γ (ΕΝΕΡΓΑ <40°C) ---", isHeader: true },
+            { name: "Hypericum Ext",                               pct: 2.0 },
+            { name: "Hippophae Ext (dry 5:1)",                     pct: 0.2 },
+            { name: "Centella Asiatica Ext",                       pct: 4.0 },
+            { name: "Althaea Officinalis Root Ext",                pct: 2.0 },
+            { name: "Mel (Honey)",                                 pct: 3.0 },
+            { name: "Mastic in Olive Oil 20%",                     pct: 10.0, note: "= 2% μαστίχα + 8% ελαιόλαδο" },
+            { name: "Euxyl PE 9010",                               pct: 0.5 },
+            { name: "Alcohol Denat",                               pct: 0.25 },
+            { name: "Parfum",                                      pct: 0.07 },
+        ],
+        instructions: [
+            "ΦΑΣΗ Α — Θερμάνετε το νερό στους 75°C. Διάλυση Glycerin.",
+            "Διασπορά Calamine σταδιακά με ανάδευση. Προσθήκη Zea Mays Starch — ανάδευση μέχρι ομοιόμορφη κατανομή χωρίς σβόλους.",
+            "Προσθήκη Sodium Hyaluronate 1% solution — ανάδευση.",
+            "Ρύθμιση pH με Citric Acid (στόχος 5.0-5.5 πριν το emulsification).",
+            "ΦΑΣΗ Β — Τήξη Cetostearyl Alcohol στους 75°C. Προσθήκη Xalifin-15, Paraffinum Liquidum, Avocado Oil, Vit E. Διατήρηση 75°C.",
+            "EMULSIFICATION — Αργή ρίψη Φάσης Β σε Φάση Α υπό ισχυρή συνεχή ανάδευση. Χρήση homogenizer αν διαθέσιμος για λεπτόκοκκο emulsion.",
+            "Συνεχής ανάδευση κατά ψύξη — μη σταματάτε έως τους 40°C.",
+            "ΦΑΣΗ Γ — <40°C: Hypericum Ext, Hippophae dry ext, Centella Asiatica, Althaea Root Ext.",
+            "Προσθήκη Mel — ανάδευση 3 λεπτά. Προσθήκη Mastic/Olive Oil 20% — ανάδευση μέχρι πλήρη ενσωμάτωση.",
+            "Euxyl PE 9010 + Alcohol Denat + Parfum — ανάδευση 5 λεπτά.",
+            "QC: pH στόχος 5.0-6.0 | Έλεγχος υφής, χρώματος, οσμής, ομοιογένειας.",
+        ]
+    },
+
+    // ── ZPLAST TOTAL REPAIR — WOUND+ ────────────────────────
+    zplast_wound: {
+        title: "ZPLAST TOTAL REPAIR — WOUND+", desc: "Wound Formula — Allantoin 0.5% + D-Panthenol 2%", initials: "ZR", shelfLife: 12, type: "standard",
+        woundNote: "Έκδοση για ανοιχτές καθαρές πληγές. Χωρίς Zea Mays, Alcohol, Parfum. Allantoin + D-Panthenol για μέγιστη επουλωτική δράση.",
+        ingredients: [
+            { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ) ---", isHeader: true },
+            { name: "Aqua",                                        pct: 0,    isQS: true },
+            { name: "Glycerin",                                    pct: 4.0 },
+            { name: "Calamine Powder",                             pct: 5.0 },
+            { name: "Sodium Hyaluronate 1%",                       pct: 1.0 },
+            { name: "Allantoin",                                   pct: 0.5,  isNew: true },
+            { name: "Citric Acid",                                 pct: 0.07 },
+            { name: "--- ΦΑΣΗ Β (ΛΙΠΑΡΗ 75°C) ---", isHeader: true },
+            { name: "Xalifin-15",                                  pct: 3.5 },
+            { name: "Paraffinum Liquidum",                         pct: 7.5 },
+            { name: "Avocado Oil",                                 pct: 2.0 },
+            { name: "Cetostearyl Alcohol",                         pct: 1.5 },
+            { name: "Tocopherol (Vit E)",                          pct: 0.5 },
+            { name: "--- ΦΑΣΗ Γ (ΕΝΕΡΓΑ <40°C) ---", isHeader: true },
+            { name: "Hypericum Ext",                               pct: 2.0 },
+            { name: "Hippophae Ext (dry 5:1)",                     pct: 0.2 },
+            { name: "Centella Asiatica Ext",                       pct: 4.0 },
+            { name: "Althaea Officinalis Root Ext",                pct: 2.0 },
+            { name: "D-Panthenol",                                 pct: 2.0,  isNew: true },
+            { name: "Mel (Honey)",                                 pct: 3.0 },
+            { name: "Mastic in Olive Oil 20%",                     pct: 10.0, note: "= 2% μαστίχα + 8% ελαιόλαδο" },
+            { name: "Euxyl PE 9010",                               pct: 0.5 },
+        ],
+        instructions: [
+            "ΦΑΣΗ Α — Θερμάνετε το νερό στους 75°C. Διάλυση Glycerin.",
+            "Διασπορά Calamine σταδιακά — ανάδευση μέχρι ομοιόμορφη κατανομή. (Χωρίς Zea Mays σε αυτή την έκδοση.)",
+            "Προσθήκη Sodium Hyaluronate 1% solution.",
+            "Ψύξη στους 60°C — διάλυση Allantoin υπό ανάδευση 5 λεπτά (απαιτεί ~60°C).",
+            "Ρύθμιση pH με Citric Acid (στόχος 5.0-5.5 πριν emulsification).",
+            "ΦΑΣΗ Β — Τήξη Cetostearyl Alcohol 75°C. Προσθήκη Xalifin-15, Paraffinum, Avocado, Vit E.",
+            "EMULSIFICATION — Αργή ρίψη Β σε Α υπό ισχυρή ανάδευση. Homogenizer αν διαθέσιμος.",
+            "Συνεχής ανάδευση κατά ψύξη.",
+            "ΦΑΣΗ Γ — <40°C: Hypericum, Hippophae dry ext, Centella, Althaea Root Ext.",
+            "Προσθήκη D-Panthenol — ανάδευση 3 λεπτά.",
+            "Προσθήκη Mel + Mastic/Olive Oil 20% — ανάδευση μέχρι πλήρη ενσωμάτωση.",
+            "Euxyl PE 9010 — ανάδευση 5 λεπτά. (Χωρίς Alcohol/Parfum σε αυτή την έκδοση.)",
+            "QC: pH στόχος 5.5-6.5 | Sterility check συνιστάται | Εφαρμογή μόνο σε καθαρές πληγές.",
+        ]
+    },
+
+    // ── BRUISE OFF ───────────────────────────────────────────
+    bruise: {
+        title: "BRUISE OFF", desc: "Stearic Formula", initials: "BO", shelfLife: 18, type: "standard",
+        safetyNote: "Ενισχυμένο Cetostearyl/Stearic.",
+        ingredients: [
+            { name: "--- ΦΑΣΗ Α (ΛΙΠΑΡΗ 75°C) ---", isHeader: true },
+            { name: "Arnica Oil",             pct: 9.10 }, { name: "Vaseline",           pct: 9.10 },
+            { name: "Cetostearyl Alcohol",    pct: 7.70 }, { name: "Stearic Acid",        pct: 3.30 },
+            { name: "Linseed Oil",            pct: 1.80 }, { name: "Propyl Paraben",      pct: 0.10 },
+            { name: "--- ΦΑΣΗ Β (ΥΔΑΤΙΚΗ 75°C) ---", isHeader: true },
+            { name: "Aqua",                   pct: 0, isQS: true }, { name: "Polysorbate 80", pct: 3.70 },
+            { name: "Propylene Glycol",       pct: 1.80 }, { name: "Methyl Paraben",      pct: 0.10 },
+            { name: "--- ΦΑΣΗ Γ (<40°C) ---", isHeader: true },
+            { name: "Lavender Lemon Balm",    pct: 0.90 },
+        ],
+        instructions: [
+            "ΦΑΣΗ Α — Τήξη Vaseline + Cetostearyl Alcohol στους 75°C. Προσθήκη Stearic Acid — πλήρης τήξη.",
+            "Προσθήκη Arnica Oil + Linseed Oil. Διάλυση Propyl Paraben στη λιπαρή φάση. Διατήρηση 75°C.",
+            "ΦΑΣΗ Β — Θέρμανση νερού στους 75°C. Διάλυση Methyl Paraben στο ζεστό νερό.",
+            "Προσθήκη Polysorbate 80 + Propylene Glycol — ανάδευση μέχρι ομοιόμορφο.",
+            "EMULSIFICATION — Αργή ρίψη Φάσης Α σε Β υπό ισχυρή συνεχή ανάδευση.",
+            "Συνεχής ανάδευση κατά ψύξη.",
+            "ΦΑΣΗ Γ — <40°C: Lavender Lemon Balm — ανάδευση 3 λεπτά.",
+            "QC: pH στόχος 5.5-6.5 | Έλεγχος υφής, χρώματος, ομοιογένειας.",
+        ]
+    },
+
+    // ── ZPLAST HEAVY ─────────────────────────────────────────
+    zplast_heavy: {
+        title: "ZPLAST TOTAL REPAIR (Heavy)", desc: "Total Repair v34b — Paraffinum Liquidum Heavy", initials: "ZH", shelfLife: 12, type: "standard",
+        safetyNote: "Ταυτόσημη σύνθεση με Total Repair v34b — μόνο το παραφινέλαιο είναι βαρύ (high viscosity). Βαρύτερη υφή, ενισχυμένη occlusion.",
+        ingredients: [
+            { name: "--- ΦΑΣΗ Α (ΥΔΑΤΙΚΗ) ---", isHeader: true },
+            { name: "Aqua",                                        pct: 0,    isQS: true },
+            { name: "Glycerin",                                    pct: 4.0 },
+            { name: "Calamine Powder",                             pct: 5.0 },
+            { name: "Zea Mays Starch",                             pct: 2.0 },
+            { name: "Sodium Hyaluronate 1%",                       pct: 1.0 },
+            { name: "Citric Acid",                                 pct: 0.07 },
+            { name: "--- ΦΑΣΗ Β (ΛΙΠΑΡΗ 75°C) ---", isHeader: true },
+            { name: "Xalifin-15",                                  pct: 3.5 },
+            { name: "Paraffinum Liquidum (HEAVY — high viscosity)", pct: 7.5 },
+            { name: "Avocado Oil",                                 pct: 2.0 },
+            { name: "Cetostearyl Alcohol",                         pct: 1.5 },
+            { name: "Tocopherol (Vit E)",                          pct: 0.5 },
+            { name: "--- ΦΑΣΗ Γ (ΕΝΕΡΓΑ <40°C) ---", isHeader: true },
+            { name: "Hypericum Ext",                               pct: 2.0 },
+            { name: "Hippophae Ext (dry 5:1)",                     pct: 0.2 },
+            { name: "Centella Asiatica Ext",                       pct: 4.0 },
+            { name: "Althaea Officinalis Root Ext",                pct: 2.0 },
+            { name: "Mel (Honey)",                                 pct: 3.0 },
+            { name: "Mastic in Olive Oil 20%",                     pct: 10.0, note: "= 2% μαστίχα + 8% ελαιόλαδο" },
+            { name: "Euxyl PE 9010",                               pct: 0.5 },
+            { name: "Alcohol Denat",                               pct: 0.25 },
+            { name: "Parfum",                                      pct: 0.07 },
+        ],
+        instructions: [
+            "ΦΑΣΗ Α — Θερμάνετε το νερό στους 75°C. Διάλυση Glycerin.",
+            "Διασπορά Calamine + Zea Mays Starch σταδιακά — ανάδευση μέχρι ομοιόμορφη κατανομή χωρίς σβόλους.",
+            "Προσθήκη Sodium Hyaluronate 1% solution. Ρύθμιση pH με Citric Acid (στόχος 5.0-5.5).",
+            "ΦΑΣΗ Β — Τήξη Cetostearyl Alcohol. Προσθήκη Xalifin-15. Προσθήκη Paraffinum Liquidum Heavy — το βαρύ παραφινέλαιο απαιτεί πλήρη θέρμανση στους 75°C για σωστό viscosity. Προσθήκη Avocado Oil + Vit E.",
+            "EMULSIFICATION — Αργή ρίψη Φάσης Β σε Α υπό ισχυρή ανάδευση. Η βαρύτερη λιπαρή φάση απαιτεί πιο έντονη ανάδευση για λεπτόκοκκο emulsion — homogenizer συνιστάται.",
+            "Ψύξη με αδιάλειπτη ανάδευση — η βαρύτερη υφή απαιτεί πιο αργή ψύξη από την κλασική.",
+            "ΦΑΣΗ Γ — <40°C: Hypericum, Hippophae dry ext, Centella, Althaea Root Ext.",
+            "Προσθήκη Mel + Mastic/Olive Oil 20% — ανάδευση μέχρι πλήρη ενσωμάτωση.",
+            "Euxyl PE 9010 + Alcohol Denat + Parfum — ανάδευση 5 λεπτά.",
+            "QC: pH 5.0-6.0 | Έλεγχος viscosity (αναμένεται βαρύτερο από κλασική Total Repair) | Ομοιογένεια, χρώμα.",
+        ]
+    },
+
+    // ── Z-BOOST CAPS ─────────────────────────────────────────
+    zboost: {
+        title: "Z-BOOST CAPS", desc: "Ginger/ALA", initials: "ZB", shelfLife: 24, type: "capsule", capsuleContentWeight: 0.5864,
+        safetyNote: "Ευαίσθητο στην υγρασία. Πλήρωση σε Dry Room.",
+        ingredients: [
+            { name: "a-Lipoic Acid (ALA)",      pct: 34.11 }, { name: "N-Acetyl-L-Cysteine (NAC)", pct: 34.11 },
+            { name: "Ginger Extract",            pct: 17.05 }, { name: "Coenzyme Q10",              pct: 8.53 },
+            { name: "Zinc Gluconate",            pct: 5.97 },  { name: "Magnesium Stearate",        pct: 0.19 },
+            { name: "Selenium Yeast",            pct: 0.03 },  { name: "Sodium Ascorbate",          pct: 0.02 },
+        ],
+        instructions: [
+            "Ζύγιση όλων των συστατικών — ακρίβεια ±0.01g για μικρο-συστατικά (Se, Sodium Ascorbate).",
+            "Κοσκίνισμα όλων των σκονών ξεχωριστά (σήτα 0.5mm) — αποφυγή συσσωματωμάτων.",
+            "ΓΕΩΜΕΤΡΙΚΗ ΑΡΑΙΩΣΗ — Ξεκινήστε από το μικρότερο: Selenium Yeast + Sodium Ascorbate → ανάμειξη με ίση ποσότητα Ginger → διαδοχική προσθήκη υπόλοιπου Ginger.",
+            "Προσθήκη Zinc Gluconate — ανάμειξη 5 λεπτά.",
+            "Προσθήκη CoQ10 — ανάμειξη 5 λεπτά.",
+            "Προσθήκη ALA — ανάμειξη 5 λεπτά. ΠΡΟΣΟΧΗ: το ALA έχει τάση συσσωμάτωσης — διασπείρετε αργά.",
+            "Προσθήκη NAC — ανάμειξη 5 λεπτά.",
+            "ΤΕΛΕΥΤΑΙΟ: Magnesium Stearate — ανάμειξη ΑΚΡΙΒΩΣ 3 λεπτά. Υπερβολική ανάμειξη μειώνει το disintegration των καψουλών.",
+            "Πλήρωση καψουλών σε Dry Room (RH <40%). Έλεγχος βάρους κάθε 10 καψούλες — στόχος 0.5864g ±2% (0.574-0.598g).",
+            "QC: Έλεγχος βάρους, εμφάνισης, κλεισίματος καψούλας | Αποθήκευση σε ξηρό και σκοτεινό χώρο.",
+        ]
+    },
+
+    // ── REVITACELL PLUS ──────────────────────────────────────
+    plus: {
+        title: "REVITACELL PLUS", desc: "New Formula", initials: "RP", shelfLife: 12, type: "standard",
+        ingredients: [
+            { name: "Βάση Gel-Cream", pct: 0, isQS: true }, { name: "Almond Oil",      pct: 2.0 },
+            { name: "Avocado Oil",    pct: 2.0 },            { name: "Jojoba Oil",       pct: 2.0 },
+            { name: "Pomegranate Oil",pct: 2.0 },            { name: "Mastic Oil",       pct: 1.0 },
+            { name: "Mastic Tincture",pct: 3.0 },            { name: "Vit E",            pct: 0.5 },
+        ],
+        instructions: [
+            "Ζύγιση βάσης Gel-Cream σε κύριο δοχείο.",
+            "Ανάμειξη λαδιών: Almond + Avocado + Jojoba + Pomegranate + Mastic Oil + Vit E — ομοιόμορφο μίγμα.",
+            "Προσθήκη Mastic Tincture στο μίγμα λαδιών — ανάδευση 3 λεπτά.",
+            "Αργή ενσωμάτωση μίγματος λαδιών στη βάση με spatula — κυκλικές κινήσεις, χωρίς παγίδευση αέρα.",
+            "QC: Έλεγχος υφής, χρώματος, ομοιογένειας | pH 5.5-6.5.",
+        ]
+    },
+
+    // ── REVITACELL EYES ──────────────────────────────────────
+    eyes: {
+        title: "REVITACELL EYES", desc: "Safe 8% Arnica", initials: "RE", shelfLife: 12, type: "standard",
+        ingredients: [
+            { name: "Βάση Gel-Cream",          pct: 0, isQS: true }, { name: "Arnica Oil",            pct: 8.0 },
+            { name: "Jojoba Oil",              pct: 1.0 },            { name: "Almond Oil",            pct: 1.0 },
+            { name: "Hyaluronic Acid 1%",      pct: 4.0 },            { name: "Glycerin",              pct: 2.0 },
+            { name: "Aesculus Hippocastanum",  pct: 2.0 },            { name: "Parfum",                pct: 0.2 },
+        ],
+        instructions: [
+            "Ζύγιση βάσης Gel-Cream.",
+            "Ανάμειξη λαδιών: Arnica Oil + Jojoba + Almond Oil.",
+            "Ξεχωριστά: ανάμειξη Hyaluronic Acid 1% + Glycerin + Aesculus Hippocastanum.",
+            "Αργή ενσωμάτωση λαδιών στο υδατικό μίγμα — ανάδευση.",
+            "Σταδιακή ενσωμάτωση όλου του μίγματος στη βάση — κυκλικές κινήσεις χωρίς αέρα.",
+            "Parfum τελευταίο — ελάχιστη ανάδευση.",
+            "QC: pH 5.5-6.5 | Απαλή υφή κατάλληλη για περιοφθαλμική χρήση | Απουσία ερεθιστικών.",
+        ]
+    },
+
+    // ── HYDRALIA ─────────────────────────────────────────────
+    hydralia: {
+        title: "HYDRALIA FACE CREAM", desc: "Moisturizing Cream", initials: "HF", shelfLife: 12, type: "standard",
+        ingredients: [
+            { name: "Βάση Gel-Cream", pct: 0, isQS: true }, { name: "Avocado Oil",   pct: 4.0 },
+            { name: "Jojoba Oil",     pct: 2.5 },            { name: "Almond Oil",    pct: 2.5 },
+            { name: "Aloe Vera Gel",  pct: 8.0 },            { name: "Parfum",        pct: 0.3 },
+        ],
+        instructions: [
+            "Ζύγιση βάσης Gel-Cream σε κύριο δοχείο.",
+            "Ανάμειξη λαδιών: Avocado + Jojoba + Almond. Προσθήκη Parfum — ανάδευση.",
+            "Ξεχωριστά: Aloe Vera Gel σε θερμοκρασία δωματίου.",
+            "Αργή ενσωμάτωση Aloe στο μίγμα λαδιών — ανάδευση.",
+            "Σταδιακή ενσωμάτωση στη βάση — spatula, κυκλικές κινήσεις.",
+            "QC: pH 5.5-6.5 | Ελαφριά ενυδατική υφή | Ομοιογένεια.",
+        ]
+    },
+
+    // ── ALVEOLAIR ────────────────────────────────────────────
+    syrup_custom: {
+        title: "ALVEOLAIR", desc: "Glycerol-based — Ξηρά Εκχυλίσματα v3", initials: "AL", shelfLife: 6, type: "standard",
+        safetyNote: "Γλυκερολικό διάλυμα. Χωρίς σάκχαρα. Ξηρά τυποποιημένα εκχυλίσματα αντί βαμμάτων. Συντηρητικό: Σορβικό Κάλιο (E202).",
+        ingredients: [
+            { name: "Γλυκερόλη (E422)",                                                    pct: 65.00 },
+            { name: "Ύδωρ (Aqua)",                                                         pct: 30.02 },
+            { name: "--- ΞΗΡΑ ΕΚΧΥΛΙΣΜΑΤΑ ---", isHeader: true },
+            { name: "Αλθαία dry ext 4:1 (Althaea officinalis L.)",                         pct: 2.10,  note: "demulcent — μαλακτική βλεννογόνου" },
+            { name: "Θυμάρι dry ext 5:1 (Thymus vulgaris L.)",                            pct: 0.79,  note: "αναπνευστική υποστήριξη" },
+            { name: "Ευκάλυπτος dry ext 10:1 (Eucalyptus globulus Labill.)",              pct: 0.79,  note: "αποσυμφόρηση αναπνευστικού" },
+            { name: "Ακερόλα dry ext Vit C 25% (Malpighia glabra L.)",                   pct: 0.79,  note: "φυσική πηγή Vit C ~197.5mg/100g" },
+            { name: "Ιπποφαές dry ext 10:1 (Hippophae rhamnoides L.)",                    pct: 0.16,  note: "αντιοξειδωτικό" },
+            { name: "--- ΕΝΕΡΓΑ & ΣΥΝΤΗΡΗΤΙΚΑ ---", isHeader: true },
+            { name: "Ασκορβικό οξύ (Βιταμίνη C)",                                        pct: 0.15  },
+            { name: "Σορβικό κάλιο (E202)",                                               pct: 0.10,  note: "συντηρητικό — αντικ. Sodium Benzoate" },
+            { name: "Κιτρικό οξύ (E330)",                                                 pct: 0.10,  note: "ρύθμιση pH — στόχος <4.5" },
+        ],
+        instructions: [
+            "ΠΡΟΕΤΟΙΜΑΣΙΑ ΕΚΧΥΛΙΣΜΑΤΩΝ — Προ-διάλυση κάθε ξηρού εκχυλίσματος χωριστά σε ελάχιστη ποσότητα ζεστού νερού (~60°C). Ανάδευση μέχρι πλήρη διάλυση.",
+            "Ζύγιση Γλυκερόλης σε ανοξείδωτο δοχείο. Ζύγιση Ύδατος (30.02g — σταθερό, όχι QS).",
+            "Ανάμειξη Γλυκερόλης + Ύδατος στους 40-50°C υπό ανάδευση.",
+            "Διάλυση Σορβικού Καλίου (E202) στο μίγμα.",
+            "Διάλυση Κιτρικού Οξέος (E330) — ανάδευση. Έλεγχος pH: στόχος <4.5.",
+            "ΕΚΧΥΛΙΣΜΑΤΑ <40°C: Αλθαία → Θυμάρι → Ευκάλυπτος → Ακερόλα → Ιπποφαές. Κάθε εκχύλισμα ξεχωριστά, ανάδευση μεταξύ.",
+            "Προσθήκη Ασκορβικού Οξέος — ανάδευση μέχρι πλήρη διάλυση.",
+            "Τελικός έλεγχος pH — στόχος <4.5. Αν χρειαστεί: μικρή προσαρμογή Κιτρικού Οξέος.",
+            "QC: pH <4.5 | Refractometer (°Bx γλυκερόλης) | Χρώμα, διαύγεια, οσμή, γεύση | Σύνολο = 100.00g ✓",
+        ]
+    },
+    // ── Z-DERM ASPIS GEL (Ecopharm 95°) ───────────────────────
+    zderm_gel: {
+        title: "Z-DERM ASPIS GEL",
+        desc: "Ecopharm 95° \u2192 70% \u03c4\u03b5\u03bb\u03b9\u03ba\u03cc | CPNP 3345106",
+        initials: "ZG", shelfLife: 24, type: "standard",
+        safetyNote: "Hydroalcoholic gel ~70% \u03b1\u03b9\u03b8\u03b1\u03bd\u03cc\u03bb\u03b7. Ecopharm 95\u00b0 \u00d7 73.68% = 70% \u03c4\u03b5\u03bb\u03b9\u03ba\u03cc. \u0391\u03bd\u03c4\u03b9\u03c3\u03b7\u03c0\u03c4\u03b9\u03ba\u03ae \u03b4\u03c1\u03ac\u03c3\u03b7. \u03a7\u03c9\u03c1\u03af\u03c2 Euxyl \u2014 \u03b7 \u03b1\u03bb\u03ba\u03bf\u03cc\u03bb\u03b7 \u03b1\u03c1\u03ba\u03b5\u03af. \u0395\u03be\u03c9\u03c4\u03b5\u03c1\u03b9\u03ba\u03ae \u03c7\u03c1\u03ae\u03c3\u03b7 \u03bc\u03cc\u03bd\u03bf. \u039c\u03b1\u03ba\u03c1\u03b9\u03ac \u03b1\u03c0\u03cc \u03c6\u03bb\u03cc\u03b3\u03b5\u03c2.",
+        ingredients: [
+            { name: "--- \u03a6\u0391\u03a3\u0397 \u0391 (ECOPHARM premix + EOs) ---", isHeader: true },
+            { name: "Ecopharm Alcoholic Lotion 95\u00b0",             pct: 73.68, note: "73.68% \u00d7 0.95 = 70% \u03c4\u03b5\u03bb\u03b9\u03ba\u03ae \u03b1\u03b9\u03b8\u03b1\u03bd\u03cc\u03bb\u03b7" },
+            { name: "Cepimax (solubilizer EOs)",                  pct: 0.50  },
+            { name: "Eucalyptus Citriodora Oil",                  pct: 0.10  },
+            { name: "Geranium Maculatum Oil",                     pct: 0.10  },
+            { name: "Lavandula Angustifolia Herb Oil",            pct: 0.10  },
+            { name: "Cymbopogon Winterianus Oil (Citronella)",    pct: 0.10  },
+            { name: "--- \u03a6\u0391\u03a3\u0397 \u0392 (\u03a5\u0394\u0391\u03a4\u0399\u039a\u0397) ---", isHeader: true },
+            { name: "Aqua",                                       pct: 0, isQS: true },
+            { name: "Glycerin",                                   pct: 6.00  },
+            { name: "Aloe Barbadensis Leaf Juice",                pct: 3.00  },
+        ],
+        instructions: [
+            "\u03a6\u0391\u03a3\u0397 \u0391 \u2014 \u0396\u03cd\u03b3\u03b9\u03c3\u03b7 Ecopharm Alcoholic Lotion 95\u00b0 \u03c3\u03b5 \u03b3\u03c5\u03ac\u03bb\u03b9\u03bd\u03bf \u03b4\u03bf\u03c7\u03b5\u03af\u03bf. \u03a0\u03a1\u039f\u03a3\u039f\u03a7\u0397: \u03bc\u03b1\u03ba\u03c1\u03b9\u03ac \u03b1\u03c0\u03cc \u03c6\u03bb\u03cc\u03b3\u03b5\u03c2.",
+            "\u03a0\u03c1\u03bf\u03c3\u03b8\u03ae\u03ba\u03b7 Cepimax \u2014 \u03b1\u03bd\u03ac\u03b4\u03b5\u03c5\u03c3\u03b7 2 \u03bb\u03b5\u03c0\u03c4\u03ac.",
+            "\u0394\u03b9\u03b1\u03b4\u03bf\u03c7\u03b9\u03ba\u03ae \u03c0\u03c1\u03bf\u03c3\u03b8\u03ae\u03ba\u03b7 \u03b1\u03b9\u03b8\u03b5\u03c1\u03af\u03c9\u03bd: Eucalyptus \u2192 Geranium \u2192 Lavender \u2192 Citronella.",
+            "\u03a6\u0391\u03a3\u0397 \u0392 \u2014 \u0391\u03bd\u03ac\u03bc\u03b5\u03b9\u03be\u03b7 Aqua + Glycerin + Aloe Barbadensis.",
+            "\u0395\u039d\u03a9\u03a3\u0397 \u2014 \u0391\u03c1\u03b3\u03ae \u03c1\u03af\u03c8\u03b7 \u03a6\u03ac\u03c3\u03b7\u03c2 \u0392 \u03c3\u03b5 \u0391 \u03c5\u03c0\u03cc \u03c3\u03c5\u03bd\u03b5\u03c7\u03ae \u03b1\u03bd\u03ac\u03b4\u03b5\u03c5\u03c3\u03b7.",
+            "\u0391\u03bb\u03ba\u03bf\u03bf\u03bb\u03bf\u03bc\u03ad\u03c4\u03c1\u03b7\u03c3\u03b7 \u2014 \u03c3\u03c4\u03cc\u03c7\u03bf\u03c2 68-72% v/v.",
+            "QC: \u0391\u03bb\u03ba\u03bf\u03bf\u03bb\u03bf\u03bc\u03ad\u03c4\u03c1\u03b7\u03c3\u03b7 | \u0394\u03b9\u03b1\u03cd\u03b3\u03b5\u03b9\u03b1 | pH 5.5-7.0 | \u039f\u03c3\u03bc\u03ae.",
+        ]
+    },
+
+    // ── Z-DERM ASPIS LOTION (O/W Emulsion) ──────────────────
+    zderm_lotion: {
+        title: "Z-DERM ASPIS LOTION",
+        desc: "O/W Emulsion \u2014 \u03a0\u03b1\u03c1\u03b1\u03c4\u03b5\u03c4\u03b1\u03bc\u03ad\u03bd\u03b7 \u03b1\u03c0\u03bf\u03b4\u03ad\u03c3\u03bc\u03b5\u03c5\u03c3\u03b7 \u03b1\u03b9\u03b8\u03b5\u03c1\u03af\u03c9\u03bd",
+        initials: "ZL", shelfLife: 12, type: "standard",
+        safetyNote: "O/W emulsion. Euxyl 0.5% \u03b1\u03bd\u03b1\u03b3\u03ba\u03b1\u03af\u03bf \u2014 \u03c7\u03c9\u03c1\u03af\u03c2 \u03b1\u03bb\u03ba\u03bf\u03cc\u03bb\u03b7. Pump dispenser \u03ae tube.",
+        ingredients: [
+            { name: "--- \u03a6\u0391\u03a3\u0397 \u0391 (\u03a5\u0394\u0391\u03a4\u0399\u039a\u0397 75\u00b0C) ---", isHeader: true },
+            { name: "Aqua",                                       pct: 0, isQS: true },
+            { name: "Glycerin",                                   pct: 5.00  },
+            { name: "Aloe Barbadensis Leaf Juice",                pct: 3.00  },
+            { name: "--- \u03a6\u0391\u03a3\u0397 \u0392 (\u039b\u0399\u03a0\u0391\u03a1\u0397 75\u00b0C) ---", isHeader: true },
+            { name: "Xalifin-15",                                 pct: 4.00  },
+            { name: "Cetostearyl Alcohol",                        pct: 1.50  },
+            { name: "Avocado Oil",                                pct: 5.00, note: "\u03ba\u03cd\u03c1\u03b9\u03bf\u03c2 \u03c6\u03bf\u03c1\u03ad\u03b1\u03c2 \u03b1\u03b9\u03b8\u03b5\u03c1\u03af\u03c9\u03bd" },
+            { name: "Jojoba Oil",                                 pct: 3.00  },
+            { name: "Tocopherol (Vit E)",                         pct: 0.30  },
+            { name: "--- \u03a6\u0391\u03a3\u0397 \u0393 \u2014 \u0391\u0399\u0398\u0395\u03a1\u0399\u0391 (<40\u00b0C) ---", isHeader: true },
+            { name: "Eucalyptus Citriodora Oil",                  pct: 0.15  },
+            { name: "Geranium Maculatum Oil",                     pct: 0.15  },
+            { name: "Lavandula Angustifolia Herb Oil",            pct: 0.15  },
+            { name: "Cymbopogon Winterianus Oil (Citronella)",    pct: 0.15  },
+            { name: "Euxyl PE 9010",                              pct: 0.50, note: "\u03b1\u03bd\u03b1\u03b3\u03ba\u03b1\u03af\u03bf \u2014 \u03c7\u03c9\u03c1\u03af\u03c2 \u03b1\u03bb\u03ba\u03bf\u03cc\u03bb\u03b7" },
+            { name: "Citric Acid",                                pct: 0.05, note: "pH \u03c3\u03c4\u03cc\u03c7\u03bf\u03c2 5.5-6.0" },
+        ],
+        instructions: [
+            "\u03a6\u0391\u03a3\u0397 \u0391 \u2014 Aqua + Glycerin + Aloe 75\u00b0C.",
+            "\u03a6\u0391\u03a3\u0397 \u0392 \u2014 \u03a4\u03ae\u03be\u03b7 Cetostearyl + Xalifin-15 + Avocado + Jojoba + Vit E 75\u00b0C.",
+            "EMULSIFICATION \u2014 \u0391\u03c1\u03b3\u03ae \u03c1\u03af\u03c8\u03b7 \u0392 \u03c3\u03b5 \u0391 \u03c5\u03c0\u03cc \u03b9\u03c3\u03c7\u03c5\u03c1\u03ae \u03b1\u03bd\u03ac\u03b4\u03b5\u03c5\u03c3\u03b7.",
+            "\u03a6\u0391\u03a3\u0397 \u0393 \u2014 <40\u00b0C: \u03b1\u03b9\u03b8\u03ad\u03c1\u03b9\u03b1 \u03ad\u03bd\u03b1-\u03ad\u03bd\u03b1, \u03b5\u03b3\u03ba\u03bb\u03c9\u03b2\u03af\u03b6\u03bf\u03bd\u03c4\u03b1\u03b9 \u03c3\u03c4\u03b1 oil droplets.",
+            "Euxyl PE 9010 \u2014 \u03b1\u03bd\u03ac\u03b4\u03b5\u03c5\u03c3\u03b7 3 \u03bb\u03b5\u03c0\u03c4\u03ac.",
+            "Citric Acid \u2014 pH 5.5-6.0.",
+            "QC: pH | Viscosity | \u039f\u03c3\u03bc\u03ae | \u039f\u03bc\u03bf\u03b9\u03bf\u03b3\u03ad\u03bd\u03b5\u03b9\u03b1 | Stability 48h.",
+        ]
+    },
+
+    // ── Z-DERM ASPIS GEL-CREAM ───────────────────────────────
+    zderm_gelcream: {
+        title: "Z-DERM ASPIS GEL-CREAM",
+        desc: "\u0392\u03ac\u03c3\u03b7 Gel-Cream + PS60 + EOs",
+        initials: "ZC", shelfLife: 12, type: "standard",
+        safetyNote: "\u0392\u03ac\u03c3\u03b7 Gel-Cream (\u03ae\u03b4\u03b7 \u03c3\u03c5\u03bd\u03c4\u03b7\u03c1\u03b7\u03bc\u03ad\u03bd\u03b7 \u03bc\u03b5 parabens). \u03a7\u03c9\u03c1\u03af\u03c2 Euxyl. Polysorbate 60 \u2014 \u03c4\u03ae\u03be\u03b7 \u03c3\u03c4\u03bf\u03c5\u03c2 35\u00b0C \u03c0\u03c1\u03b9\u03bd \u03c7\u03c1\u03ae\u03c3\u03b7.",
+        ingredients: [
+            { name: "--- \u0392\u0391\u03a3\u0397 ---", isHeader: true },
+            { name: "\u0392\u03ac\u03c3\u03b7 Gel-Cream",     pct: 0, isQS: true },
+            { name: "Glycerin (extra)",                           pct: 2.00  },
+            { name: "Aloe Barbadensis Leaf Juice",                pct: 3.00  },
+            { name: "--- PREMIX PS60 + \u0391\u0399\u0398\u0395\u03a1\u0399\u0391 ---", isHeader: true },
+            { name: "Polysorbate 60",                             pct: 1.50, note: "\u03c4\u03ae\u03be\u03b7 35\u00b0C \u03c0\u03c1\u03b9\u03bd \u03b5\u03bd\u03c3\u03c9\u03bc\u03ac\u03c4\u03c9\u03c3\u03b7 \u2014 \u03bb\u03cc\u03b3\u03bf\u03c2 PS60:EO = 2.5:1" },
+            { name: "Eucalyptus Citriodora Oil",                  pct: 0.15  },
+            { name: "Geranium Maculatum Oil",                     pct: 0.15  },
+            { name: "Lavandula Angustifolia Herb Oil",            pct: 0.15  },
+            { name: "Cymbopogon Winterianus Oil (Citronella)",    pct: 0.15  },
+        ],
+        instructions: [
+            "PREMIX PS60 \u2014 \u03a4\u03ae\u03be\u03b7 Polysorbate 60 \u03c3\u03b5 \u03bc\u03c0\u03b5\u03bd-\u03bc\u03b1\u03c1\u03af (~35\u00b0C). \u03a8\u03cd\u03be\u03b7 \u03c3\u03c4\u03bf\u03c5\u03c2 30\u00b0C.",
+            "\u03a0\u03c1\u03bf\u03c3\u03b8\u03ae\u03ba\u03b7 \u03b1\u03b9\u03b8\u03b5\u03c1\u03af\u03c9\u03bd: Eucalyptus \u2192 Geranium \u2192 Lavender \u2192 Citronella.",
+            "\u0396\u03cd\u03b3\u03b9\u03c3\u03b7 \u0392\u03ac\u03c3\u03b7\u03c2 Gel-Cream \u03c3\u03b5 \u03ba\u03cd\u03c1\u03b9\u03bf \u03b4\u03bf\u03c7\u03b5\u03af\u03bf.",
+            "\u03a0\u03c1\u03bf\u03c3\u03b8\u03ae\u03ba\u03b7 Glycerin extra + Aloe Barbadensis.",
+            "\u0391\u03c1\u03b3\u03ae \u03b5\u03bd\u03c3\u03c9\u03bc\u03ac\u03c4\u03c9\u03c3\u03b7 premix PS60/EOs \u03c3\u03c4\u03b7 \u03b2\u03ac\u03c3\u03b7 \u2014 \u03ba\u03c5\u03ba\u03bb\u03b9\u03ba\u03ad\u03c2 \u03ba\u03b9\u03bd\u03ae\u03c3\u03b5\u03b9\u03c2.",
+            "\u03a7\u03c9\u03c1\u03af\u03c2 Euxyl \u2014 \u03b7 \u03b2\u03ac\u03c3\u03b7 \u03b5\u03af\u03bd\u03b1\u03b9 \u03ae\u03b4\u03b7 \u03c3\u03c5\u03bd\u03c4\u03b7\u03c1\u03b7\u03bc\u03ad\u03bd\u03b7.",
+            "QC: pH 5.5-6.5 | \u03a5\u03c6\u03ae gel-cream | \u039f\u03c3\u03bc\u03ae.",
+        ]
+    },
+    // ── BASE GEL-CREAM ───────────────────────────────────────
+    base: {
+        title: "BASE GEL-CREAM", desc: "Base Formula", initials: "BG", shelfLife: 12, type: "standard",
+        ingredients: [
+            { name: "Aqua",           pct: 0, isQS: true }, { name: "Glycerin",       pct: 4.0 },
+            { name: "Hyaluronic Pw",  pct: 0.2 },           { name: "Carbomer",       pct: 0.25 },
+            { name: "Cetearyl Alcohol",pct: 2.0 },          { name: "Stearic Acid",   pct: 1.0 },
+            { name: "IPM",            pct: 2.0 },           { name: "Methyl Paraben", pct: 0.2 },
+            { name: "Propyl Paraben", pct: 0.1 },           { name: "Vit E",          pct: 0.5 },
+            { name: "TEA",            pct: 0.25 },
+        ],
+        instructions: [
+            "Ενυδάτωση Carbomer στο κρύο νερό — αφήστε 20-30 λεπτά χωρίς ανάδευση για πλήρη ενυδάτωση.",
+            "Διάλυση Glycerin + Hyaluronic Powder στο υδατικό μίγμα — ανάδευση.",
+            "ΦΑΣΗ ΛΙΠΑΡΗ — Τήξη Cetearyl Alcohol + Stearic Acid στους 75°C. Προσθήκη IPM + Vit E. Διάλυση Propyl Paraben στη λιπαρή φάση.",
+            "Θέρμανση υδατικής φάσης στους 75°C.",
+            "EMULSIFICATION — Αργή ρίψη λιπαρής σε υδατική υπό ισχυρή ανάδευση.",
+            "Ψύξη με ανάδευση.",
+            "~40°C: ΕΞΟΥΔΕΤΕΡΩΣΗ — Αργή προσθήκη TEA σε σταγόνες υπό συνεχή ανάδευση. Στόχος pH 6.0-6.5. ΠΡΟΣΟΧΗ: υπερβολική TEA ανεβάζει υπερβολικά το pH.",
+            "Προσθήκη Methyl Paraben (προδιαλυμένης σε ελάχιστο ζεστό νερό).",
+            "QC: pH 6.0-6.5 | Viscosity | Λευκό-κρεμώδες χρώμα | Ομοιογένεια.",
+        ]
+    },
+};
+
+// ============================================================
+// UI LOGIC
+// ============================================================
+function toggleInputs() {
+    const key = document.getElementById('recipeSelect').value;
+    const isCap = recipes[key]?.type === 'capsule';
+    document.getElementById('standardInput').style.display = isCap ? 'none' : 'block';
+    document.getElementById('capsuleInput').style.display = isCap ? 'block' : 'none';
+    document.getElementById('resultContainer').style.display = 'none';
+}
+
+
+
+// ── STOCK MANAGEMENT — Google Sheets ─────────────────────────
+// Βάλε εδώ το URL του deployed Apps Script Web App:
+const GS_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+const STOCK_KEY = 'zk_stock_cache'; // local cache fallback
+
+// ── Βοηθητικές ──
+function getCachedStock() {
+    try { return JSON.parse(localStorage.getItem(STOCK_KEY) || '{}'); }
+    catch(e) { return {}; }
+}
+function setCachedStock(data) {
+    localStorage.setItem(STOCK_KEY, JSON.stringify(data));
+}
+
+// ── Ανάγνωση από Google Sheets ──
+async function fetchStockFromSheets() {
+    if (!GS_URL || GS_URL === 'YOUR_APPS_SCRIPT_URL_HERE') return getCachedStock();
+    try {
+        const res  = await fetch(GS_URL + '?action=read');
+        const data = await res.json();
+        // Flatten: {name: {qty, min, updated}} → {name: qty}
+        const flat = {};
+        for (const [k,v] of Object.entries(data)) flat[k] = v.qty || 0;
+        setCachedStock(flat);
+        return flat;
+    } catch(e) {
+        console.warn('Sheets offline — χρήση cache:', e);
+        return getCachedStock();
+    }
+}
+
+// ── Αποθήκευση στο Google Sheets ──
+async function pushStockToSheets(stockObj) {
+    if (!GS_URL || GS_URL === 'YOUR_APPS_SCRIPT_URL_HERE') return;
+    try {
+        await fetch(GS_URL + '?action=writeAll&data=' + encodeURIComponent(JSON.stringify(stockObj)));
+    } catch(e) { console.warn('Sheets write failed:', e); }
+}
+
+function getStock() { return getCachedStock(); }
+
+async function saveStock() {
+    const stock = {};
+    document.querySelectorAll('.stock-input').forEach(inp => {
+        const name = inp.dataset.name;
+        const val  = parseFloat(inp.value) || 0;
+        if (name) stock[name] = val;
+    });
+    setCachedStock(stock);
+    const msg = document.getElementById('stockSavedMsg');
+    if (msg) { msg.style.display='inline'; msg.textContent='💾 Αποθήκευση...'; }
+    await pushStockToSheets(stock);
+    if (msg) { msg.textContent='✓ Αποθηκεύτηκε'; setTimeout(()=>msg.style.display='none', 2500); }
+}
+
+function getAllIngredientNames() {
+    const names = new Set();
+    Object.values(recipes).forEach(r => {
+        if (r.ingredients) r.ingredients.forEach(i => {
+            if (!i.isHeader && i.name) names.add(i.name);
+        });
+    });
+    return Array.from(names).sort((a,b) => a.localeCompare(b, 'el'));
+}
+
+function renderStockGrid(filter='') {
+    const stock  = getStock();
+    const names  = getAllIngredientNames();
+    const grid   = document.getElementById('stockGrid');
+    if (!grid) return;
+    const fl = filter.toLowerCase();
+    const filtered = fl ? names.filter(n => n.toLowerCase().includes(fl)) : names;
+    grid.innerHTML = filtered.map(name => {
+        const qty = stock[name] || 0;
+        const dotCls = qty <= 0 ? 'dot-zero' : qty < 50 ? 'dot-low' : 'dot-ok';
+        const itemCls = qty > 0 && qty < 50 ? 'low' : '';
+        return `<div class="stock-item ${itemCls}">
+            <div class="stock-dot ${dotCls}"></div>
+            <span class="stock-name">${name}</span>
+            <input type="number" class="stock-input" data-name="${name.replace(/"/g,'&quot;')}"
+                   value="${qty}" min="0" step="0.1" onchange="autoSaveStock(this)">
+            <span class="stock-unit">g</span>
+        </div>`;
+    }).join('');
+}
+
+function autoSaveStock(el) {
+    const stock = getCachedStock();
+    stock[el.dataset.name] = parseFloat(el.value) || 0;
+    setCachedStock(stock);
+    // Update dot
+    const item = el.closest('.stock-item');
+    const dot  = item.querySelector('.stock-dot');
+    const qty  = parseFloat(el.value) || 0;
+    dot.className = 'stock-dot ' + (qty <= 0 ? 'dot-zero' : qty < 50 ? 'dot-low' : 'dot-ok');
+    item.className = 'stock-item ' + (qty > 0 && qty < 50 ? 'low' : '');
+    // Push single update to Sheets
+    if (GS_URL && GS_URL !== 'YOUR_APPS_SCRIPT_URL_HERE') {
+        fetch(GS_URL + '?action=write&name=' + encodeURIComponent(el.dataset.name) + '&qty=' + qty).catch(()=>{});
+    }
+}
+
+function filterStock() {
+    const q = document.getElementById('stockSearch').value;
+    renderStockGrid(q);
+}
+
+async function toggleStock() {
+    const panel = document.getElementById('stockPanel');
+    if (!panel) return;
+    const visible = panel.style.display === 'block';
+    if (visible) {
+        panel.style.display = 'none';
+    } else {
+        panel.style.display = 'block';
+        const btn = document.querySelector('[onclick="toggleStock()"]');
+        if (btn) btn.textContent = '⏳ Φόρτωση...';
+        await fetchStockFromSheets();
+        renderStockGrid();
+        if (btn) btn.textContent = '📦 ΑΠΟΘΗΚΗ';
+        panel.scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+}
+
+function getStockStatus(name, required) {
+    const stock = getCachedStock();
+    const qty = stock[name];
+    if (qty === undefined) return null;
+    const after = qty - required;
+    return { qty, required, after, ok: after >= 0 };
+}
+
+// ── PRINT ────────────────────────────────────────────────────
+function printFormula() {
+    const rc = document.getElementById('resultContainer');
+    if (!rc || rc.style.display === 'none') { alert('Πρώτα κάντε Υπολογισμό.'); return; }
+
+    const header    = rc.querySelector('.recipe-header');
+    const tableWrap = rc.querySelector('.table-wrapper');
+    const instrBox  = rc.querySelector('.instructions-box');
+
+    const pw = window.open('', '_blank', 'width=800,height=650');
+    pw.document.write(`<!DOCTYPE html>
+<html lang="el"><head><meta charset="UTF-8">
+<title>ZARKOLIA LAB</title>
+<style>
+  @page { size:A4 portrait; margin:8mm 10mm; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:Arial,sans-serif; font-size:8pt; color:#000; background:white; }
+
+  .recipe-header { text-align:center; padding-bottom:5px; margin-bottom:8px; border-bottom:2px solid #000; }
+  .recipe-title  { font-size:13pt; font-weight:900; text-transform:uppercase; display:block; }
+  .recipe-desc   { font-size:7.5pt; color:#444; display:block; margin-top:2px; }
+
+  .table-wrapper { width:100%; }
+  table { width:100%; border-collapse:collapse; font-size:7.5pt; border:1px solid #000; margin-bottom:8px; table-layout:fixed; }
+  th { background:#e8e8e8; border-bottom:1.5px solid #000; font-size:7pt; text-transform:uppercase; letter-spacing:.3px; padding:3px 5px; text-align:left; }
+  td { padding:3px 5px; border-bottom:1px solid #ccc; vertical-align:middle; word-wrap:break-word; }
+  th:nth-child(1),td:nth-child(1) { width:4%;  text-align:center; }
+  th:nth-child(2),td:nth-child(2) { width:35%; }
+  th:nth-child(3),td:nth-child(3) { width:38%; }
+  th:nth-child(4),td:nth-child(4) { width:23%; text-align:right; }
+
+  .phase-row td { background:#d8d8d8; font-weight:800; font-size:7pt; border-top:1.5px solid #000; text-transform:uppercase; padding:4px 5px; }
+  .total-row td { background:#f0f0f0; font-weight:800; font-size:8pt; border-top:2px double #000; }
+  .ingredient-name { font-weight:700; font-size:7.5pt; }
+  .amount-col { font-weight:800; text-align:right; }
+  .pct-label  { display:block; font-size:6.5pt; color:#555; margin-top:1px; }
+  .traceability-box { font-size:6.5pt; color:#666; line-height:1.7; font-family:monospace; }
+  small { font-size:6.5pt; color:#555; }
+
+  /* Rev inputs as plain text */
+  .rev-input { border:none; background:transparent; font-weight:800; font-size:7.5pt; text-align:right; width:auto; color:#000; padding:0; }
+  .rev-badge { display:none; }
+
+  /* Instructions — compact */
+  .instructions-box { border:1px solid #000; padding:5px 7px; page-break-inside:avoid; margin-top:4px; }
+  .instructions-box strong { font-size:7.5pt; text-transform:uppercase; display:block; margin-bottom:4px; font-weight:900; }
+  .instructions-list { padding-left:14px; }
+  .instructions-list li { margin-bottom:2px; font-size:7.5pt; line-height:1.4; }
+
+  input[type="checkbox"] { -webkit-print-color-adjust:exact; print-color-adjust:exact; width:10px; height:10px; }
+</style></head><body>
+${header ? header.outerHTML : ''}
+${tableWrap ? tableWrap.outerHTML : ''}
+${instrBox ? instrBox.outerHTML : ''}
+</body></html>`);
+    pw.document.close();
+    pw.focus();
+    setTimeout(() => { pw.print(); pw.close(); }, 350);
+}
+
+// ── REVERSE CALCULATION ─────────────────────────────────────
+function recalcFromIngredient(el) {
+    const newGrams = parseFloat(el.value);
+    if (isNaN(newGrams) || newGrams <= 0) return;
+    const pct = parseFloat(el.getAttribute('data-pct'));
+    if (!pct || pct <= 0) return;
+    const newTotal = newGrams / (pct / 100);
+    document.querySelectorAll('.rev-input').forEach(function(input) {
+        if (input === el) return;
+        const p = parseFloat(input.getAttribute('data-pct'));
+        if (p) input.value = (p / 100 * newTotal).toFixed(2);
+    });
+    var totalEl = document.getElementById('revTotalGrams');
+    if (totalEl) totalEl.textContent = newTotal.toFixed(1) + ' g';
+    var targetEl = document.getElementById('revTargetInfo');
+    if (targetEl) targetEl.textContent = 'ΣΤΟΧΟΣ: ' + newTotal.toFixed(1) + ' g ← reverse';
+    document.getElementById('totalWeightInput').value = Math.round(newTotal * 10) / 10;
+}
+
+
+function getStockTag(name, required) {
+    const s = getStockStatus(name, required);
+    if (!s) return '';
+    const qtyFmt   = s.qty.toFixed(0) + 'g';
+    const afterFmt = (s.after >= 0 ? '+' : '') + s.after.toFixed(0) + 'g';
+    const cls  = s.ok ? '' : 'warn';
+    const icon = s.ok ? '📦' : '⚠️';
+    return `<span class="stock-tag ${cls}">${icon} Απόθεμα: ${qtyFmt} → ${afterFmt}</span>`;
+}
+
+function calculate() {
+    const key = document.getElementById('recipeSelect').value;
+    if (!key) return alert("Επιλέξτε προϊόν από τη λίστα.");
+    const recipe = recipes[key];
+
+    let weight = 0, info = "";
+    if (recipe.type === 'capsule') {
+        const bulk = parseFloat(document.getElementById('inCapsBulk').value) || 0;
+        const p12  = parseFloat(document.getElementById('inPacks12').value)  || 0;
+        const p30  = parseFloat(document.getElementById('inPacks30').value)  || 0;
+        const totalCaps = bulk + p12*12 + p30*30;
+        if (totalCaps <= 0) return alert("Εισάγετε αριθμό καψουλών.");
+        weight = totalCaps * recipe.capsuleContentWeight;
+        info = `ΣΤΟΧΟΣ: ${totalCaps} Κάψουλες (${bulk} χύμα + ${p12}×12 + ${p30}×30)`;
+    } else {
+        weight = parseFloat(document.getElementById('totalWeightInput').value);
+        if (!weight || weight <= 0) return alert("Λάθος ποσότητα.");
+        info = `ΣΤΟΧΟΣ ΠΑΡΑΓΩΓΗΣ: ${weight.toLocaleString('el-GR')} γραμμάρια`;
+    }
+
+    const now = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const printDate = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} — ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    const monthStr = pad(now.getMonth()+1);
+    const yearStr  = now.getFullYear();
+    const shelfMonths = recipe.shelfLife || 12;
+    const lotNo  = "Z" + (recipe.initials||"XX") + monthStr + yearStr;
+    const expStr = monthStr + "/" + yearStr;
+
+    document.getElementById('lblTitle').innerText   = recipe.title;
+    document.getElementById('lblLot').innerText     = lotNo;
+    document.getElementById('lblExpDate').innerText = expStr;
+    document.getElementById('paoText').innerText    = shelfMonths + "M";
+
+    let sumPct = 0;
+    recipe.ingredients.forEach(i => { if (!i.isQS && !i.isHeader && i.pct) sumPct += i.pct; });
+
+    // safety / wound note
+    let noteHtml = "";
+    if (recipe.woundNote) {
+        noteHtml = `<div class="safety-box wound">✦ <strong>WOUND FORMULA:</strong> ${recipe.woundNote}</div>`;
+    } else if (recipe.safetyNote) {
+        noteHtml = `<div class="safety-box">⚠️ <strong>ΠΡΟΣΟΧΗ:</strong> ${recipe.safetyNote}</div>`;
+    }
+
+    let html = `
+        <div class="print-doc-header">
+            <span>ZARKOLIA LAB — GMP ΦΥΛΛΟ ΠΑΡΑΓΩΓΗΣ</span>
+            <span>Ημ/νία: ${printDate}</span>
+        </div>
+        <div class="recipe-header">
+            <span class="recipe-title">${recipe.title}</span>
+            <span class="recipe-desc">${recipe.desc} &nbsp;|&nbsp; Batch: ${lotNo}</span>
+        </div>
+        ${noteHtml}
+        <div class="target-info" id="revTargetInfo">${info}</div>
+        <div class="rev-hint">✏️ Αλλάξτε οποιαδήποτε ποσότητα — όλες οι υπόλοιπες θα ενημερωθούν αυτόματα</div>
+        <div class="table-wrapper">
+            <table>
+                <tr>
+                    <th style="text-align:center;">✔</th>
+                    <th>Συστατικό</th>
+                    <th>Ιχνηλασιμότητα</th>
+                    <th style="text-align:right">Ποσότητα <span class="rev-badge">↕</span></th>
+
+                </tr>`;
+
+    recipe.ingredients.forEach(i => {
+        if (i.isHeader) {
+            html += `<tr class="phase-row"><td colspan="4">${i.name}</td></tr>`;
+        } else {
+            const finalPct = i.isQS ? Math.max(0, 100-sumPct) : i.pct;
+            const amt = (finalPct/100*weight).toFixed(2);
+            const noteStr = i.note ? `<br><small style="color:var(--text-muted);font-weight:500;">(${i.note})</small>` : '';
+            const newBadge = i.isNew ? ` <span style="background:#d1fae5;color:#065f46;font-size:.7em;padding:2px 7px;border-radius:20px;font-weight:700;margin-left:4px;">NEW</span>` : '';
+            html += `<tr>
+                <td style="text-align:center;"><input type="checkbox"></td>
+                <td><span class="ingredient-name">${i.name}${newBadge}</span>${noteStr}${getStockTag(i.name, parseFloat(amt))}</td>
+                <td class="traceability-box">
+                    <div class="lot-row">
+                        <span class="lot-label">LOT:</span>
+                        <input type="text" class="lot-input" placeholder="π.χ. ABC2408" maxlength="20">
+                    </div>
+                    <div class="lot-row">
+                        <span class="lot-label">EXP:</span>
+                        <input type="text" class="lot-input" placeholder="MM/YYYY" maxlength="10">
+                    </div>
+                </td>
+                <td class="amount-col" style="text-align:right;">
+                    <input type="number" class="rev-input"
+                           data-pct="${finalPct}"
+                           value="${amt}"
+                           step="0.1" min="0"
+                           oninput="recalcFromIngredient(this)">
+                    <span class="pct-label">(${finalPct.toFixed(2)}%)</span>
+                </td>
+            </tr>`;
+        }
+    });
+
+    html += `
+            <tr class="total-row">
+                <td colspan="3" style="text-align:right;font-weight:700;color:#065f46;">ΣΥΝΟΛΟ:</td>
+                <td class="amount-col" style="text-align:right;">
+                    <span id="revTotalGrams">${weight.toFixed(1)} g</span>
+                    <span class="pct-label">(100.00%)</span>
+                </td>
+            </tr>
+        </table></div>`;
+
+    if (document.getElementById('showInstructions').checked && recipe.instructions) {
+        html += `<div class="instructions-box">
+            <strong>Οδηγίες Παρασκευής:</strong>
+            <ul class="instructions-list">${recipe.instructions.map(s=>`<li>${s}</li>`).join('')}</ul>
+        </div>`;
+    }
+
+    const res = document.getElementById('resultContainer');
+    res.innerHTML = html;
+    res.style.display = 'block';
+    togglePrintMode();
+    res.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+</script>
+</body>
+</html>
