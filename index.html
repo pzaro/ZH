@@ -1094,9 +1094,51 @@ function printFormula() {
     const rc = document.getElementById('resultContainer');
     if (!rc || rc.style.display === 'none') { alert('Πρώτα κάντε Υπολογισμό.'); return; }
 
-    const header    = rc.querySelector('.recipe-header');
-    const tableWrap = rc.querySelector('.table-wrapper');
-    const instrBox  = rc.querySelector('.instructions-box');
+    // ── Διαβάζουμε ΤΡΕΧΟΥΣΕΣ τιμές από το DOM (όχι outerHTML) ──
+    const header   = rc.querySelector('.recipe-header');
+    const instrBox = rc.querySelector('.instructions-box');
+
+    // Χτίζουμε τον πίνακα από τα live input values
+    let tableHTML = '<table><thead><tr><th style="width:4%;text-align:center">✔</th><th style="width:36%">Συστατικό</th><th style="width:38%">Ιχνηλασιμότητα</th><th style="width:22%;text-align:right">Ποσότητα</th></tr></thead><tbody>';
+
+    rc.querySelectorAll('table tr').forEach(row => {
+        // Phase header rows
+        if (row.classList.contains('phase-row')) {
+            const txt = row.querySelector('td') ? row.querySelector('td').textContent : '';
+            tableHTML += `<tr class="phase-row"><td colspan="4">${txt}</td></tr>`;
+            return;
+        }
+        // Total row
+        if (row.classList.contains('total-row')) {
+            const totalEl = row.querySelector('#revTotalGrams');
+            const total   = totalEl ? totalEl.textContent : '';
+            tableHTML += `<tr class="total-row"><td colspan="3" style="text-align:right;font-weight:700">ΣΥΝΟΛΟ:</td><td style="text-align:right;font-weight:800">${total}</td></tr>`;
+            return;
+        }
+        // Regular ingredient rows
+        const cells = row.querySelectorAll('td');
+        if (cells.length < 4) return;
+
+        const chk      = '<input type="checkbox">';
+        const nameCell = cells[1].innerHTML;
+        // LOT/EXP — read CURRENT values from inputs
+        const lotInputs = cells[2].querySelectorAll('.lot-input');
+        let traceHTML = '';
+        if (lotInputs.length >= 2) {
+            traceHTML = `<span style="font-family:monospace;font-size:7pt">LOT: ${lotInputs[0].value || '___________'}<br>EXP: ${lotInputs[1].value || '__/__/_____'}</span>`;
+        } else {
+            traceHTML = cells[2].innerHTML;
+        }
+        // Amount — read CURRENT value from rev-input
+        const revInput = cells[3].querySelector('.rev-input');
+        const pctSpan  = cells[3].querySelector('.pct-label');
+        const amtVal   = revInput ? revInput.value : '';
+        const pctVal   = pctSpan  ? pctSpan.textContent : '';
+        const amtHTML  = `<span style="font-weight:800">${amtVal} g</span><span style="display:block;font-size:7pt;color:#555">${pctVal}</span>`;
+
+        tableHTML += `<tr><td style="text-align:center">${chk}</td><td>${nameCell}</td><td>${traceHTML}</td><td style="text-align:right">${amtHTML}</td></tr>`;
+    });
+    tableHTML += '</tbody></table>';
 
     const pw = window.open('', '_blank', 'width=800,height=650');
     pw.document.write(`<!DOCTYPE html>
@@ -1106,47 +1148,28 @@ function printFormula() {
   @page { size:A4 portrait; margin:8mm 10mm; }
   * { box-sizing:border-box; margin:0; padding:0; }
   body { font-family:Arial,sans-serif; font-size:8pt; color:#000; background:white; }
-
   .recipe-header { text-align:center; padding-bottom:5px; margin-bottom:8px; border-bottom:2px solid #000; }
   .recipe-title  { font-size:13pt; font-weight:900; text-transform:uppercase; display:block; }
   .recipe-desc   { font-size:7.5pt; color:#444; display:block; margin-top:2px; }
-
-  .table-wrapper { width:100%; }
-  table { width:100%; border-collapse:collapse; font-size:7.5pt; border:1px solid #000; margin-bottom:8px; table-layout:fixed; }
-  th { background:#e8e8e8; border-bottom:1.5px solid #000; font-size:7pt; text-transform:uppercase; letter-spacing:.3px; padding:3px 5px; text-align:left; }
+  table { width:100%; border-collapse:collapse; font-size:7.5pt; border:1px solid #000; margin-bottom:8px; }
+  th { background:#e8e8e8; border-bottom:1.5px solid #000; font-size:7pt; text-transform:uppercase; padding:3px 5px; text-align:left; }
   td { padding:3px 5px; border-bottom:1px solid #ccc; vertical-align:middle; word-wrap:break-word; }
-  th:nth-child(1),td:nth-child(1) { width:4%;  text-align:center; }
-  th:nth-child(2),td:nth-child(2) { width:35%; }
-  th:nth-child(3),td:nth-child(3) { width:38%; }
-  th:nth-child(4),td:nth-child(4) { width:23%; text-align:right; }
-
   .phase-row td { background:#d8d8d8; font-weight:800; font-size:7pt; border-top:1.5px solid #000; text-transform:uppercase; padding:4px 5px; }
   .total-row td { background:#f0f0f0; font-weight:800; font-size:8pt; border-top:2px double #000; }
-  .ingredient-name { font-weight:700; font-size:7.5pt; }
-  .amount-col { font-weight:800; text-align:right; }
-  .pct-label  { display:block; font-size:6.5pt; color:#555; margin-top:1px; }
-  .traceability-box { font-size:6.5pt; color:#666; line-height:1.7; font-family:monospace; }
-  small { font-size:6.5pt; color:#555; }
-
-  /* Rev inputs as plain text */
-  .rev-input { border:none; background:transparent; font-weight:800; font-size:7.5pt; text-align:right; width:auto; color:#000; padding:0; }
-  .rev-badge { display:none; }
-
-  /* Instructions — compact */
+  .ingredient-name { font-weight:700; }
   .instructions-box { border:1px solid #000; padding:5px 7px; page-break-inside:avoid; margin-top:4px; }
   .instructions-box strong { font-size:7.5pt; text-transform:uppercase; display:block; margin-bottom:4px; font-weight:900; }
   .instructions-list { padding-left:14px; }
   .instructions-list li { margin-bottom:2px; font-size:7.5pt; line-height:1.4; }
-
   input[type="checkbox"] { -webkit-print-color-adjust:exact; print-color-adjust:exact; width:10px; height:10px; }
 </style></head><body>
 ${header ? header.outerHTML : ''}
-${tableWrap ? tableWrap.outerHTML : ''}
+${tableHTML}
 ${instrBox ? instrBox.outerHTML : ''}
 </body></html>`);
     pw.document.close();
     pw.focus();
-    setTimeout(() => { pw.print(); pw.close(); }, 350);
+    setTimeout(() => { pw.print(); pw.close(); }, 400);
 }
 
 // ── REVERSE CALCULATION ─────────────────────────────────────
