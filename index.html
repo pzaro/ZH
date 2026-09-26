@@ -269,7 +269,7 @@
 <div class="container" id="mainApp">
     <div class="app-header">
         <h1>ZARKOLIA LAB</h1>
-        <span class="version">Production System v36</span>
+        <span class="version">Production System v37</span>
         <div class="font-ctrl">
             <span class="font-ctrl-label" style="font-size:.85em;">Α</span>
             <button class="font-btn" onclick="changeFontSize(-1)">−</button>
@@ -300,6 +300,7 @@
             </optgroup>
             <optgroup label="— Κρέμες Προσώπου —">
                 <option value="plus">Revitacell Plus</option>
+                <option value="plus_v2">Revitacell Plus v2 (Βάση 3/2/1)</option>
                 <option value="eyes">Revitacell Eyes</option>
                 <option value="eyes_v2">Revitacell Eyes v2 (Βάση 3/2/1 — Μαύροι Κύκλοι)</option>
                 <option value="hydralia">Hydralia Face</option>
@@ -812,6 +813,40 @@ const recipes = {
         ]
     },
 
+    // ── REVITACELL PLUS v2 (Βάση 3/2/1) ─────────────────────
+    plus_v2: {
+        title: "REVITACELL PLUS v2", desc: "Βάση 3/2/1 — Αναζωογονητική κρέμα προσώπου", initials: "RP2", shelfLife: 12, type: "standard",
+        safetyNote: "Βάση 3/2/1 με μειωμένη Vaseline (10%) — τα φυτικά έλαια αντικαθιστούν μέρος της. Pomegranate Oil → Avocado Oil. Συντήρηση Euxyl PE 9010 (όχι parabens — δέσμευση από Polysorbate 60). Mastic Oil + Mastic Tincture στη Φάση Γ (πτητικά).",
+        ingredients: [
+            { name: "--- ΦΑΣΗ Α (ΛΙΠΑΡΗ 75°C) ---", isHeader: true },
+            { name: "Cetostearyl Alcohol",        pct: 10.0 },
+            { name: "Vaseline",                   pct: 10.0 },
+            { name: "Polysorbate 60",             pct: 4.0 },
+            { name: "Avocado Oil",                pct: 4.0, note: "2% + 2% αντί Pomegranate" },
+            { name: "Almond Oil",                 pct: 2.0 },
+            { name: "Jojoba Oil",                 pct: 2.0 },
+            { name: "Vit E",                      pct: 0.5 },
+            { name: "--- ΦΑΣΗ Β (ΥΔΑΤΙΚΗ 75°C) ---", isHeader: true },
+            { name: "Aqua",                       pct: 0, isQS: true, note: "= 57.7%" },
+            { name: "Glycerin",                   pct: 3.0 },
+            { name: "Propylene Glycol",           pct: 2.0 },
+            { name: "--- ΦΑΣΗ Γ (<40°C) ---", isHeader: true },
+            { name: "Mastic Tincture",            pct: 3.0 },
+            { name: "Mastic Oil",                 pct: 1.0 },
+            { name: "Euxyl PE 9010",              pct: 0.8 },
+        ],
+        instructions: [
+            "ΦΑΣΗ Α — Τήξη Cetostearyl Alcohol + Vaseline στους 75°C. Προσθήκη Polysorbate 60.",
+            "Προσθήκη Avocado + Almond + Jojoba Oil + Vit E — διατήρηση 75°C.",
+            "ΦΑΣΗ Β — Aqua + Glycerin + Propylene Glycol στους 75°C.",
+            "EMULSIFICATION — Αργή ρίψη Φάσης Α σε Β υπό ισχυρή ανάδευση / homogenizer 3-5 λεπτά.",
+            "Ψύξη με συνεχή ανάδευση (έλικα).",
+            "ΦΑΣΗ Γ — <40°C: προ-ανάμειξη Mastic Oil με Mastic Tincture — αργή προσθήκη υπό ανάδευση.",
+            "Euxyl PE 9010 — ανάδευση 5 λεπτά.",
+            "QC: pH 5.5-6.5 | Υφή μετά από 24h | Φυγοκέντρηση 3000rpm/30' | 4 εβδομάδες στους 40°C | Οσμή μαστίχας ομοιόμορφη.",
+        ]
+    },
+
     // ── REVITACELL EYES v2 (Βάση 3/2/1) ─────────────────────
     eyes_v2: {
         title: "REVITACELL EYES v2", desc: "Βάση 3/2/1 — Μαύροι Κύκλοι (Ιπποκάστανο/Άρνικα/Αντιοξειδωτικά)", initials: "RE2", shelfLife: 12, type: "standard",
@@ -822,7 +857,7 @@ const recipes = {
             { name: "Vaseline",                   pct: 14.0 },
             { name: "Polysorbate 60",             pct: 4.0 },
             { name: "Arnica Oil",                 pct: 4.0 },
-            { name: "Pomegranate Oil",            pct: 1.0 },
+            { name: "Avocado Oil",                pct: 1.0, note: "αντί Pomegranate Oil" },
             { name: "Vit E",                      pct: 0.5 },
             { name: "Coenzyme Q10",               pct: 0.2 },
             { name: "--- ΦΑΣΗ Β (ΥΔΑΤΙΚΗ 75°C) ---", isHeader: true },
@@ -837,7 +872,7 @@ const recipes = {
         ],
         instructions: [
             "ΦΑΣΗ Α — Τήξη Cetostearyl Alcohol + Vaseline στους 75°C. Προσθήκη Polysorbate 60.",
-            "Ξεχωριστά: θέρμανση Arnica Oil + Pomegranate Oil + Vit E στους ~55°C. Διάλυση Coenzyme Q10 μέχρι διαύγεια (πορτοκαλί). Ρίψη στη Φάση Α.",
+            "Ξεχωριστά: θέρμανση Arnica Oil + Avocado Oil + Vit E στους ~55°C. Διάλυση Coenzyme Q10 μέχρι διαύγεια (πορτοκαλί). Ρίψη στη Φάση Α.",
             "ΦΑΣΗ Β — Aqua + Propylene Glycol στους 75°C.",
             "EMULSIFICATION — Αργή ρίψη Φάσης Α σε Β υπό ισχυρή ανάδευση / homogenizer 3-5 λεπτά.",
             "Ψύξη με συνεχή ανάδευση (έλικα).",
